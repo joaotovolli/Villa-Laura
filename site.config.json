@@ -1,0 +1,148 @@
+{
+  "site": {
+    "name": "Villa Laura",
+    "tagline": "A calm Sardinian stay above the sea.",
+    "description": "Villa Laura is a simple, elegant guest-support site with practical guidance, video walkthroughs, and direct links for help during your stay in Sardinia.",
+    "domain": "https://villa-laura.it",
+    "locale": "en-GB"
+  },
+  "links": {
+    "airbnb": "https://airbnb.co.uk/h/villa-laura-sardinia",
+    "whatsapp": "+393514830318",
+    "youtubeChannel": "https://www.youtube.com/@Villa-Laura"
+  },
+  "hero": {
+    "eyebrow": "Guest Support Site",
+    "title": "Everything guests need for a smooth stay at Villa Laura.",
+    "body": "Use this page for quick house guidance, practical videos, useful local information, and direct support while you are at the house."
+  },
+  "about": {
+    "title": "A warm, easy base for Sardinian days.",
+    "body": "Villa Laura is designed for relaxed stays with sea views, bright interiors, and the practical comforts guests need when travelling with family or friends. This site keeps key information in one place so it stays easy to use on a phone."
+  },
+  "highlights": [
+    "Sea-view setting with a calm, airy atmosphere",
+    "Simple help resources for appliances and house access",
+    "Direct WhatsApp contact for support during the stay",
+    "Airbnb listing available for bookings and full property details"
+  ],
+  "guideSections": [
+    {
+      "title": "Arrival and access",
+      "items": [
+        "Use the keys and door guide videos before your first arrival.",
+        "Keep the house keys together to avoid confusion when locking up.",
+        "If anything feels unclear, message on WhatsApp for the fastest response."
+      ]
+    },
+    {
+      "title": "Inside the house",
+      "items": [
+        "Appliance videos cover the TV, oven, hood, washing machine, dishwasher, microwave, cooktop, air conditioning, and workstation.",
+        "For the best experience, watch the short guide before using an appliance for the first time.",
+        "Please treat the house as a lived-in home and leave everything switched off when going out."
+      ]
+    },
+    {
+      "title": "Before leaving",
+      "items": [
+        "Check doors and windows carefully before departure.",
+        "Return all keys to the agreed place and confirm departure on WhatsApp.",
+        "If anything was damaged or not working during the stay, report it before check-out so it can be handled quickly."
+      ]
+    }
+  ],
+  "localInfo": [
+    {
+      "title": "Support",
+      "text": "WhatsApp is the main support channel during the stay."
+    },
+    {
+      "title": "Bookings",
+      "text": "All reservations are handled through Airbnb."
+    },
+    {
+      "title": "Videos",
+      "text": "The full guide library is also available on the Villa Laura YouTube channel."
+    }
+  ],
+  "videos": [
+    {
+      "title": "How to Use the TV",
+      "description": "Quick guide on how to turn on the TV, change channels, and access streaming apps.",
+      "url": "https://youtu.be/3JqRc2trMb0"
+    },
+    {
+      "title": "How to Use the Oven",
+      "description": "Step-by-step instructions for turning on the oven, adjusting temperature, and using basic functions.",
+      "url": "https://youtu.be/8_3PEX86HW0"
+    },
+    {
+      "title": "How to Use the Kitchen Hood",
+      "description": "How to switch on the kitchen hood, adjust the fan speed, and use the lights.",
+      "url": "https://youtu.be/WX81v13awMs"
+    },
+    {
+      "title": "How to Use the Washing Machine",
+      "description": "Simple guide on selecting programs, adding detergent, and starting a wash cycle.",
+      "url": "https://youtube.com/shorts/RHMKJzOEfn0"
+    },
+    {
+      "title": "How to Use the Dishwasher",
+      "description": "Instructions for loading dishes, adding detergent, and choosing the correct program.",
+      "url": "https://youtube.com/shorts/3iClICTKZ68"
+    },
+    {
+      "title": "How to Use the Microwave",
+      "description": "Basic instructions on heating food, setting time, and using main functions.",
+      "url": "https://youtube.com/shorts/og6Hlir7J9g"
+    },
+    {
+      "title": "How to Use the Cooktop",
+      "description": "How to turn on the cooktop, adjust heat levels, and use it safely.",
+      "url": "https://youtube.com/shorts/BKnn9JZsLkw"
+    },
+    {
+      "title": "How to Use the Air Conditioning",
+      "description": "How to turn on the AC, adjust temperature, and switch between modes.",
+      "url": "https://youtube.com/shorts/-To8ae2-_y0?feature=share"
+    },
+    {
+      "title": "How to Use Doors and Locks",
+      "description": "Instructions on opening, closing, and locking doors safely.",
+      "url": "https://youtube.com/shorts/HHHNcUKoLbs"
+    },
+    {
+      "title": "How to Use the Keys",
+      "description": "Explanation of which keys to use and how to lock and unlock the property.",
+      "url": "https://youtube.com/shorts/Ed7qidXfLpw"
+    },
+    {
+      "title": "How to Use the Workstation",
+      "description": "Guide to using the desk area, power outlets, and workspace setup.",
+      "url": "https://youtube.com/shorts/BLVhlXxrXOM"
+    }
+  ],
+  "gallery": [
+    {
+      "source": "20260331_092140010_iOS.jpg",
+      "alt": "Dining area at Villa Laura with open sea view."
+    },
+    {
+      "source": "20250331_175022362_iOS.jpg",
+      "alt": "Sunset view from Villa Laura over the Sardinian coastline."
+    },
+    {
+      "source": "20260328_174521823_iOS.jpg",
+      "alt": "Rainbow over the green hills and sea near Villa Laura."
+    },
+    {
+      "source": "20250316_135308976_iOS.jpg",
+      "alt": "Garden-level view looking up toward the villa."
+    }
+  ],
+  "contact": {
+    "title": "Need help during your stay?",
+    "body": "For the fastest support, send a WhatsApp message. For bookings, availability, and full listing details, use Airbnb."
+  }
+}

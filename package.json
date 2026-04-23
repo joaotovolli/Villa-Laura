@@ -1,0 +1,31 @@
+{
+  "name": "villa-laura-site",
+  "version": "1.0.0",
+  "description": "Static guest-support site for Villa Laura in Sardinia",
+  "main": "index.js",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "npx serve dist",
+    "check": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaotovolli/Villa-Laura.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joaotovolli/Villa-Laura/issues"
+  },
+  "homepage": "https://github.com/joaotovolli/Villa-Laura#readme",
+  "devDependencies": {
+    "serve": "^14.2.6",
+    "sharp": "^0.34.5"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}

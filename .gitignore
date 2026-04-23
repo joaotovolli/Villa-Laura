@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+
+# Local project notes and credentials must never be committed
+Doc_Keys_Villa_Laura.txt
+*_Keys_*.txt
+*.local
+*.env
+*.env.*
+notes/
+private/
+tmp/
