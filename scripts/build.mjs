@@ -4,6 +4,7 @@ import sharp from "sharp";
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
+const docsDir = path.join(root, "docs");
 const assetsDir = path.join(distDir, "assets");
 const sourceImagesDir = path.join(root, "assets", "source");
 const publicDir = path.join(root, "public");
@@ -15,6 +16,7 @@ const rawConfig = await readFile(configPath, "utf8");
 const config = JSON.parse(rawConfig);
 
 await rm(distDir, { recursive: true, force: true });
+await rm(docsDir, { recursive: true, force: true });
 await mkdir(assetsDir, { recursive: true });
 
 const publicFiles = ["_headers", "favicon.svg"];
@@ -287,3 +289,16 @@ const html = `<!doctype html>
 </html>`;
 
 await writeFile(path.join(distDir, "index.html"), html, "utf8");
+
+// Keep a GitHub Pages fallback in sync with the production build output.
+await mkdir(path.join(docsDir, "assets"), { recursive: true });
+for (const file of ["_headers", "favicon.svg", "index.html"]) {
+  await copyFile(path.join(distDir, file), path.join(docsDir, file));
+}
+for (const image of imageOutputs) {
+  for (const asset of [image.webp, image.jpeg]) {
+    const relative = asset.replace("./", "");
+    await copyFile(path.join(distDir, relative), path.join(docsDir, relative));
+  }
+}
+await writeFile(path.join(docsDir, ".nojekyll"), "", "utf8");
