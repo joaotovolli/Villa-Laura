@@ -68,65 +68,124 @@
   ],
   "videos": [
     {
+      "slug": "how-to-use-tv",
       "title": "How to Use the TV",
       "description": "Quick guide on how to turn on the TV, change channels, and access streaming apps.",
-      "url": "https://youtu.be/3JqRc2trMb0"
+      "url": "https://youtu.be/3JqRc2trMb0",
+      "notes": [
+        "Use the remote shown in the video first, then switch inputs only if needed.",
+        "If apps are already signed in, please avoid changing account settings."
+      ]
     },
     {
+      "slug": "how-to-use-oven",
       "title": "How to Use the Oven",
       "description": "Step-by-step instructions for turning on the oven, adjusting temperature, and using basic functions.",
-      "url": "https://youtu.be/8_3PEX86HW0"
+      "url": "https://youtu.be/8_3PEX86HW0",
+      "notes": [
+        "Let the oven preheat before cooking for more even results.",
+        "Make sure it is switched off fully before leaving the house."
+      ]
     },
     {
+      "slug": "how-to-use-kitchen-hood",
       "title": "How to Use the Kitchen Hood",
       "description": "How to switch on the kitchen hood, adjust the fan speed, and use the lights.",
-      "url": "https://youtu.be/WX81v13awMs"
+      "url": "https://youtu.be/WX81v13awMs",
+      "notes": [
+        "Use the hood while cooking to keep the kitchen fresh.",
+        "Leave it running briefly after cooking if needed."
+      ]
     },
     {
+      "slug": "how-to-use-washing-machine",
       "title": "How to Use the Washing Machine",
       "description": "Simple guide on selecting programs, adding detergent, and starting a wash cycle.",
-      "url": "https://youtube.com/shorts/RHMKJzOEfn0"
+      "url": "https://youtube.com/shorts/RHMKJzOEfn0",
+      "notes": [
+        "Do not overload the machine.",
+        "Use the detergent amount recommended for a small household load."
+      ]
     },
     {
+      "slug": "how-to-use-dishwasher",
       "title": "How to Use the Dishwasher",
       "description": "Instructions for loading dishes, adding detergent, and choosing the correct program.",
-      "url": "https://youtube.com/shorts/3iClICTKZ68"
+      "url": "https://youtube.com/shorts/3iClICTKZ68",
+      "notes": [
+        "Scrape off food before loading.",
+        "Open the door slightly after the cycle if you want dishes to dry faster."
+      ]
     },
     {
+      "slug": "how-to-use-microwave",
       "title": "How to Use the Microwave",
       "description": "Basic instructions on heating food, setting time, and using main functions.",
-      "url": "https://youtube.com/shorts/og6Hlir7J9g"
+      "url": "https://youtube.com/shorts/og6Hlir7J9g",
+      "notes": [
+        "Use microwave-safe containers only.",
+        "Avoid metal or foil unless clearly approved for microwave use."
+      ]
     },
     {
+      "slug": "how-to-use-cooktop",
       "title": "How to Use the Cooktop",
       "description": "How to turn on the cooktop, adjust heat levels, and use it safely.",
-      "url": "https://youtube.com/shorts/BKnn9JZsLkw"
+      "url": "https://youtube.com/shorts/BKnn9JZsLkw",
+      "notes": [
+        "Use pans sized to the cooking zone where possible.",
+        "Check that everything is switched off after cooking."
+      ]
     },
     {
+      "slug": "how-to-use-air-conditioning",
       "title": "How to Use the Air Conditioning",
       "description": "How to turn on the AC, adjust temperature, and switch between modes.",
-      "url": "https://youtube.com/shorts/-To8ae2-_y0?feature=share"
+      "url": "https://youtube.com/shorts/-To8ae2-_y0?feature=share",
+      "notes": [
+        "Keep doors and windows closed for the best cooling performance.",
+        "Use moderate settings to keep the house comfortable and efficient."
+      ]
     },
     {
+      "slug": "how-to-use-doors-and-locks",
       "title": "How to Use Doors and Locks",
       "description": "Instructions on opening, closing, and locking doors safely.",
-      "url": "https://youtube.com/shorts/HHHNcUKoLbs"
+      "url": "https://youtube.com/shorts/HHHNcUKoLbs",
+      "notes": [
+        "Always check doors are fully closed before locking.",
+        "Use gentle pressure if a door needs alignment rather than forcing it."
+      ]
     },
     {
+      "slug": "how-to-use-keys",
       "title": "How to Use the Keys",
       "description": "Explanation of which keys to use and how to lock and unlock the property.",
-      "url": "https://youtube.com/shorts/Ed7qidXfLpw"
+      "url": "https://youtube.com/shorts/Ed7qidXfLpw",
+      "notes": [
+        "Keep keys together to avoid mixing them up.",
+        "If a key feels stiff, stop and check that you are using the right one."
+      ]
     },
     {
+      "slug": "how-to-use-workstation",
       "title": "How to Use the Workstation",
       "description": "Guide to using the desk area, power outlets, and workspace setup.",
-      "url": "https://youtube.com/shorts/BLVhlXxrXOM"
+      "url": "https://youtube.com/shorts/BLVhlXxrXOM",
+      "notes": [
+        "The workstation is intended for light work and charging devices.",
+        "Please unplug personal equipment when leaving."
+      ]
     }
   ],
   "gallery": [
     {
       "source": "20260331_092140010_iOS.jpg",
       "alt": "Dining area at Villa Laura with open sea view."
+    },
+    {
+      "source": "20251107_074124521_iOS.jpg",
+      "alt": "Bright interior view at Villa Laura with terrace and sea beyond."
     },
     {
       "source": "20250331_175022362_iOS.jpg",
