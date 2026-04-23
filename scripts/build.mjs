@@ -12,13 +12,14 @@ const stylesPath = path.join(root, "src", "styles.css");
 const appScriptPath = path.join(root, "src", "app.js");
 const configPath = path.join(root, "site.config.json");
 
-const localeOrder = ["en", "it", "es", "de", "pt"];
+const localeOrder = ["en", "it", "es", "de", "pt", "fr"];
 const localeNames = {
   en: "English",
   it: "Italiano",
   es: "Espanol",
   de: "Deutsch",
-  pt: "Portugues"
+  pt: "Portugues",
+  fr: "Francais"
 };
 
 const ui = {
@@ -566,6 +567,115 @@ const ui = {
     relatedTitle: "Mais guias",
     relatedIntro: "Outros videos curtos que os hospedes usam com frequencia durante a estadia.",
     browserLanguageRedirect: true
+  },
+  fr: {
+    htmlLang: "fr",
+    titleSuffix: "Guide Sejour",
+    navAbout: "Villa",
+    navGuides: "Guides",
+    navInfo: "Infos Maison",
+    navGallery: "Galerie",
+    navContact: "Contact",
+    switcherLabel: "Langue",
+    supportEyebrow: "Site de support voyageurs",
+    supportTitle: "Tout le necessaire pour un sejour fluide a Villa Laura.",
+    supportBody:
+      "Utilisez cette page pour acceder rapidement aux instructions de la maison, aux videos pratiques, aux informations utiles et au support direct pendant votre sejour.",
+    heroPrimary: "Support WhatsApp",
+    heroSecondary: "Reserver sur Airbnb",
+    supportHeading: "Acces rapides",
+    supportCards: {
+      whatsapp: {
+        title: "Contacter sur WhatsApp",
+        body: "Le moyen le plus rapide d'obtenir de l'aide pendant le sejour."
+      },
+      airbnb: {
+        title: "Ouvrir l'annonce Airbnb",
+        body: "Reservations, informations completes sur la propriete et page d'annonce d'origine."
+      },
+      guides: {
+        title: "Parcourir les guides video",
+        body: "Aide pas a pas pour la TV, la cuisine, la climatisation, les cles et plus encore."
+      }
+    },
+    aboutKicker: "Villa Laura",
+    aboutTitle: "Un point de chute lumineux et simple pour profiter de la Sardaigne.",
+    aboutBody:
+      "Villa Laura est pensee pour des sejours detendus avec vue sur la mer, des interieurs lumineux et les equipements pratiques attendus par les familles et petits groupes. Ce site rassemble les informations essentielles dans un format facile a utiliser sur mobile.",
+    aboutPanelTitle: "A quoi sert ce site",
+    highlights: [
+      "Cadre avec vue mer et atmosphere calme",
+      "Aide simple pour les equipements et l'acces a la maison",
+      "Contact direct sur WhatsApp pendant le sejour",
+      "Annonce Airbnb disponible pour les reservations et les details complets"
+    ],
+    guidesKicker: "Bibliotheque de Guides",
+    guidesTitle: "Une aide rapide, sans surcharge.",
+    guidesIntro:
+      "Ouvrez un guide pour afficher une page claire avec la video, une courte explication et des liens directs vers le support.",
+    watchGuide: "Ouvrir le guide",
+    watchChannel: "Ouvrir la chaine YouTube",
+    guideHubLabel: "Bibliotheque de guides",
+    infoKicker: "Guide Maison",
+    infoTitle: "Des informations pratiques, faciles a parcourir.",
+    infoIntro:
+      "Cette premiere version se concentre sur l'essentiel dont les voyageurs ont le plus souvent besoin pendant leur sejour.",
+    infoPanels: [
+      { title: "Support", text: "WhatsApp est le principal canal de support pendant le sejour." },
+      { title: "Reservations", text: "Toutes les reservations sont gerees via Airbnb." },
+      {
+        title: "Videos",
+        text: "La bibliotheque complete des guides est egalement disponible sur la chaine YouTube de Villa Laura."
+      }
+    ],
+    guideSections: [
+      {
+        title: "Arrivee et acces",
+        items: [
+          "Consultez les guides video sur les cles et les portes avant votre premiere arrivee.",
+          "Gardez les cles de la maison ensemble pour eviter toute confusion au moment de fermer.",
+          "Si quelque chose n'est pas clair, envoyez un message sur WhatsApp pour obtenir une reponse rapide."
+        ]
+      },
+      {
+        title: "Dans la maison",
+        items: [
+          "Les guides video couvrent la TV, le four, la hotte, le lave-linge, le lave-vaisselle, le micro-ondes, la plaque de cuisson, la climatisation et l'espace de travail.",
+          "Pour une utilisation plus simple, regardez la courte video avant d'utiliser un appareil pour la premiere fois.",
+          "Merci de traiter la maison comme un lieu de vie et de tout laisser eteint lorsque vous sortez."
+        ]
+      },
+      {
+        title: "Avant le depart",
+        items: [
+          "Verifiez soigneusement les portes et les fenetres avant le depart.",
+          "Remettez toutes les cles a l'endroit convenu et confirmez votre depart sur WhatsApp.",
+          "Si quelque chose a ete endommage ou n'a pas fonctionne, signalez-le avant le check-out pour un traitement rapide."
+        ]
+      }
+    ],
+    galleryKicker: "Galerie",
+    galleryTitle: "La lumiere, la vue, l'atmosphere.",
+    galleryIntro:
+      "Une selection compacte d'images soigneusement choisies permet de garder un site elegant et rapide a charger.",
+    contactKicker: "Besoin d'aide pendant votre sejour ?",
+    contactTitle: "Un support simple et direct.",
+    contactBody:
+      "Pour obtenir de l'aide rapidement, envoyez un message sur WhatsApp. Pour les reservations, les disponibilites et les informations completes, utilisez Airbnb.",
+    contactPrimary: "Ouvrir WhatsApp",
+    contactSecondary: "Ouvrir Airbnb",
+    footer: "Site de support voyageurs Villa Laura",
+    videoLabel: "Guide video",
+    notesTitle: "Notes utiles",
+    notesIntro: "Quelques points supplementaires utiles avant de commencer.",
+    backHome: "Retour a l'accueil",
+    backGuides: "Retour a la bibliotheque de guides",
+    guideSupportTitle: "Besoin d'aide pour ce guide ?",
+    guideSupportBody:
+      "Si quelque chose reste peu clair apres la video, envoyez un message sur WhatsApp pour obtenir la reponse la plus rapide.",
+    relatedTitle: "Autres guides",
+    relatedIntro: "D'autres courtes videos souvent utilisees par les voyageurs pendant leur sejour.",
+    browserLanguageRedirect: true
   }
 };
 
@@ -586,6 +696,10 @@ const videoCopy = {
     pt: {
       title: "Como usar a TV",
       description: "Guia rapida para ligar a TV, mudar de canal e abrir as apps de streaming."
+    },
+    fr: {
+      title: "Comment utiliser la TV",
+      description: "Guide rapide pour allumer la TV, changer de chaine et acceder aux applications de streaming."
     }
   },
   "how-to-use-oven": {
@@ -604,6 +718,10 @@ const videoCopy = {
     pt: {
       title: "Como usar o forno",
       description: "Instrucoes passo a passo para ligar o forno, ajustar a temperatura e usar as funcoes principais."
+    },
+    fr: {
+      title: "Comment utiliser le four",
+      description: "Instructions pas a pas pour allumer le four, regler la temperature et utiliser les fonctions principales."
     }
   },
   "how-to-use-kitchen-hood": {
@@ -622,6 +740,10 @@ const videoCopy = {
     pt: {
       title: "Como usar o exaustor",
       description: "Como ligar o exaustor, ajustar a velocidade e usar as luzes."
+    },
+    fr: {
+      title: "Comment utiliser la hotte",
+      description: "Comment allumer la hotte, regler la vitesse du ventilateur et utiliser l'eclairage."
     }
   },
   "how-to-use-washing-machine": {
@@ -640,6 +762,10 @@ const videoCopy = {
     pt: {
       title: "Como usar a maquina de lavar roupa",
       description: "Guia simples para escolher o programa, colocar detergente e iniciar a lavagem."
+    },
+    fr: {
+      title: "Comment utiliser le lave-linge",
+      description: "Guide simple pour choisir un programme, ajouter la lessive et lancer un cycle."
     }
   },
   "how-to-use-dishwasher": {
@@ -658,6 +784,10 @@ const videoCopy = {
     pt: {
       title: "Como usar a maquina de lavar loica",
       description: "Instrucoes para colocar a loica, adicionar detergente e escolher o programa certo."
+    },
+    fr: {
+      title: "Comment utiliser le lave-vaisselle",
+      description: "Instructions pour charger la vaisselle, ajouter le detergent et choisir le programme adapte."
     }
   },
   "how-to-use-microwave": {
@@ -676,6 +806,10 @@ const videoCopy = {
     pt: {
       title: "Como usar o micro-ondas",
       description: "Instrucoes basicas para aquecer comida, definir o tempo e usar as funcoes principais."
+    },
+    fr: {
+      title: "Comment utiliser le micro-ondes",
+      description: "Instructions de base pour rechauffer un plat, regler le temps et utiliser les fonctions principales."
     }
   },
   "how-to-use-cooktop": {
@@ -694,6 +828,10 @@ const videoCopy = {
     pt: {
       title: "Como usar a placa",
       description: "Como ligar a placa, ajustar o calor e usa-la com seguranca."
+    },
+    fr: {
+      title: "Comment utiliser la plaque de cuisson",
+      description: "Comment allumer la plaque, regler la puissance et l'utiliser en toute securite."
     }
   },
   "how-to-use-air-conditioning": {
@@ -712,6 +850,10 @@ const videoCopy = {
     pt: {
       title: "Como usar o ar condicionado",
       description: "Como ligar o ar condicionado, ajustar a temperatura e mudar de modo."
+    },
+    fr: {
+      title: "Comment utiliser la climatisation",
+      description: "Comment allumer la climatisation, regler la temperature et changer de mode."
     }
   },
   "how-to-use-doors-and-locks": {
@@ -730,6 +872,10 @@ const videoCopy = {
     pt: {
       title: "Como usar portas e fechaduras",
       description: "Instrucoes para abrir, fechar e trancar as portas com seguranca."
+    },
+    fr: {
+      title: "Comment utiliser les portes et serrures",
+      description: "Instructions pour ouvrir, fermer et verrouiller les portes en toute securite."
     }
   },
   "how-to-use-keys": {
@@ -748,6 +894,10 @@ const videoCopy = {
     pt: {
       title: "Como usar as chaves",
       description: "Explicacao de quais chaves usar e como abrir e fechar a propriedade."
+    },
+    fr: {
+      title: "Comment utiliser les cles",
+      description: "Explication des cles a utiliser et de la facon d'ouvrir et fermer la propriete."
     }
   },
   "how-to-use-workstation": {
@@ -766,6 +916,10 @@ const videoCopy = {
     pt: {
       title: "Como usar a area de trabalho",
       description: "Guia para usar a secretaria, as tomadas e a area de trabalho."
+    },
+    fr: {
+      title: "Comment utiliser l'espace de travail",
+      description: "Guide pour utiliser le bureau, les prises de courant et l'espace de travail."
     }
   }
 };

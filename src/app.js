@@ -18,7 +18,7 @@ if ("IntersectionObserver" in window) {
   reveals.forEach((element) => element.classList.add("is-visible"));
 }
 
-const supportedLocales = ["en", "it", "es", "de", "pt"];
+const supportedLocales = ["en", "it", "es", "de", "pt", "fr"];
 const savedLocaleKey = "villa-laura-locale";
 
 document.querySelectorAll("[data-locale-switch]").forEach((link) => {
