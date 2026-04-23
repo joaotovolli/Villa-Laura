@@ -23,12 +23,14 @@ Extracted from the local key document without copying any secrets into the repo:
 ## What I Completed
 
 - Normalised the repo locally onto a standard `main` working branch
+- Made the repository public so it is compatible with public-safe static hosting paths
 - Built a polished static first version of the site
 - Added a structured content file for easy editing
 - Embedded all available YouTube guide videos
 - Added WhatsApp, Airbnb, and YouTube calls to action
 - Curated four public-safe photos and set up image optimisation during build
 - Added a Cloudflare Pages friendly static output and headers file
+- Added a GitHub Pages deployment workflow as a fallback publishing path
 - Added repository safety rules in `.gitignore`
 - Wrote a README with update and deployment instructions
 
@@ -38,20 +40,24 @@ Extracted from the local key document without copying any secrets into the repo:
 - Cloudflare account verification through CLI tooling
 - Automatic HEIC conversion from the local photo folder because no HEIC conversion tools were installed
 - Final public-domain cutover testing
+- GitHub Pages activation through the repository API on this account
 
 ## Deployment Constraints
 
 - Current environment has Node 18, which was enough for this project build
 - Current environment did not have Cloudflare API credentials available for non-interactive deployment
 - Earlier readiness checks showed `https://villa-laura.it` returning Cloudflare `525`, which suggests the current live setup is tied to an unhealthy origin; Cloudflare Pages would avoid that complexity
+- GitHub Actions can build the site, but GitHub Pages itself is not enabled yet for the repo and the API returned `422` when trying to create the Pages site
 
 ## Exact Final Deployment Steps
 
 ### GitHub
 
-1. Push the finished `main` branch to GitHub
-2. Set `main` as the default branch in GitHub
-3. Delete the old temporary `access-check-20260423` branch after `main` is live
+1. `main` is already pushed and set as the default branch
+2. The old temporary `access-check-20260423` branch has already been deleted
+3. If using GitHub Pages as a fallback host, open `https://github.com/joaotovolli/Villa-Laura/settings/pages`
+4. Enable GitHub Pages for Actions-based deployment
+5. Rerun the `Deploy GitHub Pages` workflow or push any new commit
 
 ### Cloudflare Pages
 

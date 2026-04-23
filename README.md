@@ -67,6 +67,17 @@ The build script automatically generates optimised `.webp` and `.jpg` files into
 
 If automatic GitHub deployment is connected in Cloudflare Pages, every push to the production branch can publish a new version.
 
+### GitHub Pages Fallback
+
+The repository includes [deploy-github-pages.yml](/mnt/c/codex/Villa_Laura/site-repo/.github/workflows/deploy-github-pages.yml), which builds the site and publishes `dist/` through GitHub Actions.
+
+Current status:
+
+- the workflow builds successfully
+- deployment is blocked until GitHub Pages is enabled in the repository settings
+
+Once GitHub Pages is enabled for the repo, rerun the workflow or push a new commit.
+
 ## Security
 
 - Do not commit credentials, notes, or local key files
