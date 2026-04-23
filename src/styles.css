@@ -663,7 +663,35 @@ button,
 @media (max-width: 759px) {
   .hero h1,
   .guide-hero h1 {
-    max-width: 12ch;
+    max-width: 8ch;
+    font-size: clamp(2.55rem, 12vw, 4.1rem);
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .hero__media {
+    min-height: clamp(35rem, 92svh, 42rem);
+  }
+
+  .hero__copy {
+    padding: 1.2rem 1.15rem 1.3rem;
+  }
+
+  .hero__lede {
+    max-width: 30ch;
+    margin-top: 0.8rem;
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .hero__actions {
+    gap: 0.65rem;
+    margin-top: 1.05rem;
+  }
+
+  .hero__actions .button {
+    min-height: 2.9rem;
+    padding-inline: 1rem;
   }
 
   .topbar__inner {
