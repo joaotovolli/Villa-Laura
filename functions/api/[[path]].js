@@ -142,13 +142,33 @@ const listReservations = async (storage) => {
 };
 
 const syncIcal = async (request, env, storage, identity) => {
+  const diagnostics = {
+    icalUrlConfigured: false,
+    fetchedIcal: false,
+    parsedEvents: 0,
+    reservations: 0,
+    blockedDates: 0,
+    storageWriteSuccess: false,
+    storageReadbackSuccess: false
+  };
   const icalUrl = await readPrivateIcalUrl(env);
-  if (!icalUrl) return json({ error: "Airbnb iCal URL is not configured" }, { status: 400 });
-  const response = await fetch(icalUrl, { headers: { accept: "text/calendar" } });
-  if (!response.ok) return json({ error: "Unable to fetch Airbnb calendar" }, { status: 502 });
+  diagnostics.icalUrlConfigured = Boolean(icalUrl);
+  if (!icalUrl) return json({ error: "Airbnb iCal URL is not configured", diagnostics }, { status: 400 });
+  let response;
+  try {
+    response = await fetch(icalUrl, { headers: { accept: "text/calendar" } });
+  } catch {
+    return json({ error: "Unable to fetch Airbnb calendar", diagnostics }, { status: 502 });
+  }
+  diagnostics.fetchedIcal = response.ok;
+  if (!response.ok) return json({ error: "Unable to fetch Airbnb calendar", diagnostics }, { status: 502 });
   const events = parseAirbnbIcal(await response.text());
+  diagnostics.parsedEvents = events.length;
+  diagnostics.reservations = events.filter((event) => event.type === "reservation").length;
+  diagnostics.blockedDates = events.filter((event) => event.type === "blocked").length;
   let created = 0;
   let updated = 0;
+  const writtenKeys = [];
   for (const event of events) {
     const key = keys.reservation(event.uid);
     const existing = await storage.getJson(key);
@@ -169,10 +189,17 @@ const syncIcal = async (request, env, storage, identity) => {
       updatedAt: now
     };
     await storage.putJson(key, merged);
+    writtenKeys.push(key);
     existing ? updated += 1 : created += 1;
   }
+  diagnostics.storageWriteSuccess = true;
+  if (writtenKeys.length) {
+    diagnostics.storageReadbackSuccess = Boolean(await storage.getJson(writtenKeys[0]));
+  } else {
+    diagnostics.storageReadbackSuccess = true;
+  }
   await storage.audit({ type: "ical_sync", actor: identity.email, details: { created, updated, total: events.length } });
-  return json({ created, updated, total: events.length });
+  return json({ created, updated, total: events.length, diagnostics });
 };
 
 const updateReservation = async (request, storage, identity) => {

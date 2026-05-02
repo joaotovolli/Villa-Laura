@@ -1,7 +1,7 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=final-checkin-admin-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=ical-import-diagnostics-20260502";
 
 const app = document.querySelector("#app");
-const state = { reservations: [], session: null };
+const state = { reservations: [], session: null, syncStatus: "" };
 
 const api = async (path, options = {}) => {
   const response = await fetch(path, {
@@ -9,12 +9,34 @@ const api = async (path, options = {}) => {
     headers: options.body instanceof FormData ? options.headers : { "content-type": "application/json", ...(options.headers || {}) }
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Request failed");
+  if (!response.ok) {
+    const error = new Error(body.error || "Request failed");
+    error.diagnostics = body.diagnostics;
+    throw error;
+  }
   return body;
 };
 
 const escapeHtml = (value) =>
   String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+
+const importMessage = (result) => {
+  const diagnostics = result.diagnostics || {};
+  const reservations = diagnostics.reservations ?? 0;
+  const blocked = diagnostics.blockedDates ?? 0;
+  return `Imported ${reservations} reservations and ${blocked} blocked date ranges.`;
+};
+
+const diagnosticMessage = (diagnostics = {}) =>
+  [
+    `iCal URL configured: ${diagnostics.icalUrlConfigured ? "yes" : "no"}`,
+    `fetched iCal: ${diagnostics.fetchedIcal ? "yes" : "no"}`,
+    `parsed events: ${diagnostics.parsedEvents ?? 0}`,
+    `reservations: ${diagnostics.reservations ?? 0}`,
+    `blocked dates: ${diagnostics.blockedDates ?? 0}`,
+    `storage write: ${diagnostics.storageWriteSuccess ? "yes" : "no"}`,
+    `storage readback: ${diagnostics.storageReadbackSuccess ? "yes" : "no"}`
+  ].join(" · ");
 
 const accessDenied = () => {
   app.innerHTML = `
@@ -110,6 +132,7 @@ const render = () => {
         <div><h2>Reservations</h2><p>${reservations.length} reservations · ${blocked.length} blocked date ranges</p></div>
         <div class="actions"><button id="sync">Import Airbnb iCal</button><a id="logout" class="button secondary" href="${accessLogoutUrl}">Log out</a></div>
       </div>
+      <div id="sync-status" class="notice ${state.syncStatus ? "" : "hidden"}">${escapeHtml(state.syncStatus)}</div>
       <div class="stack">${state.reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
       ${
         usesCloudflareAccessSession(state.session)
@@ -206,8 +229,21 @@ const load = async (rerender = true) => {
 };
 
 const sync = async () => {
-  await api("/api/admin/sync", { method: "POST", body: "{}" });
-  await load();
+  state.syncStatus = "Import started.";
+  render();
+  const button = document.querySelector("#sync");
+  button.disabled = true;
+  try {
+    const result = await api("/api/admin/sync", { method: "POST", body: "{}" });
+    await load(false);
+    state.syncStatus = `${importMessage(result)} ${diagnosticMessage(result.diagnostics)}`;
+    render();
+  } catch (error) {
+    state.syncStatus = `Import failed: ${error.message}. ${error.diagnostics ? diagnosticMessage(error.diagnostics) : ""}`;
+    render();
+  } finally {
+    document.querySelector("#sync").disabled = false;
+  }
 };
 
 const init = async () => {
