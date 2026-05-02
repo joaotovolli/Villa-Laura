@@ -17,6 +17,7 @@ Required secrets are configured as environment variables or Cloudflare secrets:
 - `ADMIN_SESSION_SECRET`
 - `CHECKIN_TOKEN_SECRET`
 - `ALLOWED_ADMIN_EMAILS`
+- `CF_ACCESS_TEAM_DOMAIN` and `CF_ACCESS_AUD` for strict Cloudflare Access JWT validation when available
 
 No real keys, private URLs, guest data, or document files belong in GitHub.
 
@@ -27,6 +28,7 @@ No real keys, private URLs, guest data, or document files belong in GitHub.
 - Admin sessions use signed HttpOnly SameSite cookies.
 - Production cookies are Secure.
 - Cloudflare Access is the preferred outer authentication layer.
+- In production, Cloudflare Access is the primary admin authentication layer; the password fallback is only for local development.
 - Uploads validate extension, MIME type, and size.
 - Uploaded documents are stored outside public directories.
 - Audit events avoid secrets, document numbers, and full identity details.

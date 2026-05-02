@@ -42,6 +42,8 @@ npx wrangler pages secret put ADMIN_PASSWORD
 npx wrangler pages secret put ADMIN_SESSION_SECRET
 npx wrangler pages secret put CHECKIN_TOKEN_SECRET
 npx wrangler pages secret put ALLOWED_ADMIN_EMAILS
+npx wrangler pages secret put CF_ACCESS_TEAM_DOMAIN
+npx wrangler pages secret put CF_ACCESS_AUD
 ```
 
 Set `APP_ENV=production` and `VILLA_LAURA_SITE_URL=https://villa-laura.it`.
@@ -57,6 +59,7 @@ Preferred production setup:
 - Forward Access identity headers to the Pages Function.
 
 The app can consume `cf-access-authenticated-user-email` and compare it with `ALLOWED_ADMIN_EMAILS`.
+Set `ALLOWED_ADMIN_EMAILS=joaotovolli@hotmail.com`. For strict server-side JWT validation, also set `CF_ACCESS_TEAM_DOMAIN` to the Zero Trust team domain and `CF_ACCESS_AUD` to the Access application audience value.
 
 ## Future Roadmap
 
