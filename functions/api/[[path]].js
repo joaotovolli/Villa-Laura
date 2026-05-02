@@ -206,6 +206,24 @@ const updateReservation = async (request, storage, identity) => {
   const body = await request.json();
   const existing = await storage.getJson(keys.reservation(body.uid));
   if (!existing) return json({ error: "Reservation not found" }, { status: 404 });
+  if (existing.type === "blocked") {
+    const next = {
+      ...existing,
+      type: "blocked",
+      status: "blocked",
+      guestName: "",
+      fullPhone: "",
+      email: "",
+      preferredLanguage: "",
+      numberOfGuests: "",
+      arrivalTime: "",
+      notes: "",
+      updatedAt: new Date().toISOString()
+    };
+    await storage.putJson(keys.reservation(next.uid), next);
+    await storage.audit({ type: "blocked_item_reset", actor: identity.email, reservationUid: next.uid });
+    return json({ ok: true, reservation: next });
+  }
   const allowedStatus = new Set([
     "imported",
     "waiting_for_guest",
@@ -215,8 +233,7 @@ const updateReservation = async (request, storage, identity) => {
     "rejected",
     "submitted_to_alloggiati",
     "submitted_to_ross1000",
-    "documents_deleted",
-    "blocked"
+    "documents_deleted"
   ]);
   const next = {
     ...existing,
