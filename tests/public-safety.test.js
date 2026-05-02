@@ -1,0 +1,42 @@
+import assert from "node:assert/strict";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import path from "node:path";
+import test from "node:test";
+
+const root = process.cwd();
+
+const walk = (dir) => {
+  const output = [];
+  for (const entry of readdirSync(dir)) {
+    const full = path.join(dir, entry);
+    if (full.includes(`${path.sep}.git${path.sep}`) || full.includes(`${path.sep}node_modules${path.sep}`)) continue;
+    const stat = statSync(full);
+    if (stat.isDirectory()) output.push(...walk(full));
+    else output.push(full);
+  }
+  return output;
+};
+
+const readText = (file) => readFileSync(file, "utf8");
+
+test("production admin bundle does not contain password form text", () => {
+  const adminBundle = readText(path.join(root, "dist", "assets", "admin.js"));
+
+  assert.equal(adminBundle.includes("Admin login"), false);
+  assert.equal(/<input[^>]+password/i.test(adminBundle), false);
+  assert.equal(adminBundle.toLowerCase().includes("password fallback"), false);
+});
+
+test("public repository text does not contain private admin address pattern", () => {
+  const files = walk(root).filter((file) => {
+    const relative = path.relative(root, file);
+    if (relative.startsWith("dist")) return false;
+    if (relative.startsWith("docs")) return false;
+    if (/\.(jpg|jpeg|png|webp|gif|zip|mov|mp4|heic)$/i.test(file)) return false;
+    return true;
+  });
+
+  const privateAddressDomain = `hot${"mail.com"}`;
+  const offenders = files.filter((file) => readText(file).toLowerCase().includes(privateAddressDomain));
+  assert.deepEqual(offenders.map((file) => path.relative(root, file)), []);
+});

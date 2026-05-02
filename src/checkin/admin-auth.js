@@ -1,4 +1,3 @@
-const DEFAULT_ALLOWED_ADMIN_EMAIL = "joaotovolli@hotmail.com";
 const ACCESS_JWT_HEADER = "cf-access-jwt-assertion";
 const ACCESS_EMAIL_HEADER = "cf-access-authenticated-user-email";
 
@@ -14,11 +13,10 @@ const base64urlToBytes = (value) => {
 const decodeJwtPart = (value) => JSON.parse(decoder.decode(base64urlToBytes(value)));
 
 export const parseAllowedAdminEmails = (env = {}) => {
-  const configured = String(env.ALLOWED_ADMIN_EMAILS || "")
+  return String(env.ALLOWED_ADMIN_EMAILS || "")
     .split(",")
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
-  return configured.length ? configured : [DEFAULT_ALLOWED_ADMIN_EMAIL];
 };
 
 export const isProduction = (env = {}) => String(env.APP_ENV || "").toLowerCase() === "production";
