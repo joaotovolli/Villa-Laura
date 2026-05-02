@@ -46,6 +46,11 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Blocked dates cannot be used for guest check-in links or messages."), true);
   assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
   assert.equal(adminBundle.includes("Copy check-in link"), true);
+  assert.equal(adminBundle.includes("Use fake documents for testing."), true);
+  assert.equal(adminBundle.includes("Delete uploaded documents"), true);
+  assert.equal(adminBundle.includes("Delete/redact guest data"), true);
+  assert.equal(adminBundle.includes("Reset check-in"), true);
+  assert.equal(adminBundle.includes("Delete uploaded documents for this reservation? This cannot be undone."), true);
   assert.equal(adminBundle.includes("Open WhatsApp Web"), true);
   assert.equal(adminBundle.includes("web.whatsapp.com/send"), true);
   assert.equal(adminBundle.includes("wa.me"), false);
