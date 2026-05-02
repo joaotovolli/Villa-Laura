@@ -47,6 +47,7 @@ npx wrangler pages secret put CF_ACCESS_AUD
 ```
 
 Set `APP_ENV=production` and `VILLA_LAURA_SITE_URL=https://villa-laura.it`.
+`ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` are not used as the production admin login path when `APP_ENV=production`; they are retained only for local development fallback sessions.
 
 ## Cloudflare Access
 
