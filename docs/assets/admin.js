@@ -1,4 +1,4 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=access-logout-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=final-checkin-admin-20260502";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null };
@@ -25,8 +25,9 @@ const accessDenied = () => {
 };
 
 const statusOptions = [
-  "imported_from_airbnb",
+  "imported",
   "waiting_for_guest",
+  "checkin_sent",
   "pending_review",
   "approved",
   "rejected",
@@ -36,10 +37,25 @@ const statusOptions = [
   "blocked"
 ];
 
+const absoluteCheckinLink = (reservation) =>
+  reservation.token ? `${window.location.origin}/checkin?token=${encodeURIComponent(reservation.token)}` : "";
+
+const normalizeLink = (link) => (link && link.startsWith("/") ? `${window.location.origin}${link}` : link);
+
+const buildGuestMessage = (reservation) => {
+  const link = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
+  if (!link) return "";
+  const greeting = reservation.guestName
+    ? `Hello ${reservation.guestName}, this is Joao from Villa Laura.`
+    : "Hello, this is Joao from Villa Laura.";
+  return `${greeting}\n\nTo prepare your arrival and complete the required Italian guest registration, please complete the secure online check-in form here:\n\n${link}\n\nThank you,\nJoao\nVilla Laura`;
+};
+
 const row = (reservation) => {
   const isReservation = reservation.type === "reservation";
   const phone = reservation.fullPhone || "";
   const whatsAppDisabled = !phone;
+  const checkinLink = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
   return `
     <article class="reservation stack" data-uid="${escapeHtml(reservation.uid)}">
       <div class="top">
@@ -50,15 +66,24 @@ const row = (reservation) => {
         <span class="status ${reservation.type === "blocked" ? "blocked" : ""}">${escapeHtml(reservation.status || reservation.type)}</span>
       </div>
       <div class="grid">
-        <label>Guest name<input name="guestName" value="${escapeHtml(reservation.guestName || "")}"></label>
+        <label>Main guest name<input name="guestName" value="${escapeHtml(reservation.guestName || "")}"></label>
         <label>Full phone<input name="fullPhone" value="${escapeHtml(phone)}" placeholder="+393..."></label>
+        <label>Email<input name="email" type="email" value="${escapeHtml(reservation.email || "")}"></label>
         <label>Phone last 4<input value="${escapeHtml(reservation.phoneLast4 || "")}" disabled></label>
         <label>Language<input name="preferredLanguage" value="${escapeHtml(reservation.preferredLanguage || "en")}"></label>
+        <label>Number of guests<input name="numberOfGuests" type="number" min="1" max="16" value="${escapeHtml(reservation.numberOfGuests || "")}"></label>
+        <label>Arrival time<input name="arrivalTime" value="${escapeHtml(reservation.arrivalTime || "")}" placeholder="15:00"></label>
+        <label>Source<input name="source" value="${escapeHtml(reservation.source || "Airbnb")}"></label>
         <label>Reservation code<input value="${escapeHtml(reservation.reservationCode || "")}" disabled></label>
         <label>Status<select name="status">${statusOptions
           .map((status) => `<option ${status === reservation.status ? "selected" : ""}>${status}</option>`)
           .join("")}</select></label>
       </div>
+      ${
+        checkinLink
+          ? `<p class="muted">Check-in link created${reservation.tokenCreatedAt ? ` ${escapeHtml(reservation.tokenCreatedAt)}` : ""}: <code>${escapeHtml(checkinLink)}</code></p>`
+          : ""
+      }
       <label>Notes<textarea name="notes">${escapeHtml(reservation.notes || "")}</textarea></label>
       <div class="actions">
         <button data-action="save">Save</button>
@@ -106,11 +131,12 @@ const render = () => {
     const whatsApp = card.querySelector("[data-whatsapp]");
     if (whatsApp && reservation.fullPhone) {
       whatsApp.addEventListener("click", (event) => {
-        if (!reservation.lastMessage) {
+        const message = buildGuestMessage(reservation);
+        if (!message) {
           event.preventDefault();
           setOutput("Create and copy a check-in link first.");
         } else {
-          whatsApp.href = `https://wa.me/${reservation.fullPhone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(reservation.lastMessage)}`;
+          whatsApp.href = `https://wa.me/${reservation.fullPhone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(message)}`;
         }
       });
     }
@@ -126,13 +152,18 @@ const render = () => {
           }
           if (button.dataset.action === "token") {
             const result = await api("/api/admin/token", { method: "POST", body: JSON.stringify({ uid }) });
+            reservation.token = result.token || reservation.token;
+            reservation.checkinLink = result.link;
+            reservation.tokenCreatedAt = new Date().toISOString();
             reservation.lastMessage = result.message;
             await navigator.clipboard.writeText(result.message);
             setOutput(`Check-in link created and message copied. Link: ${result.link}`);
+            await load(false);
           }
           if (button.dataset.action === "copy") {
-            if (reservation.lastMessage) {
-              await navigator.clipboard.writeText(reservation.lastMessage);
+            const message = reservation.lastMessage || buildGuestMessage(reservation);
+            if (message) {
+              await navigator.clipboard.writeText(message);
               setOutput("Message copied.");
             } else {
               setOutput("Create a check-in link first.");

@@ -22,6 +22,17 @@ export const randomToken = (prefix = "vl") => {
   return `${prefix}_${base64url(bytes)}`;
 };
 
+export const randomId = () => {
+  if (cryptoImpl?.randomUUID) return cryptoImpl.randomUUID();
+  const bytes = new Uint8Array(16);
+  if (cryptoImpl?.getRandomValues) cryptoImpl.getRandomValues(bytes);
+  else bytes.set(randomBytes(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+};
+
 const importKey = (secret) =>
   cryptoImpl.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
 

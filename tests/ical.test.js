@@ -15,6 +15,8 @@ test("parses sanitized Airbnb iCal reservations and blocks", async () => {
   assert.equal(reservation.checkIn, "2026-07-01");
   assert.equal(reservation.checkOut, "2026-07-05");
   assert.equal(reservation.nights, 4);
+  assert.equal(reservation.status, "imported");
+  assert.equal(reservation.source, "Airbnb");
   assert.equal(reservation.reservationCode, "HMABC1234");
   assert.equal(reservation.phoneLast4, "7890");
   assert.equal(blocked.status, "blocked");

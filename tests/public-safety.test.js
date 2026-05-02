@@ -29,6 +29,17 @@ test("production admin bundle does not contain password form text", () => {
   assert.equal(readText(path.join(root, "dist", "assets", "admin-client.js")).includes("https://villa-laura.it/cdn-cgi/access/logout?returnTo=https%3A%2F%2Fvilla-laura.it%2F"), true);
 });
 
+test("production admin bundle exposes final reservation workflow controls", () => {
+  const adminBundle = readText(path.join(root, "dist", "assets", "admin.js"));
+
+  assert.equal(adminBundle.includes("Email"), true);
+  assert.equal(adminBundle.includes("Number of guests"), true);
+  assert.equal(adminBundle.includes("Arrival time"), true);
+  assert.equal(adminBundle.includes("Source"), true);
+  assert.equal(adminBundle.includes("checkin_sent"), true);
+  assert.equal(adminBundle.includes("Full phone number required. Copy it manually from Airbnb reservation details."), true);
+});
+
 test("public repository text does not contain private admin address pattern", () => {
   const files = walk(root).filter((file) => {
     const relative = path.relative(root, file);

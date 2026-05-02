@@ -102,7 +102,7 @@ export const parseAirbnbIcal = (icalText) => {
         uid: event.UID,
         summary: event.SUMMARY || "",
         type: classifySummary(event.SUMMARY),
-        status: classifySummary(event.SUMMARY) === "blocked" ? "blocked" : "imported_from_airbnb",
+        status: classifySummary(event.SUMMARY) === "blocked" ? "blocked" : "imported",
         checkIn,
         checkOut,
         nights: daysBetween(checkIn, checkOut),
@@ -111,7 +111,7 @@ export const parseAirbnbIcal = (icalText) => {
         reservationUrl,
         reservationCode: extractReservationCode(reservationUrl || description),
         phoneLast4: extractPhoneLast4(description),
-        source: "airbnb_ical"
+        source: "Airbnb"
       };
     });
 };
