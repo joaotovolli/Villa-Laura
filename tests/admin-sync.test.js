@@ -52,6 +52,20 @@ const adminPatch = (path, env, body) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const adminPost = (path, env, body) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "cf-access-authenticated-user-email": "admin@example.com"
+      },
+      body: JSON.stringify(body)
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
 test("admin sync returns safe diagnostics when iCal URL is missing", async () => {
   const response = await adminRequest("/admin/sync", {
     APP_ENV: "production",
@@ -105,6 +119,51 @@ test("blocked items ignore guest fields and remain blocked on save", async () =>
     assert.equal(body.reservation.fullPhone, "");
     assert.equal(body.reservation.email, "");
     assert.equal(body.reservation.notes, "");
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("token creation preserves reservation language and localized message", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com",
+    VILLA_LAURA_SITE_URL: "https://villa-laura.it"
+  };
+  const storage = new CheckinStorage(env);
+  const uid = "french-reservation@example.test";
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    await storage.putJson(keys.reservation(uid), {
+      uid,
+      type: "reservation",
+      summary: "Reserved",
+      status: "imported",
+      checkIn: "2026-09-01",
+      checkOut: "2026-09-05",
+      nights: 4,
+      source: "Airbnb",
+      preferredLanguage: "fr",
+      guestName: "Test"
+    });
+
+    const createResponse = await adminPost("/admin/token", env, { uid });
+    const createBody = await createResponse.json();
+    const tokenResponse = await onRequest({
+      request: new Request(`https://villa-laura.it/api/checkin/token?token=${encodeURIComponent(createBody.token)}`),
+      env,
+      params: { path: ["checkin", "token"] }
+    });
+    const tokenBody = await tokenResponse.json();
+
+    assert.equal(createResponse.status, 200);
+    assert.equal(createBody.language, "fr");
+    assert.match(createBody.message, /Merci pour votre reservation/);
+    assert.equal(tokenBody.language, "fr");
+    assert.equal(tokenBody.reservation.language, "fr");
+    assert.equal(createBody.token.includes("Test"), false);
+    assert.equal(createBody.token.includes("2026"), false);
   } finally {
     await rm(".local-data/checkins", { recursive: true, force: true });
   }

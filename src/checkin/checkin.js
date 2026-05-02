@@ -1,51 +1,70 @@
-const state = { token: new URLSearchParams(location.search).get("token") || "", reservation: null };
+import { getCheckinText, normalizeLanguage } from "./i18n.js?v=localized-checkin-whatsapp-20260502";
+
+const params = new URLSearchParams(location.search);
+const state = {
+  token: params.get("token") || "",
+  language: normalizeLanguage(params.get("lang") || "en"),
+  reservation: null
+};
 const app = document.querySelector("#app");
 
 const api = async (path, options = {}) => {
   const response = await fetch(path, { ...options, headers: { ...(options.headers || {}) } });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Request failed");
+  if (!response.ok) throw new Error(body.error || getCheckinText(state.language).genericError);
   return body;
+};
+
+const escapeHtml = (value) =>
+  String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+
+const t = () => getCheckinText(state.language);
+
+const setShellLanguage = () => {
+  document.documentElement.lang = state.language;
+  document.title = `${t().title} | Villa Laura`;
+  document.querySelector("header p").textContent = t().subtitle;
 };
 
 const guestFields = (index) => `
   <section class="guest-card stack">
-    <h3>Guest ${index + 1}</h3>
+    <h3>${escapeHtml(t().guest)} ${index + 1}</h3>
     <div class="grid">
-      <label>First name<input name="guest_${index}_firstName" required autocomplete="given-name"></label>
-      <label>Last name<input name="guest_${index}_lastName" required autocomplete="family-name"></label>
-      <label>Date of birth<input name="guest_${index}_dateOfBirth" type="date" required></label>
-      <label>Place of birth<input name="guest_${index}_placeOfBirth" required></label>
-      <label>Citizenship<input name="guest_${index}_citizenship" required></label>
-      <label>Sex / gender<select name="guest_${index}_gender" required><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option></select></label>
-      <label>Document type<select name="guest_${index}_documentType" required><option value="">Select</option><option>Passport</option><option>Identity card</option><option>Other official document</option></select></label>
-      <label>Document number<input name="guest_${index}_documentNumber" required></label>
-      <label>Issuing country/place<input name="guest_${index}_documentIssuingCountry" required></label>
-      <label>Document expiry date<input name="guest_${index}_documentExpiryDate" type="date"></label>
-      <label>Document upload<input name="guest_${index}_documentUpload" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
+      <label>${escapeHtml(t().firstName)}<input name="guest_${index}_firstName" required autocomplete="given-name"></label>
+      <label>${escapeHtml(t().lastName)}<input name="guest_${index}_lastName" required autocomplete="family-name"></label>
+      <label>${escapeHtml(t().dateOfBirth)}<input name="guest_${index}_dateOfBirth" type="date" required></label>
+      <label>${escapeHtml(t().placeOfBirth)}<input name="guest_${index}_placeOfBirth" required></label>
+      <label>${escapeHtml(t().citizenship)}<input name="guest_${index}_citizenship" required></label>
+      <label>${escapeHtml(t().gender)}<select name="guest_${index}_gender" required><option value="">${escapeHtml(t().select)}</option><option>${escapeHtml(t().female)}</option><option>${escapeHtml(t().male)}</option><option>${escapeHtml(t().other)}</option></select></label>
+      <label>${escapeHtml(t().documentType)}<select name="guest_${index}_documentType" required><option value="">${escapeHtml(t().select)}</option><option>${escapeHtml(t().passport)}</option><option>${escapeHtml(t().identityCard)}</option><option>${escapeHtml(t().otherDocument)}</option></select></label>
+      <label>${escapeHtml(t().documentNumber)}<input name="guest_${index}_documentNumber" required></label>
+      <label>${escapeHtml(t().documentIssuingCountry)}<input name="guest_${index}_documentIssuingCountry" required></label>
+      <label>${escapeHtml(t().documentExpiryDate)}<input name="guest_${index}_documentExpiryDate" type="date"></label>
+      <label>${escapeHtml(t().documentUpload)}<input name="guest_${index}_documentUpload" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></label>
     </div>
   </section>
 `;
 
 const renderForm = () => {
+  setShellLanguage();
   app.innerHTML = `
     <form id="checkin-form" class="stack" enctype="multipart/form-data">
-      <input type="hidden" name="token" value="${state.token}">
+      <input type="hidden" name="token" value="${escapeHtml(state.token)}">
       <section class="panel stack">
-        <h2>Reservation</h2>
+        <h2>${escapeHtml(t().reservation)}</h2>
         <div class="grid">
-          <label>Arrival date<input name="arrivalDate" type="date" required value="${state.reservation.checkIn || ""}"></label>
-          <label>Departure date<input name="departureDate" type="date" required value="${state.reservation.checkOut || ""}"></label>
-          <label>Number of guests<input id="guest-count" name="numberOfGuests" type="number" min="1" max="16" required value="1"></label>
-          <label>Main guest email<input name="mainGuestEmail" type="email" required autocomplete="email"></label>
-          <label>Main guest phone<input name="mainGuestPhone" type="tel" required autocomplete="tel"></label>
+          <label>${escapeHtml(t().arrivalDate)}<input name="arrivalDate" type="date" required value="${escapeHtml(state.reservation.checkIn || "")}"></label>
+          <label>${escapeHtml(t().departureDate)}<input name="departureDate" type="date" required value="${escapeHtml(state.reservation.checkOut || "")}"></label>
+          <label>${escapeHtml(t().numberOfGuests)}<input id="guest-count" name="numberOfGuests" type="number" min="1" max="16" required value="1"></label>
+          <label>${escapeHtml(t().mainGuestEmail)}<input name="mainGuestEmail" type="email" required autocomplete="email"></label>
+          <label>${escapeHtml(t().mainGuestPhone)}<input name="mainGuestPhone" type="tel" required autocomplete="tel"></label>
         </div>
       </section>
       <div id="guests" class="stack">${guestFields(0)}</div>
       <section class="panel stack">
-        <label><span><input name="privacyAccepted" type="checkbox" required> I confirm this information is accurate and accept the privacy notice.</span></label>
-        <p class="muted">Identity document data is used only for required accommodation registration and operational check-in. Uploaded documents are private and deleted after processing or the applicable retention period.</p>
-        <div class="actions"><button type="submit">Submit secure check-in</button><span id="message"></span></div>
+        <label><span><input name="privacyAccepted" type="checkbox" required> ${escapeHtml(t().privacy)}</span></label>
+        <p class="muted">${escapeHtml(t().privacyNotice)}</p>
+        <div class="actions"><button type="submit">${escapeHtml(t().submit)}</button><span id="message"></span></div>
       </section>
     </form>`;
 
@@ -59,29 +78,31 @@ const renderForm = () => {
     event.preventDefault();
     const message = document.querySelector("#message");
     message.className = "muted";
-    message.textContent = "Submitting...";
+    message.textContent = t().submitting;
     try {
       const body = new FormData(event.target);
       const result = await api("/api/checkin/submit", { method: "POST", body });
-      event.target.innerHTML = `<section class="panel"><h2>Thank you</h2><p class="success">${result.message}</p></section>`;
+      event.target.innerHTML = `<section class="panel"><h2>${escapeHtml(t().thankYou)}</h2><p class="success">${escapeHtml(t().success)}</p></section>`;
     } catch (error) {
       message.className = "error";
-      message.textContent = error.message;
+      message.textContent = error.message === "Invalid document upload" ? t().uploadError : error.message;
     }
   });
 };
 
 const init = async () => {
+  setShellLanguage();
   if (!state.token) {
-    app.innerHTML = `<section class="panel"><h2>Invalid link</h2><p class="error">Missing check-in token.</p></section>`;
+    app.innerHTML = `<section class="panel"><h2>${escapeHtml(t().invalidLink)}</h2><p class="error">${escapeHtml(t().missingToken)}</p></section>`;
     return;
   }
   try {
     const result = await api(`/api/checkin/token?token=${encodeURIComponent(state.token)}`);
+    state.language = normalizeLanguage(result.language || result.reservation?.language || state.language);
     state.reservation = result.reservation;
     renderForm();
   } catch (error) {
-    app.innerHTML = `<section class="panel"><h2>Check-in unavailable</h2><p class="error">${error.message}</p></section>`;
+    app.innerHTML = `<section class="panel"><h2>${escapeHtml(t().unavailable)}</h2><p class="error">${escapeHtml(error.message)}</p></section>`;
   }
 };
 
