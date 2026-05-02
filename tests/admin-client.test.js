@@ -10,7 +10,7 @@ test("production Cloudflare Access session uses Access logout URL", () => {
   assert.equal(accessLogoutUrl, "/cdn-cgi/access/logout");
 });
 
-test("local password fallback session does not use Access logout URL", () => {
+test("local app session does not use Access logout URL", () => {
   const session = { authenticated: true, passwordFallbackEnabled: true };
 
   assert.equal(usesCloudflareAccessSession(session), false);

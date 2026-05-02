@@ -28,7 +28,7 @@ No real keys, private URLs, guest data, or document files belong in GitHub. `ADM
 - Admin sessions use signed HttpOnly SameSite cookies.
 - Production cookies are Secure.
 - Cloudflare Access is the preferred outer authentication layer.
-- In production, Cloudflare Access is the primary admin authentication layer; the password fallback is only for local development.
+- In production, Cloudflare Access is the admin authentication layer.
 - Uploads validate extension, MIME type, and size.
 - Uploaded documents are stored outside public directories.
 - Audit events avoid secrets, document numbers, and full identity details.

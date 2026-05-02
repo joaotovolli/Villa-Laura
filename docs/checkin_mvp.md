@@ -22,7 +22,7 @@ Use `.dev.vars` or shell environment for local secrets. Do not commit local secr
 
 ## MVP Workflow
 
-1. Admin logs in through Cloudflare Access in production, or the password fallback if configured.
+1. Admin logs in through Cloudflare Access in production.
 2. Admin imports Airbnb iCal reservations.
 3. Reservations and blocked date ranges are deduplicated by iCal UID.
 4. Admin edits missing guest details manually.

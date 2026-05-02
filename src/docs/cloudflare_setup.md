@@ -60,7 +60,7 @@ Preferred production setup:
 - Forward Access identity headers to the Pages Function.
 
 The app can consume `cf-access-authenticated-user-email` and compare it with `ALLOWED_ADMIN_EMAILS`.
-Set `ALLOWED_ADMIN_EMAILS=joaotovolli@hotmail.com`. For strict server-side JWT validation, also set `CF_ACCESS_TEAM_DOMAIN` to the Zero Trust team domain and `CF_ACCESS_AUD` to the Access application audience value.
+Configure allowed admin emails privately in Cloudflare Access and in the Cloudflare Pages `ALLOWED_ADMIN_EMAILS` secret. Do not commit real admin addresses. For strict server-side JWT validation, also set `CF_ACCESS_TEAM_DOMAIN` to the Zero Trust team domain and `CF_ACCESS_AUD` to the Access application audience value.
 
 ## Future Roadmap
 

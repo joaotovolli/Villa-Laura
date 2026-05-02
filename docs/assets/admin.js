@@ -16,28 +16,6 @@ const api = async (path, options = {}) => {
 const escapeHtml = (value) =>
   String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
 
-const login = () => {
-  app.innerHTML = `
-    <form id="login" class="panel stack">
-      <h2>Admin login</h2>
-      <p>Use Cloudflare Access in production where available. This password fallback uses an HttpOnly session cookie.</p>
-      <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
-      <div class="actions"><button type="submit">Login</button><span id="message"></span></div>
-    </form>`;
-  document.querySelector("#login").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const message = document.querySelector("#message");
-    message.textContent = "Checking...";
-    try {
-      await api("/api/admin/login", { method: "POST", body: JSON.stringify({ password: event.target.password.value }) });
-      await load();
-    } catch (error) {
-      message.className = "error";
-      message.textContent = error.message;
-    }
-  });
-};
-
 const accessDenied = () => {
   app.innerHTML = `
     <section class="panel stack">
@@ -54,7 +32,7 @@ const logout = async () => {
     return;
   }
   await api("/api/admin/logout", { method: "POST", body: "{}" });
-  login();
+  accessDenied();
 };
 
 const statusOptions = [
@@ -218,7 +196,6 @@ const init = async () => {
     const session = await api("/api/admin/session");
     state.session = session;
     if (session.authenticated) await load();
-    else if (session.passwordFallbackEnabled) login();
     else accessDenied();
   } catch {
     accessDenied();
