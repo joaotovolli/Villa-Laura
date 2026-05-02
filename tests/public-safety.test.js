@@ -25,6 +25,8 @@ test("production admin bundle does not contain password form text", () => {
   assert.equal(adminBundle.includes("Admin login"), false);
   assert.equal(/<input[^>]+password/i.test(adminBundle), false);
   assert.equal(adminBundle.toLowerCase().includes("password fallback"), false);
+  assert.equal(adminBundle.includes("/api/admin/logout"), false);
+  assert.equal(readText(path.join(root, "dist", "assets", "admin-client.js")).includes("https://villa-laura.it/cdn-cgi/access/logout?returnTo=https%3A%2F%2Fvilla-laura.it%2F"), true);
 });
 
 test("public repository text does not contain private admin address pattern", () => {

@@ -6,8 +6,8 @@ test("production Cloudflare Access session uses Access logout URL", () => {
   const session = { authenticated: true, passwordFallbackEnabled: false };
 
   assert.equal(usesCloudflareAccessSession(session), true);
-  assert.equal(logoutTarget(session), "/cdn-cgi/access/logout");
-  assert.equal(accessLogoutUrl, "/cdn-cgi/access/logout");
+  assert.equal(logoutTarget(session), "https://villa-laura.it/cdn-cgi/access/logout?returnTo=https%3A%2F%2Fvilla-laura.it%2F");
+  assert.equal(accessLogoutUrl, "https://villa-laura.it/cdn-cgi/access/logout?returnTo=https%3A%2F%2Fvilla-laura.it%2F");
 });
 
 test("local app session does not use Access logout URL", () => {
