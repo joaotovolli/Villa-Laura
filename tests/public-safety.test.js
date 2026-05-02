@@ -38,6 +38,9 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Source"), true);
   assert.equal(adminBundle.includes("checkin_sent"), true);
   assert.equal(adminBundle.includes("Full phone number required. Copy it manually from Airbnb reservation details."), true);
+  assert.equal(adminBundle.includes("Import started."), true);
+  assert.equal(adminBundle.includes("Import failed:"), true);
+  assert.equal(adminBundle.includes("Imported "), true);
 });
 
 test("public repository text does not contain private admin address pattern", () => {
