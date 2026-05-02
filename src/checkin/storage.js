@@ -1,4 +1,10 @@
+import { randomBytes, randomUUID } from "node:crypto";
+
 const localRoot = ".local-data/checkins";
+const makeId = () => {
+  if (typeof randomUUID === "function") return randomUUID();
+  return randomBytes(16).toString("hex");
+};
 
 const localFs = async () => {
   const fs = await import("node:fs/promises");
@@ -110,7 +116,7 @@ export class CheckinStorage {
   async audit(event) {
     const now = new Date().toISOString();
     const date = now.slice(0, 10);
-    const id = crypto.randomUUID();
+    const id = makeId();
     const safe = {
       id,
       at: now,

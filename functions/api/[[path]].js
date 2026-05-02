@@ -1,6 +1,6 @@
 import { parseAirbnbIcal } from "../../src/checkin/ical.js";
 import { getCloudflareAccessIdentity, passwordFallbackEnabled } from "../../src/checkin/admin-auth.js";
-import { allowedDocumentType, randomToken, sanitizeFilename, signValue, verifySignedValue } from "../../src/checkin/security.js";
+import { allowedDocumentType, randomId, randomToken, sanitizeFilename, signValue, verifySignedValue } from "../../src/checkin/security.js";
 import { CheckinStorage, keys } from "../../src/checkin/storage.js";
 import { publicSubmission, validateSubmission } from "../../src/checkin/validation.js";
 
@@ -113,6 +113,11 @@ const makeMessage = (reservation, link) => {
   return `${greeting}\n\nTo prepare your arrival and complete the required Italian guest registration, please complete the secure online check-in form here:\n\n${link}\n\nThank you,\nJoao\nVilla Laura`;
 };
 
+const normalizeStatus = (status, fallback = "imported") => {
+  if (status === "imported_from_airbnb") return "imported";
+  return status || fallback;
+};
+
 const listReservations = async (storage) => {
   const reservations = (await storage.listJson("checkins/reservations/")).filter(Boolean);
   const tokens = (await storage.listJson("checkins/tokens/")).filter(Boolean);
@@ -124,8 +129,10 @@ const listReservations = async (storage) => {
       const token = tokenByUid.get(reservation.uid);
       return {
         ...reservation,
+        status: normalizeStatus(reservation.status, reservation.type === "blocked" ? "blocked" : "imported"),
         token: token?.token || "",
         tokenStatus: token?.status || "",
+        tokenCreatedAt: token?.createdAt || reservation.tokenCreatedAt || "",
         tokenExpiresAt: token?.expiresAt || "",
         checkinSubmitted: token ? submissionByToken.has(token.token) : false,
         documentsDeletedAt: reservation.documentsDeletedAt || ""
@@ -151,9 +158,13 @@ const syncIcal = async (request, env, storage, identity) => {
       ...event,
       guestName: existing?.guestName || "",
       fullPhone: existing?.fullPhone || "",
+      email: existing?.email || "",
       preferredLanguage: existing?.preferredLanguage || "en",
+      numberOfGuests: existing?.numberOfGuests || "",
+      arrivalTime: existing?.arrivalTime || "",
+      source: existing?.source || event.source || "Airbnb",
       notes: existing?.notes || "",
-      status: existing?.status && existing.status !== "blocked" ? existing.status : event.status,
+      status: existing?.status && existing.status !== "blocked" ? normalizeStatus(existing.status) : event.status,
       importedAt: existing?.importedAt || now,
       updatedAt: now
     };
@@ -169,8 +180,9 @@ const updateReservation = async (request, storage, identity) => {
   const existing = await storage.getJson(keys.reservation(body.uid));
   if (!existing) return json({ error: "Reservation not found" }, { status: 404 });
   const allowedStatus = new Set([
-    "imported_from_airbnb",
+    "imported",
     "waiting_for_guest",
+    "checkin_sent",
     "pending_review",
     "approved",
     "rejected",
@@ -183,9 +195,13 @@ const updateReservation = async (request, storage, identity) => {
     ...existing,
     guestName: String(body.guestName || ""),
     fullPhone: String(body.fullPhone || "").replace(/[^\d+]/g, ""),
+    email: String(body.email || "").trim(),
     preferredLanguage: String(body.preferredLanguage || "en"),
+    numberOfGuests: body.numberOfGuests ? Math.max(1, Math.min(16, Number.parseInt(body.numberOfGuests, 10) || 1)) : "",
+    arrivalTime: String(body.arrivalTime || "").slice(0, 40),
+    source: String(body.source || existing.source || "Airbnb").slice(0, 60),
     notes: String(body.notes || ""),
-    status: allowedStatus.has(body.status) ? body.status : existing.status,
+    status: allowedStatus.has(body.status) ? body.status : normalizeStatus(existing.status, existing.type === "blocked" ? "blocked" : "imported"),
     reviewedAt: body.status === "pending_review" ? new Date().toISOString() : existing.reviewedAt || "",
     approvedAt: body.status === "approved" ? new Date().toISOString() : existing.approvedAt || "",
     rejectedAt: body.status === "rejected" ? new Date().toISOString() : existing.rejectedAt || "",
@@ -215,7 +231,7 @@ const createToken = async (request, env, storage, identity) => {
     updatedAt: now
   });
   await storage.audit({ type: "token_created", actor: identity.email, reservationUid: uid, tokenId: token.slice(0, 10) });
-  return json({ tokenStatus: "created", expiresAt, link, message: makeMessage(reservation, link) });
+  return json({ token, tokenStatus: "created", expiresAt, link, message: makeMessage(reservation, link) });
 };
 
 const getPublicToken = async (request, storage) => {
@@ -279,7 +295,7 @@ const submitCheckin = async (request, storage) => {
       if (file.size > 8 * 1024 * 1024 || !allowedDocumentType(file)) {
         return json({ error: "Invalid document upload" }, { status: 400 });
       }
-      const safeName = `${crypto.randomUUID()}-${sanitizeFilename(file.name)}`;
+      const safeName = `${randomId()}-${sanitizeFilename(file.name)}`;
       await storage.putBytes(keys.document(token, `guest-${index + 1}`, safeName), file, file.type);
       documents.push({ guestId: `guest-${index + 1}`, filename: safeName, originalName: sanitizeFilename(file.name), size: file.size, type: file.type });
     }
