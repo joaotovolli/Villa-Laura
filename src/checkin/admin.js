@@ -36,6 +36,14 @@ const login = () => {
   });
 };
 
+const accessDenied = () => {
+  app.innerHTML = `
+    <section class="panel stack">
+      <h2>Access denied</h2>
+      <p>This admin area is protected by Cloudflare Access. Open it through the approved admin email account.</p>
+    </section>`;
+};
+
 const statusOptions = [
   "imported_from_airbnb",
   "waiting_for_guest",
@@ -194,9 +202,10 @@ const init = async () => {
   try {
     const session = await api("/api/admin/session");
     if (session.authenticated) await load();
-    else login();
+    else if (session.passwordFallbackEnabled) login();
+    else accessDenied();
   } catch {
-    login();
+    accessDenied();
   }
 };
 

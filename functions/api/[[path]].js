@@ -1,4 +1,5 @@
 import { parseAirbnbIcal } from "../../src/checkin/ical.js";
+import { getCloudflareAccessIdentity, passwordFallbackEnabled } from "../../src/checkin/admin-auth.js";
 import { allowedDocumentType, randomToken, sanitizeFilename, signValue, verifySignedValue } from "../../src/checkin/security.js";
 import { CheckinStorage, keys } from "../../src/checkin/storage.js";
 import { publicSubmission, validateSubmission } from "../../src/checkin/validation.js";
@@ -51,14 +52,10 @@ const cookieMap = (request) =>
   );
 
 const getAdminIdentity = async (request, env) => {
-  const accessEmail = request.headers.get("cf-access-authenticated-user-email");
-  const allowed = String(env.ALLOWED_ADMIN_EMAILS || "")
-    .split(",")
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
-  if (accessEmail && (!allowed.length || allowed.includes(accessEmail.toLowerCase()))) {
-    return { email: accessEmail, method: "cloudflare_access" };
-  }
+  const accessIdentity = await getCloudflareAccessIdentity(request, env);
+  if (accessIdentity) return accessIdentity;
+
+  if (!passwordFallbackEnabled(env)) return null;
 
   const cookie = cookieMap(request)[SESSION_COOKIE];
   if (!cookie) return null;
@@ -347,9 +344,16 @@ const handleAdmin = async (context, path, storage) => {
   const { request, env } = context;
   if (path === "/admin/session") {
     const identity = await getAdminIdentity(request, env);
-    return json({ authenticated: Boolean(identity), identity });
+    return json({
+      authenticated: Boolean(identity),
+      identity,
+      passwordFallbackEnabled: passwordFallbackEnabled(env)
+    });
   }
   if (path === "/admin/login" && request.method === "POST") {
+    if (!passwordFallbackEnabled(env)) {
+      return json({ error: "Cloudflare Access authentication required" }, { status: 403 });
+    }
     const ip = request.headers.get("cf-connecting-ip") || "local";
     const attempts = loginAttempts.get(ip) || { count: 0, reset: Date.now() + 600000 };
     if (attempts.count >= 8 && attempts.reset > Date.now()) return json({ error: "Too many attempts" }, { status: 429 });
