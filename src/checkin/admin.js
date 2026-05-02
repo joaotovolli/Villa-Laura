@@ -1,4 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=separate-blocked-dates-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=localized-checkin-whatsapp-20260502";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=localized-checkin-whatsapp-20260502";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -58,24 +59,31 @@ const statusOptions = [
   "documents_deleted"
 ];
 
+const languageOptions = Object.entries(languageLabels)
+  .map(([value, label]) => ({ value, label }))
+  .filter(({ value }) => ["en", "fr", "it", "pt"].includes(value));
+
 const absoluteCheckinLink = (reservation) =>
   reservation.token ? `${window.location.origin}/checkin?token=${encodeURIComponent(reservation.token)}` : "";
 
 const normalizeLink = (link) => (link && link.startsWith("/") ? `${window.location.origin}${link}` : link);
 
+const checkinLinkFor = (reservation) => normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
+
 const buildGuestMessage = (reservation) => {
-  const link = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
+  const link = checkinLinkFor(reservation);
   if (!link) return "";
-  const greeting = reservation.guestName
-    ? `Hello ${reservation.guestName}, this is Joao from Villa Laura.`
-    : "Hello, this is Joao from Villa Laura.";
-  return `${greeting}\n\nTo prepare your arrival and complete the required Italian guest registration, please complete the secure online check-in form here:\n\n${link}\n\nThank you,\nJoao\nVilla Laura`;
+  return buildLocalizedGuestMessage({ ...reservation, preferredLanguage: normalizeLanguage(reservation.preferredLanguage) }, link);
 };
+
+const whatsappWebUrl = (phone, message) =>
+  `https://web.whatsapp.com/send?phone=${String(phone || "").replace(/\D/g, "")}&text=${encodeURIComponent(message)}`;
 
 const row = (reservation) => {
   const phone = reservation.fullPhone || "";
   const whatsAppDisabled = !phone;
-  const checkinLink = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
+  const checkinLink = checkinLinkFor(reservation);
+  const language = normalizeLanguage(reservation.preferredLanguage);
   return `
     <article class="reservation stack" data-uid="${escapeHtml(reservation.uid)}">
       <div class="top">
@@ -90,7 +98,9 @@ const row = (reservation) => {
         <label>Full phone<input name="fullPhone" value="${escapeHtml(phone)}" placeholder="+393..."></label>
         <label>Email<input name="email" type="email" value="${escapeHtml(reservation.email || "")}"></label>
         <label>Phone last 4<input value="${escapeHtml(reservation.phoneLast4 || "")}" disabled></label>
-        <label>Language<input name="preferredLanguage" value="${escapeHtml(reservation.preferredLanguage || "en")}"></label>
+        <label>Language<select name="preferredLanguage">${languageOptions
+          .map(({ value, label }) => `<option value="${value}" ${value === language ? "selected" : ""}>${value} - ${escapeHtml(label)}</option>`)
+          .join("")}</select></label>
         <label>Number of guests<input name="numberOfGuests" type="number" min="1" max="16" value="${escapeHtml(reservation.numberOfGuests || "")}"></label>
         <label>Arrival time<input name="arrivalTime" value="${escapeHtml(reservation.arrivalTime || "")}" placeholder="15:00"></label>
         <label>Source<input name="source" value="${escapeHtml(reservation.source || "Airbnb")}"></label>
@@ -114,10 +124,12 @@ const row = (reservation) => {
         ${
           whatsAppDisabled
             ? `<button class="secondary" disabled title="Full phone number required">WhatsApp unavailable</button><span class="muted">Full phone number required. Copy it manually from Airbnb reservation details.</span>`
-            : `<a class="button secondary" data-whatsapp href="#" target="_blank" rel="noopener">Open WhatsApp</a>`
+            : `<a class="button secondary" data-whatsapp href="#" target="_blank" rel="noopener">Open WhatsApp Web</a>`
         }
+        <button class="secondary" data-action="copy-whatsapp">Copy WhatsApp message</button>
         ${reservation.checkinSubmitted ? `<button class="secondary" data-action="submission">View submission</button>` : ""}
       </div>
+      <p class="muted">To use WhatsApp Business, open this link in a browser/profile linked to your WhatsApp Business account.</p>
       <div class="notice hidden" data-output></div>
     </article>`;
 };
@@ -186,7 +198,7 @@ const render = () => {
           event.preventDefault();
           setOutput("Create and copy a check-in link first.");
         } else {
-          whatsApp.href = `https://wa.me/${reservation.fullPhone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(message)}`;
+          whatsApp.href = whatsappWebUrl(reservation.fullPhone, message);
         }
       });
     }
@@ -224,6 +236,15 @@ const render = () => {
             if (message) {
               await navigator.clipboard.writeText(message);
               setOutput("Message copied.");
+            } else {
+              setOutput("Create a check-in link first.");
+            }
+          }
+          if (button.dataset.action === "copy-whatsapp") {
+            const message = reservation.lastMessage || buildGuestMessage(reservation);
+            if (message) {
+              await navigator.clipboard.writeText(message);
+              setOutput("WhatsApp message copied.");
             } else {
               setOutput("Create a check-in link first.");
             }

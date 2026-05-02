@@ -45,6 +45,14 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Blocked dates cannot be used for guest check-in links or messages."), true);
   assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
   assert.equal(adminBundle.includes("Copy check-in link"), true);
+  assert.equal(adminBundle.includes("Open WhatsApp Web"), true);
+  assert.equal(adminBundle.includes("web.whatsapp.com/send"), true);
+  assert.equal(adminBundle.includes("wa.me"), false);
+  assert.equal(adminBundle.includes("Copy WhatsApp message"), true);
+  const i18nBundle = readText(path.join(root, "dist", "assets", "i18n.js"));
+  assert.equal(i18nBundle.includes("Francais"), true);
+  assert.equal(i18nBundle.includes("Portugues"), true);
+  assert.equal(i18nBundle.includes("Prenom"), true);
 });
 
 test("public repository text does not contain private admin address pattern", () => {

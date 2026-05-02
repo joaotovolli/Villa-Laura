@@ -3,6 +3,7 @@ import { getCloudflareAccessIdentity, passwordFallbackEnabled } from "../../src/
 import { allowedDocumentType, randomId, randomToken, sanitizeFilename, signValue, verifySignedValue } from "../../src/checkin/security.js";
 import { CheckinStorage, keys } from "../../src/checkin/storage.js";
 import { publicSubmission, validateSubmission } from "../../src/checkin/validation.js";
+import { buildLocalizedGuestMessage, normalizeLanguage } from "../../src/checkin/i18n.js";
 
 const SESSION_COOKIE = "vl_admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 4;
@@ -106,12 +107,7 @@ const readPrivateIcalUrl = async (env) => {
 
 const siteUrl = (request, env) => env.VILLA_LAURA_SITE_URL || new URL(request.url).origin;
 
-const makeMessage = (reservation, link) => {
-  const greeting = reservation.guestName
-    ? `Hello ${reservation.guestName}, this is Joao from Villa Laura.`
-    : "Hello, this is Joao from Villa Laura.";
-  return `${greeting}\n\nTo prepare your arrival and complete the required Italian guest registration, please complete the secure online check-in form here:\n\n${link}\n\nThank you,\nJoao\nVilla Laura`;
-};
+const makeMessage = (reservation, link) => buildLocalizedGuestMessage(reservation, link);
 
 const normalizeStatus = (status, fallback = "imported") => {
   if (status === "imported_from_airbnb") return "imported";
@@ -179,7 +175,7 @@ const syncIcal = async (request, env, storage, identity) => {
       guestName: existing?.guestName || "",
       fullPhone: existing?.fullPhone || "",
       email: existing?.email || "",
-      preferredLanguage: existing?.preferredLanguage || "en",
+      preferredLanguage: normalizeLanguage(existing?.preferredLanguage || "en"),
       numberOfGuests: existing?.numberOfGuests || "",
       arrivalTime: existing?.arrivalTime || "",
       source: existing?.source || event.source || "Airbnb",
@@ -240,7 +236,7 @@ const updateReservation = async (request, storage, identity) => {
     guestName: String(body.guestName || ""),
     fullPhone: String(body.fullPhone || "").replace(/[^\d+]/g, ""),
     email: String(body.email || "").trim(),
-    preferredLanguage: String(body.preferredLanguage || "en"),
+    preferredLanguage: normalizeLanguage(body.preferredLanguage || "en"),
     numberOfGuests: body.numberOfGuests ? Math.max(1, Math.min(16, Number.parseInt(body.numberOfGuests, 10) || 1)) : "",
     arrivalTime: String(body.arrivalTime || "").slice(0, 40),
     source: String(body.source || existing.source || "Airbnb").slice(0, 60),
@@ -266,7 +262,19 @@ const createToken = async (request, env, storage, identity) => {
   const now = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 45).toISOString();
   const link = `${siteUrl(request, env).replace(/\/$/, "")}/checkin?token=${encodeURIComponent(token)}`;
-  const record = { token, reservationUid: uid, status: "created", createdAt: now, expiresAt };
+  const language = normalizeLanguage(reservation.preferredLanguage || "en");
+  const record = {
+    token,
+    reservationUid: uid,
+    checkIn: reservation.checkIn || "",
+    checkOut: reservation.checkOut || "",
+    nights: reservation.nights || 0,
+    language,
+    source: reservation.source || "",
+    status: "created",
+    createdAt: now,
+    expiresAt
+  };
   await storage.putJson(keys.token(token), record);
   await storage.putJson(keys.reservation(uid), {
     ...reservation,
@@ -275,7 +283,7 @@ const createToken = async (request, env, storage, identity) => {
     updatedAt: now
   });
   await storage.audit({ type: "token_created", actor: identity.email, reservationUid: uid, tokenId: token.slice(0, 10) });
-  return json({ token, tokenStatus: "created", expiresAt, link, message: makeMessage(reservation, link) });
+  return json({ token, tokenStatus: "created", expiresAt, link, language, message: makeMessage({ ...reservation, preferredLanguage: language }, link) });
 };
 
 const getPublicToken = async (request, storage) => {
@@ -285,12 +293,16 @@ const getPublicToken = async (request, storage) => {
     return json({ error: "Invalid or expired check-in link" }, { status: 404 });
   }
   const reservation = await storage.getJson(keys.reservation(record.reservationUid));
+  const language = normalizeLanguage(reservation?.preferredLanguage || record.language || "en");
   return json({
     token,
+    language,
     reservation: {
-      checkIn: reservation?.checkIn || "",
-      checkOut: reservation?.checkOut || "",
-      nights: reservation?.nights || 0,
+      checkIn: reservation?.checkIn || record.checkIn || "",
+      checkOut: reservation?.checkOut || record.checkOut || "",
+      nights: reservation?.nights || record.nights || 0,
+      language,
+      source: reservation?.source || record.source || "",
       guestName: reservation?.guestName || ""
     }
   });

@@ -14,6 +14,7 @@ const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
 const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
 const adminClientScriptPath = path.join(root, "src", "checkin", "admin-client.js");
 const checkinScriptPath = path.join(root, "src", "checkin", "checkin.js");
+const checkinI18nScriptPath = path.join(root, "src", "checkin", "i18n.js");
 const sourceDocsDir = path.join(root, "src", "docs");
 const configPath = path.join(root, "site.config.json");
 
@@ -946,6 +947,7 @@ await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
 await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
 await copyFile(adminClientScriptPath, path.join(assetsDir, "admin-client.js"));
 await copyFile(checkinScriptPath, path.join(assetsDir, "checkin.js"));
+await copyFile(checkinI18nScriptPath, path.join(assetsDir, "i18n.js"));
 
 const escapeHtml = (value) =>
   String(value)
@@ -1495,7 +1497,7 @@ const renderCheckinShell = ({ title, script }) => `<!doctype html>
         <section class="panel"><p>Loading...</p></section>
       </div>
     </main>
-    <script type="module" src="../assets/${script}?v=separate-blocked-dates-20260502"></script>
+    <script type="module" src="../assets/${script}?v=localized-checkin-whatsapp-20260502"></script>
   </body>
 </html>`;
 
