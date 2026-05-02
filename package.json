@@ -6,7 +6,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "preview": "npx serve dist",
-    "check": "npm run build"
+    "check": "npm run build && npm test && npm run security:scan",
+    "test": "node --test tests",
+    "security:scan": "node scripts/security-scan.mjs",
+    "dev:pages": "npx wrangler pages dev dist --compatibility-date=2026-05-02"
   },
   "repository": {
     "type": "git",

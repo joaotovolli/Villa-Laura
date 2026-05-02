@@ -37,6 +37,8 @@ The site is designed to sit between booking platforms and day-to-day operations,
 - Multilingual interface support
 - Simple content update model driven by a single configuration file
 - Image optimisation during build for lightweight delivery
+- Secure digital check-in MVP at `/checkin`
+- Private admin MVP at `/admin` with Airbnb iCal import and Cloudflare Pages Functions backend
 
 ## Technology
 
@@ -115,6 +117,9 @@ The build process generates:
 - Credentials, local notes, and private operational reference files are excluded from version control
 - Sensitive operational details are not stored in the repository
 - Public repository content is limited to source code, build configuration, and safe static assets
+- Guest data, uploaded identity documents, private iCal URLs, and local check-in data must never be committed
+- Run `npm run security:scan` before opening a pull request
+- Check-in architecture and operations are documented in [docs/checkin_mvp.md](docs/checkin_mvp.md), [docs/security_privacy.md](docs/security_privacy.md), and [docs/cloudflare_setup.md](docs/cloudflare_setup.md)
 
 ## Possible Future Enhancements
 

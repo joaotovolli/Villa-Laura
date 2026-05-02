@@ -1,0 +1,183 @@
+:root {
+  --bg: #fbf7f1;
+  --panel: #fffdf9;
+  --ink: #233038;
+  --muted: rgba(35, 48, 56, 0.68);
+  --border: rgba(35, 48, 56, 0.14);
+  --sea: #214955;
+  --sun: #b76925;
+  --ok: #256b4b;
+  --warn: #9a5b00;
+  --bad: #9e2f2f;
+  --radius: 8px;
+  font-family: Manrope, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+main {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+p {
+  color: var(--muted);
+}
+
+.panel,
+.reservation,
+.guest-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.85rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+}
+
+textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.6rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--sea);
+  border-radius: 6px;
+  background: var(--sea);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button.secondary,
+.button.secondary {
+  background: transparent;
+  color: var(--sea);
+}
+
+button.danger {
+  border-color: var(--bad);
+  background: var(--bad);
+}
+
+button:disabled,
+.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(33, 73, 85, 0.1);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.status.blocked {
+  background: rgba(154, 91, 0, 0.14);
+}
+
+.notice {
+  padding: 0.75rem;
+  border-left: 4px solid var(--sun);
+  background: rgba(183, 105, 37, 0.1);
+}
+
+.error {
+  color: var(--bad);
+  font-weight: 800;
+}
+
+.success {
+  color: var(--ok);
+  font-weight: 800;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
