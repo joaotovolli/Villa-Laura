@@ -33,7 +33,8 @@ test("production admin bundle exposes final reservation workflow controls", () =
   const adminBundle = readText(path.join(root, "dist", "assets", "admin.js"));
 
   assert.equal(adminBundle.includes("Email"), true);
-  assert.equal(adminBundle.includes("Number of guests"), true);
+  assert.equal(adminBundle.includes("Adults"), true);
+  assert.equal(adminBundle.includes("Children / minors"), true);
   assert.equal(adminBundle.includes("Arrival time"), true);
   assert.equal(adminBundle.includes("Source"), true);
   assert.equal(adminBundle.includes("checkin_sent"), true);
@@ -52,7 +53,13 @@ test("production admin bundle exposes final reservation workflow controls", () =
   const i18nBundle = readText(path.join(root, "dist", "assets", "i18n.js"));
   assert.equal(i18nBundle.includes("Francais"), true);
   assert.equal(i18nBundle.includes("Portugues"), true);
+  assert.equal(i18nBundle.includes("Deutsch"), true);
+  assert.equal(i18nBundle.includes("Espanol"), true);
   assert.equal(i18nBundle.includes("Prenom"), true);
+  assert.equal(i18nBundle.includes("Vorname"), true);
+  assert.equal(i18nBundle.includes("Nombre"), true);
+  assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("adult-count"), true);
+  assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("responsibleGuestId"), true);
 });
 
 test("public repository text does not contain private admin address pattern", () => {

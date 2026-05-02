@@ -1,4 +1,4 @@
-export const supportedLanguages = ["en", "fr", "it", "pt"];
+export const supportedLanguages = ["en", "fr", "it", "pt", "de", "es"];
 
 export const normalizeLanguage = (language) => {
   const value = String(language || "en").trim().toLowerCase().slice(0, 2);
@@ -9,7 +9,9 @@ export const languageLabels = {
   en: "English",
   fr: "Francais",
   it: "Italiano",
-  pt: "Portugues"
+  pt: "Portugues",
+  de: "Deutsch",
+  es: "Espanol"
 };
 
 export const messageTemplates = {
@@ -20,7 +22,11 @@ export const messageTemplates = {
   it: ({ name, link }) =>
     `${name ? `Ciao ${name},` : "Ciao,"}\n\nGrazie per la tua prenotazione a Villa Laura.\n\nPer preparare il tuo arrivo e completare la registrazione obbligatoria degli ospiti in Italia, compila il modulo di check-in sicuro qui:\n\n${link}\n\nGrazie,\nJoao\nVilla Laura`,
   pt: ({ name, link }) =>
-    `${name ? `Ola ${name},` : "Ola,"}\n\nObrigado pela sua reserva na Villa Laura.\n\nPara preparar a sua chegada e completar o registo obrigatorio de hospedes em Italia, preencha o formulario seguro de check-in aqui:\n\n${link}\n\nObrigado,\nJoao\nVilla Laura`
+    `${name ? `Ola ${name},` : "Ola,"}\n\nObrigado pela sua reserva na Villa Laura.\n\nPara preparar a sua chegada e completar o registo obrigatorio de hospedes em Italia, preencha o formulario seguro de check-in aqui:\n\n${link}\n\nObrigado,\nJoao\nVilla Laura`,
+  de: ({ name, link }) =>
+    `${name ? `Hallo ${name},` : "Hallo,"}\n\nvielen Dank fuer Ihre Buchung in der Villa Laura.\n\nZur Vorbereitung Ihrer Ankunft und fuer die erforderliche italienische Gaesteregistrierung fuellen Sie bitte dieses sichere Check-in-Formular aus:\n\n${link}\n\nVielen Dank,\nJoao\nVilla Laura`,
+  es: ({ name, link }) =>
+    `${name ? `Hola ${name},` : "Hola,"}\n\nGracias por su reserva en Villa Laura.\n\nPara preparar su llegada y completar el registro obligatorio de huespedes en Italia, complete el formulario seguro de check-in aqui:\n\n${link}\n\nGracias,\nJoao\nVilla Laura`
 };
 
 export const buildLocalizedGuestMessage = (reservation = {}, link = "") => {
@@ -192,7 +198,233 @@ export const checkinText = {
     unavailable: "Check-in indisponivel",
     genericError: "Verifique os campos obrigatorios",
     uploadError: "Documento enviado invalido"
+  },
+  de: {
+    title: "Sicherer Check-in",
+    subtitle: "Sichere Gaesteregistrierung Villa Laura",
+    reservation: "Reservierung",
+    arrivalDate: "Anreisedatum",
+    departureDate: "Abreisedatum",
+    numberOfGuests: "Anzahl der Gaeste",
+    mainGuestEmail: "E-Mail des Hauptgastes",
+    mainGuestPhone: "Telefon des Hauptgastes",
+    guest: "Gast",
+    firstName: "Vorname",
+    lastName: "Nachname",
+    dateOfBirth: "Geburtsdatum",
+    placeOfBirth: "Geburtsort",
+    citizenship: "Staatsangehoerigkeit",
+    gender: "Geschlecht",
+    select: "Auswaehlen",
+    female: "Weiblich",
+    male: "Maennlich",
+    other: "Andere",
+    documentType: "Dokumenttyp",
+    passport: "Reisepass",
+    identityCard: "Personalausweis",
+    otherDocument: "Anderes offizielles Dokument",
+    documentNumber: "Dokumentnummer",
+    documentIssuingCountry: "Ausstellungsland/-ort",
+    documentExpiryDate: "Ablaufdatum des Dokuments",
+    documentUpload: "Dokument hochladen",
+    privacy: "Ich bestaetige, dass diese Angaben korrekt sind, und akzeptiere den Datenschutzhinweis.",
+    privacyNotice:
+      "Ausweisdaten werden nur fuer die erforderliche Unterkunftsregistrierung und den operativen Check-in verwendet. Hochgeladene Dokumente bleiben privat und werden nach der Bearbeitung oder gemaess der geltenden Aufbewahrungsfrist geloescht.",
+    submit: "Sicheren Check-in senden",
+    submitting: "Wird gesendet...",
+    thankYou: "Vielen Dank",
+    success: "Check-in sicher gesendet. Vielen Dank.",
+    invalidLink: "Ungueltiger Link",
+    missingToken: "Check-in-Token fehlt.",
+    unavailable: "Check-in nicht verfuegbar",
+    genericError: "Bitte pruefen Sie die Pflichtfelder",
+    uploadError: "Ungueltiger Dokument-Upload"
+  },
+  es: {
+    title: "Check-in seguro",
+    subtitle: "Registro seguro de huespedes Villa Laura",
+    reservation: "Reserva",
+    arrivalDate: "Fecha de llegada",
+    departureDate: "Fecha de salida",
+    numberOfGuests: "Numero de huespedes",
+    mainGuestEmail: "Email del huesped principal",
+    mainGuestPhone: "Telefono del huesped principal",
+    guest: "Huesped",
+    firstName: "Nombre",
+    lastName: "Apellido",
+    dateOfBirth: "Fecha de nacimiento",
+    placeOfBirth: "Lugar de nacimiento",
+    citizenship: "Nacionalidad",
+    gender: "Sexo / genero",
+    select: "Seleccionar",
+    female: "Femenino",
+    male: "Masculino",
+    other: "Otro",
+    documentType: "Tipo de documento",
+    passport: "Pasaporte",
+    identityCard: "Documento de identidad",
+    otherDocument: "Otro documento oficial",
+    documentNumber: "Numero de documento",
+    documentIssuingCountry: "Pais/lugar de emision",
+    documentExpiryDate: "Fecha de caducidad del documento",
+    documentUpload: "Subir documento",
+    privacy: "Confirmo que esta informacion es correcta y acepto el aviso de privacidad.",
+    privacyNotice:
+      "Los datos de documentos de identidad se utilizan solo para el registro obligatorio del alojamiento y el check-in operativo. Los documentos subidos son privados y se eliminan despues del procesamiento o segun el periodo de conservacion aplicable.",
+    submit: "Enviar check-in seguro",
+    submitting: "Enviando...",
+    thankYou: "Gracias",
+    success: "Check-in enviado de forma segura. Gracias.",
+    invalidLink: "Enlace no valido",
+    missingToken: "Falta el token de check-in.",
+    unavailable: "Check-in no disponible",
+    genericError: "Revise los campos obligatorios",
+    uploadError: "Documento subido no valido"
   }
 };
 
-export const getCheckinText = (language) => checkinText[normalizeLanguage(language)] || checkinText.en;
+const extraText = {
+  en: {
+    adults: "Adults",
+    minors: "Children / minors",
+    infants: "Infants / babies",
+    totalGuests: "Total guests",
+    everyoneNotice:
+      "Include every person staying at the property, including children and babies. Adult documents are required. Children should be linked to a responsible adult; if a child has a document, upload it.",
+    guestCategory: "Guest category",
+    adult: "Adult",
+    minor: "Minor / child",
+    infant: "Infant / baby",
+    role: "Relationship / role",
+    mainGuest: "Main guest / responsible adult",
+    spouse: "Spouse / partner",
+    child: "Child",
+    familyMember: "Family member",
+    groupMember: "Group member",
+    responsibleAdult: "Responsible adult",
+    documentAvailable: "Document available",
+    yes: "Yes",
+    no: "No",
+    minorDocumentNote: "Minor registered under responsible adult/family group; document details can be completed by host if required."
+  },
+  fr: {
+    adults: "Adultes",
+    minors: "Enfants / mineurs",
+    infants: "Bebes",
+    totalGuests: "Total voyageurs",
+    everyoneNotice:
+      "Ajoutez toutes les personnes qui sejournent dans la propriete, y compris les enfants et les bebes. Les documents des adultes sont requis. Les enfants doivent etre lies a un adulte responsable; si un enfant a un document, ajoutez-le.",
+    guestCategory: "Categorie du voyageur",
+    adult: "Adulte",
+    minor: "Mineur / enfant",
+    infant: "Bebe",
+    role: "Relation / role",
+    mainGuest: "Voyageur principal / adulte responsable",
+    spouse: "Conjoint / partenaire",
+    child: "Enfant",
+    familyMember: "Membre de la famille",
+    groupMember: "Membre du groupe",
+    responsibleAdult: "Adulte responsable",
+    documentAvailable: "Document disponible",
+    yes: "Oui",
+    no: "Non",
+    minorDocumentNote: "Mineur enregistre sous l'adulte responsable/groupe familial; l'hote peut completer les details si necessaire."
+  },
+  it: {
+    adults: "Adulti",
+    minors: "Bambini / minori",
+    infants: "Neonati / bebe",
+    totalGuests: "Totale ospiti",
+    everyoneNotice:
+      "Inserisci tutte le persone che soggiornano nella struttura, inclusi bambini e neonati. I documenti degli adulti sono richiesti. I bambini devono essere collegati a un adulto responsabile; se un bambino ha un documento, caricalo.",
+    guestCategory: "Categoria ospite",
+    adult: "Adulto",
+    minor: "Minore / bambino",
+    infant: "Neonato / bebe",
+    role: "Relazione / ruolo",
+    mainGuest: "Ospite principale / adulto responsabile",
+    spouse: "Coniuge / partner",
+    child: "Figlio/a",
+    familyMember: "Familiare",
+    groupMember: "Membro del gruppo",
+    responsibleAdult: "Adulto responsabile",
+    documentAvailable: "Documento disponibile",
+    yes: "Si",
+    no: "No",
+    minorDocumentNote: "Minore registrato sotto l'adulto responsabile/gruppo familiare; l'host puo completare i dettagli se necessario."
+  },
+  pt: {
+    adults: "Adultos",
+    minors: "Criancas / menores",
+    infants: "Bebes",
+    totalGuests: "Total de hospedes",
+    everyoneNotice:
+      "Inclua todas as pessoas que ficam na propriedade, incluindo criancas e bebes. Os documentos dos adultos sao obrigatorios. As criancas devem estar ligadas a um adulto responsavel; se a crianca tiver documento, envie-o.",
+    guestCategory: "Categoria do hospede",
+    adult: "Adulto",
+    minor: "Menor / crianca",
+    infant: "Bebe",
+    role: "Relacao / funcao",
+    mainGuest: "Hospede principal / adulto responsavel",
+    spouse: "Conjuge / parceiro",
+    child: "Crianca",
+    familyMember: "Membro da familia",
+    groupMember: "Membro do grupo",
+    responsibleAdult: "Adulto responsavel",
+    documentAvailable: "Documento disponivel",
+    yes: "Sim",
+    no: "Nao",
+    minorDocumentNote: "Menor registado sob o adulto responsavel/grupo familiar; o anfitriao pode completar detalhes se necessario."
+  },
+  de: {
+    adults: "Erwachsene",
+    minors: "Kinder / Minderjaehrige",
+    infants: "Kleinkinder / Babys",
+    totalGuests: "Gaeste gesamt",
+    everyoneNotice:
+      "Bitte alle Personen angeben, die in der Unterkunft bleiben, einschliesslich Kinder und Babys. Dokumente fuer Erwachsene sind erforderlich. Kinder sollten einem verantwortlichen Erwachsenen zugeordnet werden; falls ein Kind ein Dokument hat, laden Sie es hoch.",
+    guestCategory: "Gaestekategorie",
+    adult: "Erwachsener",
+    minor: "Minderjaehrig / Kind",
+    infant: "Kleinkind / Baby",
+    role: "Beziehung / Rolle",
+    mainGuest: "Hauptgast / verantwortlicher Erwachsener",
+    spouse: "Ehepartner / Partner",
+    child: "Kind",
+    familyMember: "Familienmitglied",
+    groupMember: "Gruppenmitglied",
+    responsibleAdult: "Verantwortlicher Erwachsener",
+    documentAvailable: "Dokument vorhanden",
+    yes: "Ja",
+    no: "Nein",
+    minorDocumentNote: "Minderjaehriger unter verantwortlichem Erwachsenen/Familiengruppe registriert; der Gastgeber kann Details bei Bedarf ergaenzen."
+  },
+  es: {
+    adults: "Adultos",
+    minors: "Ninos / menores",
+    infants: "Bebes",
+    totalGuests: "Total de huespedes",
+    everyoneNotice:
+      "Incluya a todas las personas que se alojan en la propiedad, incluidos ninos y bebes. Los documentos de adultos son obligatorios. Los ninos deben estar vinculados a un adulto responsable; si un nino tiene documento, subalo.",
+    guestCategory: "Categoria del huesped",
+    adult: "Adulto",
+    minor: "Menor / nino",
+    infant: "Bebe",
+    role: "Relacion / rol",
+    mainGuest: "Huesped principal / adulto responsable",
+    spouse: "Conyuge / pareja",
+    child: "Hijo/a",
+    familyMember: "Familiar",
+    groupMember: "Miembro del grupo",
+    responsibleAdult: "Adulto responsable",
+    documentAvailable: "Documento disponible",
+    yes: "Si",
+    no: "No",
+    minorDocumentNote: "Menor registrado bajo adulto responsable/grupo familiar; el anfitrion puede completar detalles si es necesario."
+  }
+};
+
+export const getCheckinText = (language) => {
+  const normalized = normalizeLanguage(language);
+  return { ...checkinText.en, ...extraText.en, ...(checkinText[normalized] || {}), ...(extraText[normalized] || {}) };
+};
