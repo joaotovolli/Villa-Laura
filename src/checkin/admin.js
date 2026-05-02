@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=localized-checkin-whatsapp-20260502";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=localized-checkin-whatsapp-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=minor-guest-flow-20260502";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=minor-guest-flow-20260502";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -61,7 +61,7 @@ const statusOptions = [
 
 const languageOptions = Object.entries(languageLabels)
   .map(([value, label]) => ({ value, label }))
-  .filter(({ value }) => ["en", "fr", "it", "pt"].includes(value));
+  .filter(({ value }) => ["en", "fr", "it", "pt", "de", "es"].includes(value));
 
 const absoluteCheckinLink = (reservation) =>
   reservation.token ? `${window.location.origin}/checkin?token=${encodeURIComponent(reservation.token)}` : "";
@@ -101,7 +101,9 @@ const row = (reservation) => {
         <label>Language<select name="preferredLanguage">${languageOptions
           .map(({ value, label }) => `<option value="${value}" ${value === language ? "selected" : ""}>${value} - ${escapeHtml(label)}</option>`)
           .join("")}</select></label>
-        <label>Number of guests<input name="numberOfGuests" type="number" min="1" max="16" value="${escapeHtml(reservation.numberOfGuests || "")}"></label>
+        <label>Adults<input name="adults" type="number" min="1" max="16" value="${escapeHtml(reservation.adults || reservation.numberOfGuests || 1)}"></label>
+        <label>Children / minors<input name="minors" type="number" min="0" max="16" value="${escapeHtml(reservation.minors || 0)}"></label>
+        <label>Infants / babies<input name="infants" type="number" min="0" max="16" value="${escapeHtml(reservation.infants || 0)}"></label>
         <label>Arrival time<input name="arrivalTime" value="${escapeHtml(reservation.arrivalTime || "")}" placeholder="15:00"></label>
         <label>Source<input name="source" value="${escapeHtml(reservation.source || "Airbnb")}"></label>
         <label>Reservation code<input value="${escapeHtml(reservation.reservationCode || "")}" disabled></label>

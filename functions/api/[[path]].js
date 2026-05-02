@@ -177,6 +177,9 @@ const syncIcal = async (request, env, storage, identity) => {
       email: existing?.email || "",
       preferredLanguage: normalizeLanguage(existing?.preferredLanguage || "en"),
       numberOfGuests: existing?.numberOfGuests || "",
+      adults: existing?.adults || "",
+      minors: existing?.minors || "",
+      infants: existing?.infants || "",
       arrivalTime: existing?.arrivalTime || "",
       source: existing?.source || event.source || "Airbnb",
       notes: existing?.notes || "",
@@ -237,7 +240,10 @@ const updateReservation = async (request, storage, identity) => {
     fullPhone: String(body.fullPhone || "").replace(/[^\d+]/g, ""),
     email: String(body.email || "").trim(),
     preferredLanguage: normalizeLanguage(body.preferredLanguage || "en"),
-    numberOfGuests: body.numberOfGuests ? Math.max(1, Math.min(16, Number.parseInt(body.numberOfGuests, 10) || 1)) : "",
+    adults: Math.max(1, Math.min(16, Number.parseInt(body.adults || body.numberOfGuests, 10) || 1)),
+    minors: Math.max(0, Math.min(16, Number.parseInt(body.minors, 10) || 0)),
+    infants: Math.max(0, Math.min(16, Number.parseInt(body.infants, 10) || 0)),
+    numberOfGuests: Math.max(1, Math.min(48, (Number.parseInt(body.adults || body.numberOfGuests, 10) || 1) + (Number.parseInt(body.minors, 10) || 0) + (Number.parseInt(body.infants, 10) || 0))),
     arrivalTime: String(body.arrivalTime || "").slice(0, 40),
     source: String(body.source || existing.source || "Airbnb").slice(0, 60),
     notes: String(body.notes || ""),
@@ -271,6 +277,9 @@ const createToken = async (request, env, storage, identity) => {
     nights: reservation.nights || 0,
     language,
     source: reservation.source || "",
+    adults: reservation.adults || reservation.numberOfGuests || 1,
+    minors: reservation.minors || 0,
+    infants: reservation.infants || 0,
     status: "created",
     createdAt: now,
     expiresAt
@@ -303,6 +312,9 @@ const getPublicToken = async (request, storage) => {
       nights: reservation?.nights || record.nights || 0,
       language,
       source: reservation?.source || record.source || "",
+      adults: reservation?.adults || record.adults || reservation?.numberOfGuests || 1,
+      minors: reservation?.minors || record.minors || 0,
+      infants: reservation?.infants || record.infants || 0,
       guestName: reservation?.guestName || ""
     }
   });
@@ -316,10 +328,20 @@ const submitCheckin = async (request, storage) => {
     return json({ error: "Invalid or expired check-in link" }, { status: 404 });
   }
   const numberOfGuests = Number.parseInt(form.get("numberOfGuests"), 10);
+  const adults = Number.parseInt(form.get("adults"), 10);
+  const minors = Number.parseInt(form.get("minors"), 10) || 0;
+  const infants = Number.parseInt(form.get("infants"), 10) || 0;
   const guests = [];
   for (let index = 0; index < numberOfGuests; index += 1) {
+    const ageCategory = String(form.get(`guest_${index}_ageCategory`) || (index === 0 ? "adult" : "adult"));
+    const documentAvailable = form.get(`guest_${index}_documentAvailable`) !== "no";
     guests.push({
       id: `guest-${index + 1}`,
+      ageCategory,
+      guestType: String(form.get(`guest_${index}_guestType`) || (index === 0 ? (numberOfGuests > 1 ? "head_of_family" : "single_guest") : "family_member")),
+      relationshipRole: String(form.get(`guest_${index}_relationshipRole`) || (index === 0 ? "main_guest" : "family_member")),
+      responsibleGuestId: String(form.get(`guest_${index}_responsibleGuestId`) || ""),
+      documentAvailable,
       firstName: String(form.get(`guest_${index}_firstName`) || ""),
       lastName: String(form.get(`guest_${index}_lastName`) || ""),
       dateOfBirth: String(form.get(`guest_${index}_dateOfBirth`) || ""),
@@ -336,6 +358,9 @@ const submitCheckin = async (request, storage) => {
     arrivalDate: form.get("arrivalDate"),
     departureDate: form.get("departureDate"),
     numberOfGuests,
+    adults,
+    minors,
+    infants,
     mainGuestEmail: form.get("mainGuestEmail"),
     mainGuestPhone: form.get("mainGuestPhone"),
     privacyAccepted: form.get("privacyAccepted"),
@@ -347,6 +372,9 @@ const submitCheckin = async (request, storage) => {
   const documents = [];
   for (let index = 0; index < numberOfGuests; index += 1) {
     const file = form.get(`guest_${index}_documentUpload`);
+    if (guests[index]?.ageCategory === "adult" && (!file || file.size <= 0)) {
+      return json({ error: "Please check the required fields", fields: [`guests.${index}.documentUpload`] }, { status: 400 });
+    }
     if (file && file.size > 0) {
       if (file.size > 8 * 1024 * 1024 || !allowedDocumentType(file)) {
         return json({ error: "Invalid document upload" }, { status: 400 });
