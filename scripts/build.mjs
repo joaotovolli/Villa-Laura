@@ -12,6 +12,7 @@ const stylesPath = path.join(root, "src", "styles.css");
 const appScriptPath = path.join(root, "src", "app.js");
 const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
 const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
+const adminClientScriptPath = path.join(root, "src", "checkin", "admin-client.js");
 const checkinScriptPath = path.join(root, "src", "checkin", "checkin.js");
 const sourceDocsDir = path.join(root, "src", "docs");
 const configPath = path.join(root, "site.config.json");
@@ -943,6 +944,7 @@ const styles = await readFile(stylesPath, "utf8");
 const appScript = await readFile(appScriptPath, "utf8");
 await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
 await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
+await copyFile(adminClientScriptPath, path.join(assetsDir, "admin-client.js"));
 await copyFile(checkinScriptPath, path.join(assetsDir, "checkin.js"));
 
 const escapeHtml = (value) =>

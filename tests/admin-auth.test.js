@@ -55,3 +55,12 @@ test("allowed admin email defaults to Joao and rejects other users", () => {
   assert.equal(isEmailAllowed("joaotovolli@hotmail.com", {}), true);
   assert.equal(isEmailAllowed("guest@example.test", {}), false);
 });
+
+test("non-allowed Cloudflare Access email is rejected", async () => {
+  const identity = await getCloudflareAccessIdentity(
+    requestWithHeaders({ "cf-access-authenticated-user-email": "guest@example.test" }),
+    { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "joaotovolli@hotmail.com" }
+  );
+
+  assert.equal(identity, null);
+});

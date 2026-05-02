@@ -1,5 +1,7 @@
+import { logoutTarget, usesCloudflareAccessSession } from "./admin-client.js";
+
 const app = document.querySelector("#app");
-const state = { reservations: [] };
+const state = { reservations: [], session: null };
 
 const api = async (path, options = {}) => {
   const response = await fetch(path, {
@@ -42,6 +44,17 @@ const accessDenied = () => {
       <h2>Access denied</h2>
       <p>This admin area is protected by Cloudflare Access. Open it through the approved admin email account.</p>
     </section>`;
+};
+
+const logout = async () => {
+  const target = logoutTarget(state.session);
+  if (target) {
+    await api("/api/admin/logout", { method: "POST", body: "{}" }).catch(() => {});
+    window.location.assign(target);
+    return;
+  }
+  await api("/api/admin/logout", { method: "POST", body: "{}" });
+  login();
 };
 
 const statusOptions = [
@@ -103,16 +116,18 @@ const render = () => {
     <section class="stack">
       <div class="top">
         <div><h2>Reservations</h2><p>${reservations.length} reservations · ${blocked.length} blocked date ranges</p></div>
-        <div class="actions"><button id="sync">Import Airbnb iCal</button><button id="logout" class="secondary">Logout</button></div>
+        <div class="actions"><button id="sync">Import Airbnb iCal</button><button id="logout" class="secondary">Log out</button></div>
       </div>
       <div class="stack">${state.reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
+      ${
+        usesCloudflareAccessSession(state.session)
+          ? `<p class="muted">This admin session is managed by Cloudflare Access.</p>`
+          : ""
+      }
     </section>`;
 
   document.querySelector("#sync").addEventListener("click", sync);
-  document.querySelector("#logout").addEventListener("click", async () => {
-    await api("/api/admin/logout", { method: "POST", body: "{}" });
-    login();
-  });
+  document.querySelector("#logout").addEventListener("click", logout);
 
   document.querySelectorAll(".reservation").forEach((card) => {
     const uid = card.dataset.uid;
@@ -201,6 +216,7 @@ const sync = async () => {
 const init = async () => {
   try {
     const session = await api("/api/admin/session");
+    state.session = session;
     if (session.authenticated) await load();
     else if (session.passwordFallbackEnabled) login();
     else accessDenied();

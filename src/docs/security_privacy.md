@@ -19,7 +19,7 @@ Required secrets are configured as environment variables or Cloudflare secrets:
 - `ALLOWED_ADMIN_EMAILS`
 - `CF_ACCESS_TEAM_DOMAIN` and `CF_ACCESS_AUD` for strict Cloudflare Access JWT validation when available
 
-No real keys, private URLs, guest data, or document files belong in GitHub.
+No real keys, private URLs, guest data, or document files belong in GitHub. `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` are only for local development fallback sessions; production admin login is Cloudflare Access only.
 
 ## Controls
 
