@@ -1495,7 +1495,7 @@ const renderCheckinShell = ({ title, script }) => `<!doctype html>
         <section class="panel"><p>Loading...</p></section>
       </div>
     </main>
-    <script type="module" src="../assets/${script}?v=ical-import-diagnostics-20260502"></script>
+    <script type="module" src="../assets/${script}?v=separate-blocked-dates-20260502"></script>
   </body>
 </html>`;
 

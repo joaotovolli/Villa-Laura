@@ -1,4 +1,4 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=ical-import-diagnostics-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=separate-blocked-dates-20260502";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -55,8 +55,7 @@ const statusOptions = [
   "rejected",
   "submitted_to_alloggiati",
   "submitted_to_ross1000",
-  "documents_deleted",
-  "blocked"
+  "documents_deleted"
 ];
 
 const absoluteCheckinLink = (reservation) =>
@@ -74,7 +73,6 @@ const buildGuestMessage = (reservation) => {
 };
 
 const row = (reservation) => {
-  const isReservation = reservation.type === "reservation";
   const phone = reservation.fullPhone || "";
   const whatsAppDisabled = !phone;
   const checkinLink = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
@@ -109,9 +107,10 @@ const row = (reservation) => {
       <label>Notes<textarea name="notes">${escapeHtml(reservation.notes || "")}</textarea></label>
       <div class="actions">
         <button data-action="save">Save</button>
-        ${isReservation ? `<button class="secondary" data-action="token">Create check-in link</button>` : ""}
+        <button class="secondary" data-action="token">Create check-in link</button>
+        ${checkinLink ? `<button class="secondary" data-action="copy-link">Copy check-in link</button>` : ""}
         ${reservation.reservationUrl ? `<a class="button secondary" href="${escapeHtml(reservation.reservationUrl)}" target="_blank" rel="noopener">Open Airbnb</a>` : ""}
-        <button class="secondary" data-action="copy" ${isReservation ? "" : "disabled"}>Copy Airbnb message</button>
+        <button class="secondary" data-action="copy">Copy Airbnb message</button>
         ${
           whatsAppDisabled
             ? `<button class="secondary" disabled title="Full phone number required">WhatsApp unavailable</button><span class="muted">Full phone number required. Copy it manually from Airbnb reservation details.</span>`
@@ -123,6 +122,26 @@ const row = (reservation) => {
     </article>`;
 };
 
+const blockedRow = (reservation) => `
+  <article class="reservation stack blocked-date" data-uid="${escapeHtml(reservation.uid)}">
+    <div class="top">
+      <div>
+        <h3>${escapeHtml(reservation.source || "Airbnb")} (${escapeHtml(reservation.summary || "Not available")})</h3>
+        <p>${escapeHtml(reservation.checkIn)} to ${escapeHtml(reservation.checkOut)} · ${reservation.nights || 0} nights</p>
+      </div>
+      <span class="status blocked">blocked</span>
+    </div>
+    <div class="grid">
+      <label>Source<input value="${escapeHtml(reservation.source || "Airbnb")}" disabled></label>
+      <label>Status<input value="blocked" disabled></label>
+    </div>
+    <details>
+      <summary>Metadata</summary>
+      <p class="muted">UID: ${escapeHtml(reservation.uid)}</p>
+    </details>
+    <p class="muted">Blocked dates cannot be used for guest check-in links or messages.</p>
+  </article>`;
+
 const render = () => {
   const reservations = state.reservations.filter((entry) => entry.type === "reservation");
   const blocked = state.reservations.filter((entry) => entry.type === "blocked");
@@ -133,7 +152,15 @@ const render = () => {
         <div class="actions"><button id="sync">Import Airbnb iCal</button><a id="logout" class="button secondary" href="${accessLogoutUrl}">Log out</a></div>
       </div>
       <div id="sync-status" class="notice ${state.syncStatus ? "" : "hidden"}">${escapeHtml(state.syncStatus)}</div>
-      <div class="stack">${state.reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
+      <section class="stack">
+        <h2>Reservations</h2>
+        <p class="muted">Use real reservations to generate guest check-in links. Blocked dates cannot be used for check-in.</p>
+        <div class="stack">${reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
+      </section>
+      <section class="stack">
+        <h2>Blocked dates</h2>
+        <div class="stack">${blocked.map(blockedRow).join("") || `<p>No blocked date ranges imported yet.</p>`}</div>
+      </section>
       ${
         usesCloudflareAccessSession(state.session)
           ? `<p class="muted">This admin session is managed by Cloudflare Access.</p>`
@@ -182,6 +209,15 @@ const render = () => {
             await navigator.clipboard.writeText(result.message);
             setOutput(`Check-in link created and message copied. Link: ${result.link}`);
             await load(false);
+          }
+          if (button.dataset.action === "copy-link") {
+            const link = normalizeLink(reservation.checkinLink) || absoluteCheckinLink(reservation);
+            if (link) {
+              await navigator.clipboard.writeText(link);
+              setOutput("Check-in link copied.");
+            } else {
+              setOutput("Create a check-in link first.");
+            }
           }
           if (button.dataset.action === "copy") {
             const message = reservation.lastMessage || buildGuestMessage(reservation);

@@ -3,6 +3,7 @@ import { rm } from "node:fs/promises";
 import test from "node:test";
 import { onRequest } from "../functions/api/[[path]].js";
 import { CheckinStorage } from "../src/checkin/storage.js";
+import { keys } from "../src/checkin/storage.js";
 
 const fixture = `BEGIN:VCALENDAR
 BEGIN:VEVENT
@@ -37,6 +38,20 @@ const adminRequest = (path, env) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const adminPatch = (path, env, body) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        "cf-access-authenticated-user-email": "admin@example.com"
+      },
+      body: JSON.stringify(body)
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
 test("admin sync returns safe diagnostics when iCal URL is missing", async () => {
   const response = await adminRequest("/admin/sync", {
     APP_ENV: "production",
@@ -48,6 +63,51 @@ test("admin sync returns safe diagnostics when iCal URL is missing", async () =>
   assert.equal(body.error, "Airbnb iCal URL is not configured");
   assert.equal(body.diagnostics.icalUrlConfigured, false);
   assert.equal(JSON.stringify(body).includes("http"), false);
+});
+
+test("blocked items ignore guest fields and remain blocked on save", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com"
+  };
+  const storage = new CheckinStorage(env);
+  const uid = "blocked-reset@example.test";
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    await storage.putJson(keys.reservation(uid), {
+      uid,
+      type: "blocked",
+      summary: "Not available",
+      status: "blocked",
+      checkIn: "2026-08-01",
+      checkOut: "2026-08-03",
+      nights: 2,
+      source: "Airbnb",
+      guestName: "Should Be Removed",
+      fullPhone: "+390000000000"
+    });
+
+    const response = await adminPatch("/admin/reservations", env, {
+      uid,
+      guestName: "Accidental Guest",
+      fullPhone: "+391111111111",
+      email: "guest@example.com",
+      status: "imported",
+      notes: "Should not persist"
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.reservation.type, "blocked");
+    assert.equal(body.reservation.status, "blocked");
+    assert.equal(body.reservation.guestName, "");
+    assert.equal(body.reservation.fullPhone, "");
+    assert.equal(body.reservation.email, "");
+    assert.equal(body.reservation.notes, "");
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
 });
 
 test("admin sync writes reservations to the same storage list endpoint reads", async () => {

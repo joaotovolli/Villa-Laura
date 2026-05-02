@@ -41,6 +41,10 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Import started."), true);
   assert.equal(adminBundle.includes("Import failed:"), true);
   assert.equal(adminBundle.includes("Imported "), true);
+  assert.equal(adminBundle.includes("Blocked dates"), true);
+  assert.equal(adminBundle.includes("Blocked dates cannot be used for guest check-in links or messages."), true);
+  assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
+  assert.equal(adminBundle.includes("Copy check-in link"), true);
 });
 
 test("public repository text does not contain private admin address pattern", () => {
