@@ -10,6 +10,10 @@ const sourceImagesDir = path.join(root, "assets", "source");
 const publicDir = path.join(root, "public");
 const stylesPath = path.join(root, "src", "styles.css");
 const appScriptPath = path.join(root, "src", "app.js");
+const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
+const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
+const checkinScriptPath = path.join(root, "src", "checkin", "checkin.js");
+const sourceDocsDir = path.join(root, "src", "docs");
 const configPath = path.join(root, "site.config.json");
 
 const localeOrder = ["en", "it", "es", "de", "pt", "fr"];
@@ -931,12 +935,15 @@ await rm(distDir, { recursive: true, force: true });
 await rm(docsDir, { recursive: true, force: true });
 await mkdir(assetsDir, { recursive: true });
 
-for (const file of ["_headers", "favicon.svg"]) {
+for (const file of ["_headers", "favicon.svg", "robots.txt"]) {
   await copyFile(path.join(publicDir, file), path.join(distDir, file));
 }
 
 const styles = await readFile(stylesPath, "utf8");
 const appScript = await readFile(appScriptPath, "utf8");
+await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
+await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
+await copyFile(checkinScriptPath, path.join(assetsDir, "checkin.js"));
 
 const escapeHtml = (value) =>
   String(value)
@@ -1463,6 +1470,33 @@ const writePage = async (segments, html) => {
   await writeFile(path.join(dir, "index.html"), html);
 };
 
+const renderCheckinShell = ({ title, script }) => `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>${title} | Villa Laura</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/checkin.css">
+  </head>
+  <body>
+    <main>
+      <header class="top">
+        <div>
+          <h1>${title}</h1>
+          <p>Villa Laura secure guest registration</p>
+        </div>
+        <a class="button secondary" href="/">Villa Laura</a>
+      </header>
+      <div id="app" class="stack">
+        <section class="panel"><p>Loading...</p></section>
+      </div>
+    </main>
+    <script type="module" src="../assets/${script}"></script>
+  </body>
+</html>`;
+
 for (const locale of localeOrder) {
   const homeSegments = locale === "en" ? [] : [locale];
   await writePage(homeSegments, renderHomepage(locale));
@@ -1474,5 +1508,9 @@ for (const locale of localeOrder) {
   }
 }
 
+await writePage(["admin"], renderCheckinShell({ title: "Admin", script: "admin.js" }));
+await writePage(["checkin"], renderCheckinShell({ title: "Secure Check-In", script: "checkin.js" }));
+
 await cp(distDir, docsDir, { recursive: true });
 await writeFile(path.join(docsDir, ".nojekyll"), "");
+await cp(sourceDocsDir, docsDir, { recursive: true });

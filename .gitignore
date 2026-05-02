@@ -4,11 +4,35 @@ dist/
 
 # Local project notes and credentials must never be committed
 Doc_Keys_Villa_Laura.txt
+../Doc_Keys_Villa_Laura.txt
 *_Keys_*.txt
 *.local
 *.env
+.env
 *.env.*
+.dev.vars
 notes/
 private/
 tmp/
 *.zip
+
+# Private local check-in data and uploads
+.local-data/
+local-data/
+checkins/
+uploads/
+secrets/
+
+# Private key material and wallet files
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*wallet*
+*.wallet
+
+# Local Cloudflare/Wrangler state
+.wrangler/
+.mf/
