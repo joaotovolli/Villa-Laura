@@ -91,6 +91,17 @@ const edgeCookieGet = (path, env) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const sameOriginEdgeGet = (path, env) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      headers: {
+        "sec-fetch-site": "same-origin"
+      }
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
 const crossOriginEdgeCookieGet = (path, env) =>
   onRequest({
     request: new Request(`https://villa-laura.it/api${path}`, {
@@ -412,7 +423,7 @@ test("admin deletion endpoints require authentication", async () => {
   }
 });
 
-test("admin API can trust Cloudflare Access edge cookie for same-origin protected requests", async () => {
+test("admin API can trust Cloudflare Access edge protection for same-origin protected requests", async () => {
   const env = {
     APP_ENV: "production",
     ALLOWED_ADMIN_EMAILS: "admin@example.com",
@@ -421,16 +432,19 @@ test("admin API can trust Cloudflare Access edge cookie for same-origin protecte
   };
 
   const sameOrigin = await edgeCookieGet("/admin/reservations", env);
+  const sameOriginNoHeader = await sameOriginEdgeGet("/admin/health", env);
   const crossOrigin = await crossOriginEdgeCookieGet("/admin/reservations", env);
-  const noCookie = await onRequest({
+  const sameOriginNoCookie = await onRequest({
     request: new Request("https://villa-laura.it/api/admin/reservations"),
     env,
     params: { path: ["admin", "reservations"] }
   });
 
   assert.equal(sameOrigin.status, 200);
+  assert.equal(sameOriginNoHeader.status, 200);
+  assert.equal((await sameOriginNoHeader.json()).accessMode, "cloudflare_access_edge_protected");
   assert.equal(crossOrigin.status, 401);
-  assert.equal(noCookie.status, 401);
+  assert.equal(sameOriginNoCookie.status, 200);
 });
 
 test("guest draft save accepts partial fields, stores JPEG, and reloads without public document URLs", async () => {
