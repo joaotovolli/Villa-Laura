@@ -135,6 +135,7 @@ export const keys = {
   reservation: (uid) => `checkins/reservations/${encodeURIComponent(uid)}.json`,
   token: (token) => `checkins/tokens/${encodeURIComponent(token)}.json`,
   submission: (token) => `checkins/submissions/${encodeURIComponent(token)}/submission.json`,
+  notification: (date, id) => `checkins/notifications/${date}/${encodeURIComponent(id)}.json`,
   document: (token, guestId, filename) =>
     `checkins/submissions/${encodeURIComponent(token)}/documents/${encodeURIComponent(guestId)}/${encodeURIComponent(filename)}`
 };

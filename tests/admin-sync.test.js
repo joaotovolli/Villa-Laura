@@ -68,6 +68,17 @@ const adminPost = (path, env, body) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const adminGet = (path, env) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      headers: {
+        "cf-access-authenticated-user-email": "admin@example.com"
+      }
+    }),
+    env,
+    params: { path: path.split("?")[0].replace(/^\//, "").split("/") }
+  });
+
 const unauthenticatedPost = (path, env, body) =>
   onRequest({
     request: new Request(`https://villa-laura.it/api${path}`, {
@@ -338,6 +349,58 @@ test("checkinToken creation preserves reservation language and localized message
   }
 });
 
+test("check-in link creation is idempotent and regeneration disables the old token", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com",
+    VILLA_LAURA_SITE_URL: "https://villa-laura.it"
+  };
+  const storage = new CheckinStorage(env);
+  const uid = "idempotent-token@example.test";
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    await storage.putJson(keys.reservation(uid), {
+      uid,
+      type: "reservation",
+      summary: "Reserved",
+      status: "imported",
+      checkIn: "2026-09-01",
+      checkOut: "2026-09-05",
+      nights: 4,
+      preferredLanguage: "en"
+    });
+
+    const first = await (await adminPost("/admin/token", env, { uid })).json();
+    const second = await (await adminPost("/admin/token", env, { uid })).json();
+    assert.equal(second.token, first.token);
+    assert.equal(second.existing, true);
+
+    const regenerated = await (await adminPost("/admin/token/regenerate", env, { uid })).json();
+    assert.notEqual(regenerated.token, first.token);
+    assert.equal(regenerated.disabledPreviousTokens, 1);
+
+    const oldTokenResponse = await onRequest({
+      request: new Request(`https://villa-laura.it/api/checkin/token?token=${encodeURIComponent(first.token)}`),
+      env,
+      params: { path: ["checkin", "token"] }
+    });
+    const newTokenResponse = await onRequest({
+      request: new Request(`https://villa-laura.it/api/checkin/token?token=${encodeURIComponent(regenerated.token)}`),
+      env,
+      params: { path: ["checkin", "token"] }
+    });
+    const tokens = await storage.listJson("checkins/tokens/");
+    const active = tokens.filter((entry) => entry.reservationUid === uid && !["disabled", "expired", "revoked"].includes(entry.status));
+
+    assert.equal(oldTokenResponse.status, 404);
+    assert.equal(newTokenResponse.status, 200);
+    assert.equal(active.length, 1);
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
 test("admin sync writes reservations to the same storage list endpoint reads", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response(fixture, { status: 200, headers: { "content-type": "text/calendar" } });
@@ -410,6 +473,80 @@ test("admin cleanup deletes documents, redacts personal data, and resets check-i
     assert.equal(resetSubmission.resetAt.length > 0, true);
     assert.equal(resetSubmission.mainGuestEmail, undefined);
     assert.equal(resetRecord.status, "created");
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("admin export returns submitted data without private storage keys", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com"
+  };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const checkinToken = await fakeSubmittedCheckin(storage, fakeToken("export_token"));
+    const jsonResponse = await adminGet(`/admin/export?token=${encodeURIComponent(checkinToken)}&format=json`, env);
+    const jsonBody = await jsonResponse.json();
+    const csvResponse = await adminGet(`/admin/export?token=${encodeURIComponent(checkinToken)}&format=csv`, env);
+    const csvBody = await csvResponse.text();
+
+    assert.equal(jsonResponse.status, 200);
+    assert.equal(jsonBody.label, "Structured export for manual review");
+    assert.equal(jsonBody.guests[0].firstName, "Fake");
+    assert.equal(jsonBody.guests[0].documentNumber, "FAKE123");
+    assert.equal(JSON.stringify(jsonBody).includes("checkins/submissions"), false);
+    assert.equal(JSON.stringify(jsonBody).includes("filename"), false);
+    assert.equal(csvResponse.status, 200);
+    assert.match(csvBody, /first_name/);
+    assert.match(csvBody, /FAKE123/);
+    assert.equal(csvBody.includes("checkins/submissions"), false);
+    assert.equal(csvBody.includes("fake.pdf"), false);
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("final submit queues minimal admin notification without document data", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const token = await createPublicToken(storage, fakeToken("notification_token"));
+    const response = await publicFormPost(
+      "/checkin/submit",
+      env,
+      makeDraftForm(token, {
+        arrivalDate: "2026-11-01",
+        departureDate: "2026-11-04",
+        mainGuestEmail: "fake@example.test",
+        mainGuestPhone: "+390000000000",
+        firstName: "Fake",
+        lastName: "Guest",
+        dateOfBirth: "1990-01-01",
+        placeOfBirth: "Test City",
+        citizenship: "Testland",
+        gender: "Other",
+        documentType: "Passport",
+        documentNumber: "FAKE123",
+        documentIssuingCountry: "Testland",
+        privacyAccepted: true,
+        file: { blob: new Blob(["fake"], { type: "application/pdf" }), name: "fake.pdf" }
+      })
+    );
+    const notificationsResponse = await adminGet("/admin/notifications", env);
+    const notifications = await notificationsResponse.json();
+    const serialized = JSON.stringify(notifications);
+
+    assert.equal(response.status, 200);
+    assert.equal(notifications.notifications.length, 1);
+    assert.equal(notifications.notifications[0].type, "checkin_submitted");
+    assert.equal(serialized.includes("FAKE123"), false);
+    assert.equal(serialized.includes("fake.pdf"), false);
+    assert.equal(serialized.includes("fake@example.test"), false);
   } finally {
     await rm(".local-data/checkins", { recursive: true, force: true });
   }
