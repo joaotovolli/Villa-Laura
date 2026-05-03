@@ -1,8 +1,8 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-edge-access-20260503";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-edge-access-20260503";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-workflow-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-workflow-20260503";
 
 const app = document.querySelector("#app");
-const state = { reservations: [], session: null, syncStatus: "" };
+const state = { reservations: [], notifications: [], session: null, syncStatus: "" };
 
 const api = async (path, options = {}) => {
   const response = await fetch(path, {
@@ -99,6 +99,91 @@ const documentStatusFor = (reservation) => {
   return "No documents uploaded yet";
 };
 
+const checklistItem = (label, done) => `<li class="${done ? "done" : "todo"}"><span>${done ? "Done" : "Open"}</span>${escapeHtml(label)}</li>`;
+
+const workflowChecklist = (reservation, checkinLink) => {
+  const manualDetails = Boolean(reservation.guestName && (reservation.fullPhone || reservation.email) && reservation.adults);
+  const docsDeleted = Boolean(reservation.documentsDeletedAt);
+  const dataRedacted = Boolean(reservation.personalDataDeletedAt || reservation.status === "data_redacted");
+  return `
+    <details class="workflow" open>
+      <summary>Operational checklist</summary>
+      <ol>
+        ${checklistItem("Airbnb reservation imported", Boolean(reservation.importedAt || reservation.source))}
+        ${checklistItem("Manual details completed", manualDetails)}
+        ${checklistItem("Check-in link created", Boolean(checkinLink || reservation.token))}
+        ${checklistItem("Message sent to guest", ["checkin_sent", "draft_saved", "pending_review", "approved"].includes(reservation.status))}
+        ${checklistItem("Draft saved", Boolean(reservation.draftSaved))}
+        ${checklistItem("Final check-in submitted", Boolean(reservation.checkinSubmitted))}
+        ${checklistItem("Documents uploaded", Boolean(reservation.documentCount))}
+        ${checklistItem("Admin review completed", ["approved", "rejected", "submitted_to_alloggiati", "submitted_to_ross1000"].includes(reservation.status))}
+        ${checklistItem("Documents deleted", docsDeleted)}
+        ${checklistItem("Guest data redacted", dataRedacted)}
+        ${checklistItem("Ready for Alloggiati/ROSS1000 handling", ["approved", "submitted_to_alloggiati", "submitted_to_ross1000"].includes(reservation.status))}
+      </ol>
+    </details>`;
+};
+
+const displayValue = (value) => escapeHtml(value || "Not provided");
+
+const submissionDetailsHtml = (submission, token) => {
+  const documents = submission.documents || [];
+  const documentLinks = documents.length
+    ? documents
+        .map(
+          (doc) =>
+            `<li>${escapeHtml(doc.guestId)} · <a href="/api/admin/document?token=${encodeURIComponent(token)}&guestId=${encodeURIComponent(doc.guestId)}&filename=${encodeURIComponent(doc.filename)}" target="_blank" rel="noopener">${escapeHtml(doc.originalName || "document")}</a> · ${escapeHtml(doc.type || "")} · ${doc.size || 0} bytes</li>`
+        )
+        .join("")
+    : "<li>No documents available.</li>";
+  const guests = (submission.guests || [])
+    .map(
+      (guest, index) => `
+        <details class="guest-review" open>
+          <summary>Guest ${index + 1}: ${displayValue(`${guest.firstName || ""} ${guest.lastName || ""}`.trim())}</summary>
+          <dl class="summary-list">
+            <div><dt>Category</dt><dd>${displayValue(guest.ageCategory)}</dd></div>
+            <div><dt>Guest type</dt><dd>${displayValue(guest.guestType)}</dd></div>
+            <div><dt>Relationship / role</dt><dd>${displayValue(guest.relationshipRole)}</dd></div>
+            <div><dt>Responsible adult</dt><dd>${displayValue(guest.responsibleGuestId)}</dd></div>
+            <div><dt>First name</dt><dd>${displayValue(guest.firstName)}</dd></div>
+            <div><dt>Last name</dt><dd>${displayValue(guest.lastName)}</dd></div>
+            <div><dt>Sex / gender</dt><dd>${displayValue(guest.gender)}</dd></div>
+            <div><dt>Date of birth</dt><dd>${displayValue(guest.dateOfBirth)}</dd></div>
+            <div><dt>Place of birth</dt><dd>${displayValue(guest.placeOfBirth)}</dd></div>
+            <div><dt>Citizenship / nationality</dt><dd>${displayValue(guest.citizenship)}</dd></div>
+            <div><dt>Document available</dt><dd>${guest.documentAvailable ? "yes" : "no"}</dd></div>
+            <div><dt>Document type</dt><dd>${displayValue(guest.documentType)}</dd></div>
+            <div><dt>Document number</dt><dd>${displayValue(guest.documentNumber)}</dd></div>
+            <div><dt>Issuing country/place</dt><dd>${displayValue(guest.documentIssuingCountry)}</dd></div>
+            <div><dt>Document expiry</dt><dd>${displayValue(guest.documentExpiryDate)}</dd></div>
+          </dl>
+        </details>`
+    )
+    .join("");
+  return `
+    <section class="review-panel">
+      <h4>Submitted check-in details</h4>
+      <dl class="summary-list">
+        <div><dt>Status</dt><dd>${displayValue(submission.status)}</dd></div>
+        <div><dt>Submitted at</dt><dd>${displayValue(submission.submittedAt)}</dd></div>
+        <div><dt>Draft saved at</dt><dd>${displayValue(submission.draftSavedAt)}</dd></div>
+        <div><dt>Arrival</dt><dd>${displayValue(submission.arrivalDate)}</dd></div>
+        <div><dt>Departure</dt><dd>${displayValue(submission.departureDate)}</dd></div>
+        <div><dt>Guests</dt><dd>${submission.numberOfGuests || 0} total · ${submission.adults || 0} adults · ${submission.minors || 0} minors · ${submission.infants || 0} infants</dd></div>
+        <div><dt>Main guest email</dt><dd>${displayValue(submission.mainGuestEmail)}</dd></div>
+        <div><dt>Main guest phone</dt><dd>${displayValue(submission.mainGuestPhone)}</dd></div>
+        <div><dt>Privacy accepted</dt><dd>${submission.privacyAccepted ? "yes" : "no"}</dd></div>
+        <div><dt>Documents</dt><dd>${documents.length}</dd></div>
+      </dl>
+      <div class="stack">${guests || "<p>No guest details stored.</p>"}</div>
+      <details open>
+        <summary>Uploaded documents</summary>
+        <ul>${documentLinks}</ul>
+      </details>
+    </section>`;
+};
+
 const dataManagementSection = (reservation, checkinLink) => {
   const hasSubmission = Boolean(reservation.checkinSubmitted);
   const hasDraft = Boolean(reservation.draftSaved);
@@ -135,8 +220,11 @@ const dataManagementSection = (reservation, checkinLink) => {
       <p class="muted">Reset check-in prepares this reservation for another test or new submission.</p>
       <div class="actions">
         ${checkinLink ? `<button class="secondary" data-action="copy-link">Copy check-in link</button>` : ""}
+        ${checkinLink ? `<button class="secondary" data-action="regenerate-token">Regenerate check-in link</button>` : ""}
         <button class="secondary" data-action="submission" ${hasSubmission ? "" : "disabled"}>View submitted check-in</button>
         <button class="secondary" data-action="submission" ${hasSubmission && reservation.documentCount ? "" : "disabled"}>View/download documents</button>
+        <a class="button secondary ${hasSubmission ? "" : "is-disabled"}" ${hasSubmission ? `href="/api/admin/export?token=${encodeURIComponent(reservation.token)}&format=json"` : ""} target="_blank" rel="noopener">Download JSON</a>
+        <a class="button secondary ${hasSubmission ? "" : "is-disabled"}" ${hasSubmission ? `href="/api/admin/export?token=${encodeURIComponent(reservation.token)}&format=csv"` : ""} target="_blank" rel="noopener">Download CSV</a>
         <button class="danger" data-action="delete-documents" ${hasSubmission && reservation.documentCount ? "" : "disabled"}>Delete uploaded documents</button>
         <button class="danger" data-action="redact-data" ${hasSubmission ? "" : "disabled"}>Delete/redact guest data</button>
         <button class="danger" data-action="reset-checkin" ${canReset ? "" : "disabled"}>Reset check-in</button>
@@ -193,10 +281,15 @@ const row = (reservation) => {
           : ""
       }
       <label>Notes<textarea name="notes">${escapeHtml(reservation.notes || "")}</textarea></label>
+      ${workflowChecklist(reservation, checkinLink)}
       ${dataManagementSection(reservation, checkinLink)}
       <div class="actions">
-        <button data-action="save">Save</button>
-        <button class="secondary" data-action="token">Create check-in link</button>
+        <button data-action="save">Save reservation details</button>
+        ${
+          checkinLink
+            ? `<button class="secondary" data-action="copy-link">Copy check-in link</button>`
+            : `<button class="secondary" data-action="token">Create check-in link</button>`
+        }
         ${reservation.reservationUrl ? `<a class="button secondary" href="${escapeHtml(reservation.reservationUrl)}" target="_blank" rel="noopener">Open Airbnb</a>` : ""}
         <button class="secondary" data-action="copy">Copy Airbnb message</button>
         ${
@@ -231,9 +324,35 @@ const blockedRow = (reservation) => `
     <p class="muted">Blocked dates cannot be used for guest check-in links or messages.</p>
   </article>`;
 
+const notificationPanel = () => {
+  if (!state.notifications.length) {
+    return `<section class="panel stack"><h2>Notifications</h2><p>No submitted check-in notifications yet.</p></section>`;
+  }
+  return `
+    <section class="panel stack">
+      <h2>Notifications</h2>
+      <p class="muted">Final check-in submissions appear here with minimal metadata only.</p>
+      <div class="stack">${state.notifications
+        .map(
+          (notification) => `
+            <article class="notification">
+              <strong>${escapeHtml(notification.type === "checkin_submitted" ? "Check-in submitted" : notification.type)}</strong>
+              <p>${escapeHtml(notification.checkIn)} to ${escapeHtml(notification.checkOut)} · ${notification.numberOfGuests || 0} guests · ${escapeHtml(notification.submittedAt || notification.createdAt)}</p>
+              ${notification.reservationCode ? `<p class="muted">Reservation code: ${escapeHtml(notification.reservationCode)}</p>` : ""}
+            </article>`
+        )
+        .join("")}</div>
+    </section>`;
+};
+
 const render = () => {
   const reservations = state.reservations.filter((entry) => entry.type === "reservation");
   const blocked = state.reservations.filter((entry) => entry.type === "blocked");
+  const pendingReview = reservations.filter((entry) => entry.status === "pending_review" || entry.checkinSubmitted);
+  const completed = reservations.filter((entry) =>
+    ["approved", "rejected", "submitted_to_alloggiati", "submitted_to_ross1000", "documents_deleted", "data_redacted"].includes(entry.status)
+  );
+  const active = reservations.filter((entry) => !pendingReview.includes(entry) && !completed.includes(entry));
   app.innerHTML = `
     <section class="stack">
       <div class="top">
@@ -241,11 +360,20 @@ const render = () => {
         <div class="actions"><button id="sync">Import Airbnb iCal</button><a id="logout" class="button secondary" href="${accessLogoutUrl}">Log out</a></div>
       </div>
       <div id="sync-status" class="notice ${state.syncStatus ? "" : "hidden"}">${escapeHtml(state.syncStatus)}</div>
+      ${notificationPanel()}
+      <section class="stack">
+        <h2>Pending review</h2>
+        <div class="stack">${pendingReview.map(row).join("") || `<p>No submitted check-ins are waiting for review.</p>`}</div>
+      </section>
       <section class="stack">
         <h2>Reservations</h2>
         <p class="muted">Use real reservations to generate guest check-in links. Blocked dates cannot be used for check-in.</p>
         <p class="muted">Use fake documents for testing. Do not upload real passports until upload, review, and deletion have been verified.</p>
-        <div class="stack">${reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
+        <div class="stack">${active.map(row).join("") || `<p>No active reservations imported yet.</p>`}</div>
+      </section>
+      <section class="stack">
+        <h2>Approved / completed</h2>
+        <div class="stack">${completed.map(row).join("") || `<p>No approved or completed reservations yet.</p>`}</div>
       </section>
       <section class="stack">
         <h2>Blocked dates</h2>
@@ -294,10 +422,21 @@ const render = () => {
             const result = await api("/api/admin/token", { method: "POST", body: JSON.stringify({ uid }) });
             reservation.token = result.token || reservation.token;
             reservation.checkinLink = result.link;
+            reservation.tokenCreatedAt = result.existing ? reservation.tokenCreatedAt : new Date().toISOString();
+            reservation.lastMessage = result.message;
+            await navigator.clipboard.writeText(result.message);
+            setOutput(`${result.existing ? "Existing check-in link reused" : "Check-in link created"} and message copied. Link: ${result.link}`);
+            await load(false);
+          }
+          if (button.dataset.action === "regenerate-token") {
+            if (!confirm("Regenerate check-in link? The old link will stop working and the guest will need the new link.")) return;
+            const result = await api("/api/admin/token/regenerate", { method: "POST", body: JSON.stringify({ uid }) });
+            reservation.token = result.token || reservation.token;
+            reservation.checkinLink = result.link;
             reservation.tokenCreatedAt = new Date().toISOString();
             reservation.lastMessage = result.message;
             await navigator.clipboard.writeText(result.message);
-            setOutput(`Check-in link created and message copied. Link: ${result.link}`);
+            setOutput(`Check-in link regenerated and message copied. Old links disabled: ${result.disabledPreviousTokens || 0}. Link: ${result.link}`);
             await load(false);
           }
           if (button.dataset.action === "copy-link") {
@@ -331,14 +470,8 @@ const render = () => {
             const token = reservation.token;
             if (!token) return setOutput("No check-in token is available for this reservation.");
             const result = await api(`/api/admin/submission?token=${encodeURIComponent(token)}`);
-            const docs = (result.submission.documents || [])
-              .map(
-                (doc) =>
-                  `<a href="/api/admin/document?token=${encodeURIComponent(token)}&guestId=${encodeURIComponent(doc.guestId)}&filename=${encodeURIComponent(doc.filename)}" target="_blank" rel="noopener">${escapeHtml(doc.originalName || doc.filename)}</a>`
-              )
-              .join(" · ");
             output.classList.remove("hidden");
-            output.innerHTML = `Submission received for ${result.submission.numberOfGuests} guest(s). Adults: ${result.submission.adults || 0}. Minors: ${result.submission.minors || 0}. Infants: ${result.submission.infants || 0}. Documents: ${docs || "none"}`;
+            output.innerHTML = submissionDetailsHtml(result.submission, token);
           }
           if (button.dataset.action === "delete-documents") {
             const token = reservation.token;
@@ -377,8 +510,12 @@ function FormDataLike(element) {
 }
 
 const load = async (rerender = true) => {
-  const result = await api("/api/admin/reservations");
+  const [result, notifications] = await Promise.all([
+    api("/api/admin/reservations"),
+    api("/api/admin/notifications").catch(() => ({ notifications: [] }))
+  ]);
   state.reservations = result.reservations;
+  state.notifications = notifications.notifications || [];
   if (rerender) render();
 };
 

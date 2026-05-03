@@ -23,6 +23,7 @@ const text = (body, init = {}) =>
   new Response(body, {
     ...init,
     headers: {
+      "content-type": "text/plain; charset=utf-8",
       "cache-control": "no-store",
       ...(init.headers || {})
     }
@@ -132,11 +133,147 @@ const normalizeStatus = (status, fallback = "imported") => {
   return status || fallback;
 };
 
+const inactiveTokenStatuses = new Set(["disabled", "expired", "revoked"]);
+
+const activeTokens = (tokens) =>
+  tokens
+    .filter((token) => token?.token && token?.reservationUid && !inactiveTokenStatuses.has(token.status))
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+
+const activeTokenForReservation = async (storage, uid) => {
+  const tokens = activeTokens((await storage.listJson("checkins/tokens/")).filter(Boolean));
+  return tokens.find((token) => token.reservationUid === uid) || null;
+};
+
+const linkForToken = (request, env, token) => `${siteUrl(request, env).replace(/\/$/, "")}/checkin?token=${encodeURIComponent(token)}`;
+
+const publicDocument = (doc = {}) => ({
+  guestId: doc.guestId || "",
+  originalName: doc.originalName || "document",
+  size: doc.size || 0,
+  type: doc.type || ""
+});
+
+const manualReviewExport = (submission, reservation = {}) => ({
+  label: "Structured export for manual review",
+  purpose: "Pre-export data for Alloggiati/ROSS1000 preparation",
+  reservation: {
+    uid: submission.reservationUid || reservation.uid || "",
+    source: reservation.source || "",
+    reservationCode: reservation.reservationCode || "",
+    checkIn: reservation.checkIn || submission.arrivalDate || "",
+    checkOut: reservation.checkOut || submission.departureDate || "",
+    nights: reservation.nights || 0,
+    status: reservation.status || submission.status || ""
+  },
+  submission: {
+    status: submission.status || "",
+    submittedAt: submission.submittedAt || "",
+    draftSavedAt: submission.draftSavedAt || "",
+    privacyAccepted: Boolean(submission.privacyAccepted),
+    arrivalDate: submission.arrivalDate || "",
+    departureDate: submission.departureDate || "",
+    numberOfGuests: submission.numberOfGuests || 0,
+    adults: submission.adults || 0,
+    minors: submission.minors || 0,
+    infants: submission.infants || 0,
+    mainGuestEmail: submission.mainGuestEmail || "",
+    mainGuestPhone: submission.mainGuestPhone || ""
+  },
+  exportReadyView: {
+    primaryGuests: (submission.guests || []).filter((guest) => ["single_guest", "head_of_family", "head_of_group"].includes(guest.guestType)),
+    members: (submission.guests || []).filter((guest) => ["family_member", "group_member"].includes(guest.guestType)),
+    adults: (submission.guests || []).filter((guest) => guest.ageCategory === "adult"),
+    minors: (submission.guests || []).filter((guest) => guest.ageCategory === "minor"),
+    infants: (submission.guests || []).filter((guest) => guest.ageCategory === "infant")
+  },
+  guests: (submission.guests || []).map((guest) => ({
+    id: guest.id || "",
+    ageCategory: guest.ageCategory || "",
+    guestType: guest.guestType || "",
+    relationshipRole: guest.relationshipRole || "",
+    responsibleGuestId: guest.responsibleGuestId || "",
+    documentAvailable: Boolean(guest.documentAvailable),
+    firstName: guest.firstName || "",
+    lastName: guest.lastName || "",
+    gender: guest.gender || "",
+    dateOfBirth: guest.dateOfBirth || "",
+    placeOfBirth: guest.placeOfBirth || "",
+    citizenship: guest.citizenship || "",
+    documentType: guest.documentType || "",
+    documentNumber: guest.documentNumber || "",
+    documentIssuingCountry: guest.documentIssuingCountry || "",
+    documentExpiryDate: guest.documentExpiryDate || ""
+  })),
+  documents: (submission.documents || []).map(publicDocument),
+  deletion: {
+    documentsDeletedAt: submission.documentsDeletedAt || "",
+    personalDataDeletedAt: submission.personalDataDeletedAt || "",
+    resetAt: submission.resetAt || ""
+  }
+});
+
+const csvCell = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+const exportToCsv = (exportData) => {
+  const columns = [
+    "reservation_uid",
+    "reservation_code",
+    "arrival_date",
+    "departure_date",
+    "guest_id",
+    "age_category",
+    "guest_type",
+    "relationship_role",
+    "responsible_guest_id",
+    "first_name",
+    "last_name",
+    "gender",
+    "date_of_birth",
+    "place_of_birth",
+    "citizenship",
+    "document_available",
+    "document_type",
+    "document_number",
+    "document_issuing_country",
+    "document_expiry_date",
+    "document_count_for_guest"
+  ];
+  const documentCounts = new Map();
+  for (const doc of exportData.documents) documentCounts.set(doc.guestId, (documentCounts.get(doc.guestId) || 0) + 1);
+  const rows = exportData.guests.map((guest) =>
+    [
+      exportData.reservation.uid,
+      exportData.reservation.reservationCode,
+      exportData.submission.arrivalDate,
+      exportData.submission.departureDate,
+      guest.id,
+      guest.ageCategory,
+      guest.guestType,
+      guest.relationshipRole,
+      guest.responsibleGuestId,
+      guest.firstName,
+      guest.lastName,
+      guest.gender,
+      guest.dateOfBirth,
+      guest.placeOfBirth,
+      guest.citizenship,
+      guest.documentAvailable ? "yes" : "no",
+      guest.documentType,
+      guest.documentNumber,
+      guest.documentIssuingCountry,
+      guest.documentExpiryDate,
+      documentCounts.get(guest.id) || 0
+    ].map(csvCell).join(",")
+  );
+  return [columns.join(","), ...rows].join("\n");
+};
+
 const listReservations = async (storage) => {
   const reservations = (await storage.listJson("checkins/reservations/")).filter(Boolean);
   const tokens = (await storage.listJson("checkins/tokens/")).filter(Boolean);
   const submissions = (await storage.listJson("checkins/submissions/")).filter(Boolean);
-  const tokenByUid = new Map(tokens.map((entry) => [entry.reservationUid, entry]));
+  const tokenByUid = new Map(activeTokens(tokens).map((entry) => [entry.reservationUid, entry]));
   const submissionByToken = new Map(submissions.filter((entry) => entry.token).map((entry) => [entry.token, entry]));
   return reservations
     .map((reservation) => {
@@ -298,10 +435,24 @@ const createToken = async (request, env, storage, identity) => {
   const { uid } = await request.json();
   const reservation = await storage.getJson(keys.reservation(uid));
   if (!reservation || reservation.type !== "reservation") return json({ error: "Reservation not found" }, { status: 404 });
+  const existingToken = await activeTokenForReservation(storage, uid);
+  if (existingToken) {
+    const link = linkForToken(request, env, existingToken.token);
+    const language = normalizeLanguage(reservation.preferredLanguage || existingToken.language || "en");
+    return json({
+      token: existingToken.token,
+      tokenStatus: existingToken.status || "created",
+      expiresAt: existingToken.expiresAt || "",
+      link,
+      language,
+      existing: true,
+      message: makeMessage({ ...reservation, preferredLanguage: language }, link)
+    });
+  }
   const token = randomToken("vl");
   const now = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 45).toISOString();
-  const link = `${siteUrl(request, env).replace(/\/$/, "")}/checkin?token=${encodeURIComponent(token)}`;
+  const link = linkForToken(request, env, token);
   const language = normalizeLanguage(reservation.preferredLanguage || "en");
   const record = {
     token,
@@ -327,6 +478,46 @@ const createToken = async (request, env, storage, identity) => {
   });
   await storage.audit({ type: "token_created", actor: identity.email, reservationUid: uid, tokenId: token.slice(0, 10) });
   return json({ token, tokenStatus: "created", expiresAt, link, language, message: makeMessage({ ...reservation, preferredLanguage: language }, link) });
+};
+
+const regenerateToken = async (request, env, storage, identity) => {
+  const { uid } = await request.json();
+  const reservation = await storage.getJson(keys.reservation(uid));
+  if (!reservation || reservation.type !== "reservation") return json({ error: "Reservation not found" }, { status: 404 });
+  const now = new Date().toISOString();
+  const existingTokens = activeTokens((await storage.listJson("checkins/tokens/")).filter(Boolean)).filter((entry) => entry.reservationUid === uid);
+  for (const existingToken of existingTokens) {
+    await storage.putJson(keys.token(existingToken.token), { ...existingToken, status: "disabled", disabledAt: now, replacedAt: now });
+  }
+  const token = randomToken("vl");
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 45).toISOString();
+  const link = linkForToken(request, env, token);
+  const language = normalizeLanguage(reservation.preferredLanguage || "en");
+  const record = {
+    token,
+    reservationUid: uid,
+    checkIn: reservation.checkIn || "",
+    checkOut: reservation.checkOut || "",
+    nights: reservation.nights || 0,
+    language,
+    source: reservation.source || "",
+    adults: reservation.adults || reservation.numberOfGuests || 1,
+    minors: reservation.minors || 0,
+    infants: reservation.infants || 0,
+    status: "created",
+    createdAt: now,
+    expiresAt
+  };
+  await storage.putJson(keys.token(token), record);
+  await storage.putJson(keys.reservation(uid), {
+    ...reservation,
+    status: "waiting_for_guest",
+    tokenCreatedAt: now,
+    tokenRegeneratedAt: now,
+    updatedAt: now
+  });
+  await storage.audit({ type: "token_regenerated", actor: identity.email, reservationUid: uid, tokenId: token.slice(0, 10), details: { disabled: existingTokens.length } });
+  return json({ token, tokenStatus: "created", expiresAt, link, language, disabledPreviousTokens: existingTokens.length, message: makeMessage({ ...reservation, preferredLanguage: language }, link) });
 };
 
 const getPublicToken = async (request, storage) => {
@@ -519,8 +710,69 @@ const submitCheckin = async (request, storage) => {
   if (reservation) {
     await storage.putJson(keys.reservation(record.reservationUid), { ...reservation, status: "pending_review", submittedAt: now, updatedAt: now });
   }
+  await queueNotification(storage, {
+    type: "checkin_submitted",
+    reservationUid: record.reservationUid,
+    source: reservation?.source || record.source || "",
+    reservationCode: reservation?.reservationCode || "",
+    checkIn: reservation?.checkIn || record.checkIn || submission.arrivalDate || "",
+    checkOut: reservation?.checkOut || record.checkOut || submission.departureDate || "",
+    numberOfGuests: submission.numberOfGuests || 0,
+    adults: submission.adults || 0,
+    minors: submission.minors || 0,
+    infants: submission.infants || 0,
+    submittedAt: now,
+    adminPath: "/admin"
+  });
   await storage.audit({ type: "checkin_submitted", actor: "guest", reservationUid: record.reservationUid, tokenId: token.slice(0, 10) });
   return json({ ok: true, message: "Check-in submitted securely. Thank you." });
+};
+
+const queueNotification = async (storage, event) => {
+  const now = new Date().toISOString();
+  const id = randomId();
+  const date = now.slice(0, 10);
+  await storage.putJson(keys.notification(date, id), {
+    id,
+    type: event.type,
+    createdAt: now,
+    status: "unread",
+    reservationUid: event.reservationUid || "",
+    source: event.source || "",
+    reservationCode: event.reservationCode || "",
+    checkIn: event.checkIn || "",
+    checkOut: event.checkOut || "",
+    numberOfGuests: event.numberOfGuests || 0,
+    adults: event.adults || 0,
+    minors: event.minors || 0,
+    infants: event.infants || 0,
+    submittedAt: event.submittedAt || now,
+    adminPath: event.adminPath || "/admin"
+  });
+};
+
+const listNotifications = async (storage) => {
+  const notifications = (await storage.listJson("checkins/notifications/")).filter(Boolean);
+  return notifications
+    .map((notification) => ({
+      id: notification.id || "",
+      type: notification.type || "",
+      createdAt: notification.createdAt || "",
+      status: notification.status || "",
+      reservationUid: notification.reservationUid || "",
+      source: notification.source || "",
+      reservationCode: notification.reservationCode || "",
+      checkIn: notification.checkIn || "",
+      checkOut: notification.checkOut || "",
+      numberOfGuests: notification.numberOfGuests || 0,
+      adults: notification.adults || 0,
+      minors: notification.minors || 0,
+      infants: notification.infants || 0,
+      submittedAt: notification.submittedAt || "",
+      adminPath: notification.adminPath || "/admin"
+    }))
+    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
+    .slice(0, 50);
 };
 
 const getSubmission = async (request, storage) => {
@@ -528,6 +780,29 @@ const getSubmission = async (request, storage) => {
   const submission = await storage.getJson(keys.submission(token));
   if (!submission) return json({ error: "Submission not found" }, { status: 404 });
   return json({ submission });
+};
+
+const exportSubmission = async (request, storage) => {
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token") || "";
+  const format = (url.searchParams.get("format") || "json").toLowerCase();
+  const submission = await storage.getJson(keys.submission(token));
+  if (!submission) return json({ error: "Submission not found" }, { status: 404 });
+  const reservation = await storage.getJson(keys.reservation(submission.reservationUid));
+  const exportData = manualReviewExport(submission, reservation || {});
+  if (format === "csv") {
+    return text(exportToCsv(exportData), {
+      headers: {
+        "content-type": "text/csv; charset=utf-8",
+        "content-disposition": `attachment; filename="villa-laura-checkin-${sanitizeFilename(submission.reservationUid || "submission")}.csv"`
+      }
+    });
+  }
+  return json(exportData, {
+    headers: {
+      "content-disposition": `attachment; filename="villa-laura-checkin-${sanitizeFilename(submission.reservationUid || "submission")}.json"`
+    }
+  });
 };
 
 const getDocument = async (request, storage, identity) => {
@@ -681,8 +956,11 @@ const handleAdmin = async (context, path, storage) => {
   if (path === "/admin/sync" && request.method === "POST") return syncIcal(request, env, storage, auth.identity);
   if (path === "/admin/reservations" && request.method === "GET") return json({ reservations: await listReservations(storage) });
   if (path === "/admin/reservations" && request.method === "PATCH") return updateReservation(request, storage, auth.identity);
+  if (path === "/admin/notifications" && request.method === "GET") return json({ notifications: await listNotifications(storage) });
   if (path === "/admin/token" && request.method === "POST") return createToken(request, env, storage, auth.identity);
+  if (path === "/admin/token/regenerate" && request.method === "POST") return regenerateToken(request, env, storage, auth.identity);
   if (path === "/admin/submission" && request.method === "GET") return getSubmission(request, storage);
+  if (path === "/admin/export" && request.method === "GET") return exportSubmission(request, storage);
   if (path === "/admin/document" && request.method === "GET") return getDocument(request, storage, auth.identity);
   if (path === "/admin/documents/delete" && request.method === "POST") return deleteDocuments(request, storage, auth.identity);
   if (path === "/admin/submission/redact" && request.method === "POST") return redactSubmissionData(request, storage, auth.identity);

@@ -128,6 +128,7 @@ button:disabled,
 .is-disabled {
   cursor: not-allowed;
   opacity: 0.55;
+  pointer-events: none;
 }
 
 .actions {
@@ -159,6 +160,51 @@ button:disabled,
 
 .data-management h4 {
   margin: 0 0 0.5rem;
+}
+
+.workflow ol {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  padding-left: 0;
+  list-style: none;
+}
+
+.workflow li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.workflow li span {
+  flex: 0 0 auto;
+  width: 3.2rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.workflow li.done span {
+  color: var(--ok);
+}
+
+.review-panel,
+.notification {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.guest-review {
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
 }
 
 .summary-list {

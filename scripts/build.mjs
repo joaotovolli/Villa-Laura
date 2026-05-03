@@ -1497,7 +1497,7 @@ const renderCheckinShell = ({ title, script }) => `<!doctype html>
         <section class="panel"><p>Loading...</p></section>
       </div>
     </main>
-    <script type="module" src="../assets/${script}?v=admin-edge-access-20260503"></script>
+    <script type="module" src="../assets/${script}?v=admin-workflow-20260503"></script>
   </body>
 </html>`;
 
