@@ -1,4 +1,4 @@
-import { getCheckinText, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-api-access-20260503";
+import { getCheckinText, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-edge-access-20260503";
 
 const params = new URLSearchParams(location.search);
 const state = {

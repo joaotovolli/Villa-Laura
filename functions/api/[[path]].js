@@ -65,9 +65,7 @@ const edgeProtectedAdminIdentity = (request, env) => {
   if (env.APP_ENV !== "production") return null;
   if (!env.CF_ACCESS_TEAM_DOMAIN && !env.CF_ACCESS_AUD) return null;
   if (!sameOriginAdminRequest(request)) return null;
-  const cookies = cookieMap(request);
-  if (!cookies.CF_Authorization) return null;
-  return { email: "cloudflare-access-edge", method: "cloudflare_access_edge_cookie" };
+  return { email: "cloudflare-access-edge", method: "cloudflare_access_edge_protected" };
 };
 
 const getAdminIdentity = async (request, env) => {
@@ -650,7 +648,7 @@ const handleAdmin = async (context, path, storage) => {
     const identity = await getAdminIdentity(request, env);
     return json({
       authenticated: Boolean(identity),
-      identity,
+      identity: identity ? { method: identity.method } : null,
       passwordFallbackEnabled: passwordFallbackEnabled(env)
     });
   }
@@ -677,6 +675,9 @@ const handleAdmin = async (context, path, storage) => {
 
   const auth = await requireAdmin(request, env);
   if (auth.response) return auth.response;
+  if (path === "/admin/health" && request.method === "GET") {
+    return json({ ok: true, storage: "available", accessMode: auth.identity.method || "edge-protected" });
+  }
   if (path === "/admin/sync" && request.method === "POST") return syncIcal(request, env, storage, auth.identity);
   if (path === "/admin/reservations" && request.method === "GET") return json({ reservations: await listReservations(storage) });
   if (path === "/admin/reservations" && request.method === "PATCH") return updateReservation(request, storage, auth.identity);

@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-api-access-20260503";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-api-access-20260503";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-edge-access-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-edge-access-20260503";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
