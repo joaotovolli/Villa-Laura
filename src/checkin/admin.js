@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=data-management-20260503";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=data-management-20260503";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=checkin-draft-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=checkin-draft-20260503";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -56,7 +56,8 @@ const statusOptions = [
   "rejected",
   "submitted_to_alloggiati",
   "submitted_to_ross1000",
-  "documents_deleted"
+  "documents_deleted",
+  "data_redacted"
 ];
 
 const languageOptions = Object.entries(languageLabels)
@@ -87,6 +88,7 @@ const documentStatusFor = (reservation) => {
 
 const dataManagementSection = (reservation, checkinLink) => {
   const hasSubmission = Boolean(reservation.checkinSubmitted);
+  const hasDraft = Boolean(reservation.draftSaved);
   const canReset = Boolean(checkinLink || reservation.token);
   const submittedSummary = hasSubmission
     ? `<dl class="summary-list">
@@ -98,9 +100,12 @@ const dataManagementSection = (reservation, checkinLink) => {
         <div><dt>Document status</dt><dd>${documentStatusFor(reservation)}</dd></div>
       </dl>`
     : `<dl class="summary-list">
-        <div><dt>Submission status</dt><dd>Not submitted yet</dd></div>
-        <div><dt>Documents</dt><dd>No documents uploaded yet</dd></div>
-        <div><dt>Guest data</dt><dd>No guest data submitted yet</dd></div>
+        <div><dt>Submission status</dt><dd>${hasDraft ? "Draft saved" : "Not submitted yet"}</dd></div>
+        ${hasDraft ? `<div><dt>Draft saved at</dt><dd>${escapeHtml(reservation.draftSavedAt || "")}</dd></div>` : ""}
+        ${hasDraft ? `<div><dt>Guests started</dt><dd>${reservation.submittedGuests || 0}</dd></div>` : ""}
+        ${hasDraft ? `<div><dt>Document count</dt><dd>${reservation.documentCount || 0}</dd></div>` : ""}
+        <div><dt>Documents</dt><dd>${hasDraft ? documentStatusFor(reservation) : "No documents uploaded yet"}</dd></div>
+        <div><dt>Guest data</dt><dd>${hasDraft ? "Draft only, not final submitted" : "No guest data submitted yet"}</dd></div>
       </dl>`;
 
   return `

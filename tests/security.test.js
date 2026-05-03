@@ -13,8 +13,14 @@ test("check-in tokens are opaque and do not contain personal data", () => {
 test("document upload validation accepts only expected MIME and extension pairs", () => {
   assert.equal(allowedDocumentType({ name: "scan.pdf", type: "application/pdf" }), true);
   assert.equal(allowedDocumentType({ name: "scan.jpg", type: "image/jpeg" }), true);
+  assert.equal(allowedDocumentType({ name: "scan.jpeg", type: "image/jpeg" }), true);
+  assert.equal(allowedDocumentType({ name: "scan.JPG", type: "image/jpeg" }), true);
+  assert.equal(allowedDocumentType({ name: "scan.JPEG", type: "image/pjpeg" }), true);
+  assert.equal(allowedDocumentType({ name: "scan with spaces.png", type: "image/png" }), true);
+  assert.equal(allowedDocumentType({ name: "scan-accentue.webp", type: "image/webp" }), true);
   assert.equal(allowedDocumentType({ name: "scan.exe", type: "application/pdf" }), false);
   assert.equal(allowedDocumentType({ name: "scan.pdf", type: "application/octet-stream" }), false);
+  assert.equal(allowedDocumentType({ name: "scan.heic", type: "image/heic" }), false);
   assert.equal(sanitizeFilename("../../passport scan.pdf"), "passport-scan.pdf");
 });
 

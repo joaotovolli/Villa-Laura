@@ -71,13 +71,15 @@ export const sanitizeFilename = (name) => {
 };
 
 export const allowedDocumentType = (file) => {
-  const allowed = new Map([
-    ["application/pdf", ".pdf"],
-    ["image/jpeg", ".jpg"],
-    ["image/png", ".png"],
-    ["image/webp", ".webp"]
-  ]);
   const type = String(file?.type || "").toLowerCase();
   const name = String(file?.name || "").toLowerCase();
-  return allowed.has(type) && name.endsWith(allowed.get(type));
+  const extension = name.match(/\.([a-z0-9]+)$/)?.[1] || "";
+  const allowed = {
+    "application/pdf": new Set(["pdf"]),
+    "image/jpeg": new Set(["jpg", "jpeg"]),
+    "image/pjpeg": new Set(["jpg", "jpeg"]),
+    "image/png": new Set(["png"]),
+    "image/webp": new Set(["webp"])
+  };
+  return Boolean(allowed[type]?.has(extension));
 };

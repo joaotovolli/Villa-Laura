@@ -24,6 +24,8 @@ DESCRIPTION:Owner block
 END:VEVENT
 END:VCALENDAR`;
 
+const fakeToken = (name) => `vl_fake_${name}`;
+
 const adminRequest = (path, env) =>
   onRequest({
     request: new Request(`https://villa-laura.it/api${path}`, {
@@ -77,7 +79,79 @@ const unauthenticatedPost = (path, env, body) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
-const fakeSubmittedCheckin = async (storage, checkinToken = "vl_fake_cleanup_token") => {
+const publicFormPost = (path, env, form) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      method: "POST",
+      body: form
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
+const publicGet = (path, env) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`),
+    env,
+    params: { path: path.split("?")[0].replace(/^\//, "").split("/") }
+  });
+
+const makeDraftForm = (token, overrides = {}) => {
+  const form = new FormData();
+  form.set("token", token);
+  form.set("language", overrides.language || "fr");
+  form.set("arrivalDate", overrides.arrivalDate || "");
+  form.set("departureDate", overrides.departureDate || "");
+  form.set("adults", overrides.adults || "1");
+  form.set("minors", overrides.minors || "0");
+  form.set("infants", overrides.infants || "0");
+  form.set("numberOfGuests", overrides.numberOfGuests || "1");
+  form.set("mainGuestEmail", overrides.mainGuestEmail || "");
+  form.set("mainGuestPhone", overrides.mainGuestPhone || "");
+  form.set("guest_0_ageCategory", "adult");
+  form.set("guest_0_guestType", "single_guest");
+  form.set("guest_0_relationshipRole", "main_guest");
+  form.set("guest_0_documentAvailable", "yes");
+  form.set("guest_0_firstName", overrides.firstName || "");
+  form.set("guest_0_lastName", overrides.lastName || "");
+  form.set("guest_0_dateOfBirth", overrides.dateOfBirth || "");
+  form.set("guest_0_placeOfBirth", overrides.placeOfBirth || "");
+  form.set("guest_0_citizenship", overrides.citizenship || "");
+  form.set("guest_0_gender", overrides.gender || "");
+  form.set("guest_0_documentType", overrides.documentType || "");
+  form.set("guest_0_documentNumber", overrides.documentNumber || "");
+  form.set("guest_0_documentIssuingCountry", overrides.documentIssuingCountry || "");
+  form.set("guest_0_documentExpiryDate", overrides.documentExpiryDate || "");
+  if (overrides.privacyAccepted) form.set("privacyAccepted", "on");
+  if (overrides.file) form.set("guest_0_documentUpload", overrides.file.blob, overrides.file.name);
+  return form;
+};
+
+const createPublicToken = async (storage, token = fakeToken("public_token")) => {
+  await storage.putJson(keys.reservation("public-reservation"), {
+    uid: "public-reservation",
+    type: "reservation",
+    status: "checkin_sent",
+    checkIn: "2026-11-01",
+    checkOut: "2026-11-04",
+    nights: 3,
+    preferredLanguage: "fr",
+    adults: 1,
+    minors: 0,
+    infants: 0
+  });
+  await storage.putJson(keys.token(token), {
+    token,
+    reservationUid: "public-reservation",
+    status: "created",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    expiresAt: "2099-01-01T00:00:00.000Z",
+    language: "fr"
+  });
+  return token;
+};
+
+const fakeSubmittedCheckin = async (storage, checkinToken = fakeToken("cleanup_token")) => {
   await storage.putJson(keys.reservation("cleanup-reservation"), {
     uid: "cleanup-reservation",
     type: "reservation",
@@ -292,7 +366,7 @@ test("admin cleanup deletes documents, redacts personal data, and resets check-i
     assert.equal(redacted.guests[0].documentNumber, undefined);
     assert.equal(redacted.guests[0].personalDataDeleted, true);
 
-    const resetTokenValue = await fakeSubmittedCheckin(storage, "vl_fake_reset_token");
+    const resetTokenValue = await fakeSubmittedCheckin(storage, fakeToken("reset_token"));
     const resetResponse = await adminPost("/admin/checkin/reset", env, { token: resetTokenValue });
     const resetSubmission = await storage.getJson(keys.submission(resetTokenValue));
     const resetRecord = await storage.getJson(keys.token(resetTokenValue));
@@ -310,5 +384,117 @@ test("admin deletion endpoints require authentication", async () => {
   for (const path of ["/admin/documents/delete", "/admin/submission/redact", "/admin/checkin/reset"]) {
     const response = await unauthenticatedPost(path, env, { token: "vl_fake" });
     assert.equal(response.status, 401);
+  }
+});
+
+test("guest draft save accepts partial fields, stores JPEG, and reloads without public document URLs", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const token = await createPublicToken(storage, fakeToken("draft_token"));
+    const form = makeDraftForm(token, {
+      firstName: "Fake",
+      language: "fr",
+      file: { blob: new Blob(["fake-jpeg"], { type: "image/jpeg" }), name: "Photo Test.JPEG" }
+    });
+
+    const response = await publicFormPost("/checkin/draft", env, form);
+    const body = await response.json();
+    const saved = await storage.getJson(keys.submission(token));
+    const tokenRecord = await storage.getJson(keys.token(token));
+    const reloadResponse = await publicGet(`/checkin/token?token=${encodeURIComponent(token)}`, env);
+    const reload = await reloadResponse.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.status, "draft_saved");
+    assert.equal(saved.status, "draft_saved");
+    assert.equal(saved.privacyAccepted, false);
+    assert.equal(saved.guests[0].firstName, "Fake");
+    assert.equal(saved.documents.length, 1);
+    assert.equal(saved.documents[0].originalName, "Photo-Test.JPEG");
+    assert.equal(tokenRecord.status, "draft_saved");
+    assert.equal(reload.draft.status, "draft_saved");
+    assert.equal(reload.draft.language, "fr");
+    assert.equal(reload.draft.documents[0].originalName, "Photo-Test.JPEG");
+    assert.equal(JSON.stringify(reload).includes("checkins/submissions"), false);
+    assert.equal(JSON.stringify(reload).includes("filename"), false);
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("guest draft save preserves text when invalid document is skipped", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const token = await createPublicToken(storage, fakeToken("invalid_draft_token"));
+    const response = await publicFormPost(
+      "/checkin/draft",
+      env,
+      makeDraftForm(token, {
+        firstName: "Draft",
+        file: { blob: new Blob(["bad"], { type: "text/plain" }), name: "notes.txt" }
+      })
+    );
+    const body = await response.json();
+    const saved = await storage.getJson(keys.submission(token));
+
+    assert.equal(response.status, 200);
+    assert.equal(body.warnings[0].code, "invalid_document");
+    assert.equal(saved.guests[0].firstName, "Draft");
+    assert.equal(saved.documents.length, 0);
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("final submit remains strict but can reuse draft document", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const token = await createPublicToken(storage, fakeToken("final_token"));
+    const validFields = {
+      arrivalDate: "2026-11-01",
+      departureDate: "2026-11-04",
+      mainGuestEmail: "fake@example.test",
+      mainGuestPhone: "+390000000000",
+      firstName: "Fake",
+      lastName: "Guest",
+      dateOfBirth: "1990-01-01",
+      placeOfBirth: "Test City",
+      citizenship: "Testland",
+      gender: "Other",
+      documentType: "Passport",
+      documentNumber: "FAKE123",
+      documentIssuingCountry: "Testland"
+    };
+
+    const noPrivacy = await publicFormPost("/checkin/submit", env, makeDraftForm(token, validFields));
+    assert.equal(noPrivacy.status, 400);
+
+    await publicFormPost(
+      "/checkin/draft",
+      env,
+      makeDraftForm(token, {
+        ...validFields,
+        file: { blob: new Blob(["fake-jpg"], { type: "image/jpeg" }), name: "adult.JPG" }
+      })
+    );
+    const finalResponse = await publicFormPost("/checkin/submit", env, makeDraftForm(token, { ...validFields, privacyAccepted: true }));
+    const finalSubmission = await storage.getJson(keys.submission(token));
+    const reservation = await storage.getJson(keys.reservation("public-reservation"));
+
+    assert.equal(finalResponse.status, 200);
+    assert.equal(finalSubmission.status, "pending_review");
+    assert.equal(finalSubmission.documents.length, 1);
+    assert.equal(reservation.status, "pending_review");
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
   }
 });

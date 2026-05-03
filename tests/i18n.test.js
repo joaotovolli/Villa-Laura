@@ -19,6 +19,10 @@ test("localized message templates support required languages with English fallba
 test("check-in text supports French and English fallback", () => {
   assert.equal(getCheckinText("fr").firstName, "Prenom");
   assert.equal(getCheckinText("fr").submit, "Envoyer le check-in securise");
+  assert.equal(getCheckinText("fr").saveDraft, "Enregistrer le brouillon");
+  assert.equal(getCheckinText("fr").documentUpload, "Importer le document");
+  assert.equal(getCheckinText("fr").uploadError, "Ce type de fichier n'est pas accepte. Veuillez importer un PDF, JPG, JPEG, PNG ou WebP.");
+  assert.equal(getCheckinText("fr").privacy.includes("politique de confidentialite"), true);
   assert.equal(getCheckinText("de").firstName, "Vorname");
   assert.equal(getCheckinText("es").firstName, "Nombre");
   assert.equal(getCheckinText("xx").invalidLink, "Invalid link");
