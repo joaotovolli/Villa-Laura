@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-access-recovery-20260503";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-access-recovery-20260503";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-api-access-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-api-access-20260503";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -7,18 +7,22 @@ const state = { reservations: [], session: null, syncStatus: "" };
 const api = async (path, options = {}) => {
   const response = await fetch(path, {
     ...options,
+    credentials: "include",
     headers: options.body instanceof FormData ? options.headers : { "content-type": "application/json", ...(options.headers || {}) }
   });
   const contentType = response.headers.get("content-type") || "";
+  const detail = `HTTP ${response.status} · ${contentType.includes("application/json") ? "JSON response" : "non-JSON response"} · ${
+    contentType.includes("text/html") ? "looks like Cloudflare Access HTML" : "not Cloudflare Access HTML"
+  }`;
   if (!contentType.includes("application/json")) {
-    throw new Error("Admin API access denied. Please log out and log in again through Cloudflare Access.");
+    throw new Error(`Admin API request failed. Please log out through Cloudflare Access and log in again. ${detail}`);
   }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(
       response.status === 401 || response.status === 403
-        ? "Admin API access denied. Please log out and log in again through Cloudflare Access."
-        : body.error || "Request failed"
+        ? `Admin API request failed. Please log out through Cloudflare Access and log in again. ${detail}`
+        : body.error || `Request failed. ${detail}`
     );
     error.diagnostics = body.diagnostics;
     throw error;
@@ -47,7 +51,7 @@ const diagnosticMessage = (diagnostics = {}) =>
     `storage readback: ${diagnostics.storageReadbackSuccess ? "yes" : "no"}`
   ].join(" · ");
 
-const adminApiDenied = (message = "Admin API access denied. Please log out and log in again through Cloudflare Access.") => {
+const adminApiDenied = (message = "Admin API request failed. Please log out through Cloudflare Access and log in again.") => {
   app.innerHTML = `
     <section class="panel stack">
       <h2>Admin API access denied</h2>

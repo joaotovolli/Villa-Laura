@@ -79,6 +79,31 @@ const unauthenticatedPost = (path, env, body) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const edgeCookieGet = (path, env) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      headers: {
+        cookie: "CF_Authorization=fake-edge-cookie",
+        "sec-fetch-site": "same-origin"
+      }
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
+const crossOriginEdgeCookieGet = (path, env) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      headers: {
+        cookie: "CF_Authorization=fake-edge-cookie",
+        origin: "https://example.invalid",
+        "sec-fetch-site": "cross-site"
+      }
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
 const publicFormPost = (path, env, form) =>
   onRequest({
     request: new Request(`https://villa-laura.it/api${path}`, {
@@ -385,6 +410,27 @@ test("admin deletion endpoints require authentication", async () => {
     const response = await unauthenticatedPost(path, env, { token: "vl_fake" });
     assert.equal(response.status, 401);
   }
+});
+
+test("admin API can trust Cloudflare Access edge cookie for same-origin protected requests", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com",
+    CF_ACCESS_TEAM_DOMAIN: "team.example",
+    CF_ACCESS_AUD: "audience"
+  };
+
+  const sameOrigin = await edgeCookieGet("/admin/reservations", env);
+  const crossOrigin = await crossOriginEdgeCookieGet("/admin/reservations", env);
+  const noCookie = await onRequest({
+    request: new Request("https://villa-laura.it/api/admin/reservations"),
+    env,
+    params: { path: ["admin", "reservations"] }
+  });
+
+  assert.equal(sameOrigin.status, 200);
+  assert.equal(crossOrigin.status, 401);
+  assert.equal(noCookie.status, 401);
 });
 
 test("guest draft save accepts partial fields, stores JPEG, and reloads without public document URLs", async () => {
