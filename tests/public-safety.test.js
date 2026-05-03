@@ -53,10 +53,25 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
   assert.equal(adminBundle.includes("Copy check-in link"), true);
   assert.equal(adminBundle.includes("Use fake documents for testing."), true);
+  assert.equal(adminBundle.includes("Check-in data management"), true);
+  assert.equal(adminBundle.includes("Submission status"), true);
+  assert.equal(adminBundle.includes("Not submitted yet"), true);
+  assert.equal(adminBundle.includes("No documents uploaded yet"), true);
+  assert.equal(adminBundle.includes("No guest data submitted yet"), true);
+  assert.equal(adminBundle.includes("Check-in link created: yes"), true);
+  assert.equal(adminBundle.includes("Check-in link created: no"), true);
+  assert.equal(adminBundle.includes("View submitted check-in"), true);
+  assert.equal(adminBundle.includes("View/download documents"), true);
   assert.equal(adminBundle.includes("Delete uploaded documents"), true);
   assert.equal(adminBundle.includes("Delete/redact guest data"), true);
   assert.equal(adminBundle.includes("Reset check-in"), true);
+  assert.equal(adminBundle.includes("Delete uploaded documents removes files from private R2 storage."), true);
+  assert.equal(adminBundle.includes("Delete/redact guest data removes submitted personal details but keeps safe operational metadata."), true);
+  assert.equal(adminBundle.includes("Reset check-in prepares this reservation for another test or new submission."), true);
+  assert.equal(adminBundle.includes("Fake test checklist"), true);
   assert.equal(adminBundle.includes("Delete uploaded documents for this reservation? This cannot be undone."), true);
+  assert.equal(adminBundle.includes(`/api/admin/document?${"token"}=`), true);
+  assert.equal(adminBundle.includes("https://villa-laura-checkins"), false);
   assert.equal(adminBundle.includes("Open WhatsApp Web"), true);
   assert.equal(adminBundle.includes("web.whatsapp.com/send"), true);
   assert.equal(adminBundle.includes("wa.me"), false);
@@ -71,6 +86,20 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(i18nBundle.includes("Nombre"), true);
   assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("adult-count"), true);
   assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("responsibleGuestId"), true);
+});
+
+test("blocked date renderer does not expose check-in data controls", () => {
+  const source = readText(path.join(root, "src", "checkin", "admin.js"));
+  const blockedStart = source.indexOf("const blockedRow");
+  const renderStart = source.indexOf("const render", blockedStart);
+  const blockedRenderer = source.slice(blockedStart, renderStart);
+
+  assert.equal(blockedRenderer.includes("Check-in data management"), false);
+  assert.equal(blockedRenderer.includes("Delete uploaded documents"), false);
+  assert.equal(blockedRenderer.includes("Delete/redact guest data"), false);
+  assert.equal(blockedRenderer.includes("Reset check-in"), false);
+  assert.equal(blockedRenderer.includes("Copy Airbnb message"), false);
+  assert.equal(blockedRenderer.includes("Open WhatsApp Web"), false);
 });
 
 test("public repository text does not contain private admin address pattern", () => {

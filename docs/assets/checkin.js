@@ -1,4 +1,4 @@
-import { getCheckinText, normalizeLanguage } from "./i18n.js?v=delete-test-data-20260502";
+import { getCheckinText, normalizeLanguage } from "./i18n.js?v=data-management-20260503";
 
 const params = new URLSearchParams(location.search);
 const state = {
