@@ -447,6 +447,41 @@ test("admin API can trust Cloudflare Access edge protection for same-origin prot
   assert.equal(sameOriginNoCookie.status, 200);
 });
 
+test("R2-style listJson ignores uploaded document objects under submission prefix", async () => {
+  const objects = new Map([
+    [keys.submission("vl_fake_r2"), { token: "vl_fake_r2", reservationUid: "r2-reservation", status: "pending_review" }],
+    [keys.document("vl_fake_r2", "guest-1", "fake.jpg"), "not-json-document-bytes"]
+  ]);
+  const storage = new CheckinStorage({
+    VILLA_LAURA_CHECKINS: {
+      async list({ prefix }) {
+        return { objects: Array.from(objects.keys()).filter((key) => key.startsWith(prefix)).map((key) => ({ key })) };
+      },
+      async get(key) {
+        const value = objects.get(key);
+        if (!key.endsWith(".json")) {
+          return {
+            async json() {
+              throw new Error("document object should not be parsed as json");
+            }
+          };
+        }
+        return value
+          ? {
+              async json() {
+                return value;
+              }
+            }
+          : null;
+      }
+    }
+  });
+
+  const submissions = await storage.listJson("checkins/submissions/");
+  assert.equal(submissions.length, 1);
+  assert.equal(submissions[0].token, "vl_fake_r2");
+});
+
 test("guest draft save accepts partial fields, stores JPEG, and reloads without public document URLs", async () => {
   const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
   const storage = new CheckinStorage(env);

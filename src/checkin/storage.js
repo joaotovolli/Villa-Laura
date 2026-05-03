@@ -90,7 +90,8 @@ export class CheckinStorage {
   async listJson(prefix) {
     if (this.bucket) {
       const list = await this.bucket.list({ prefix });
-      return Promise.all(list.objects.map((object) => this.getJson(object.key)));
+      const jsonObjects = list.objects.filter((object) => object.key.endsWith(".json"));
+      return Promise.all(jsonObjects.map((object) => this.getJson(object.key)));
     }
     const { fs, path } = await localFs();
     const dir = path.join(process.cwd(), localRoot, prefix);
