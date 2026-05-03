@@ -52,9 +52,29 @@ const cookieMap = (request) =>
       .filter(([key, value]) => key && value)
   );
 
+const sameOriginAdminRequest = (request) => {
+  const url = new URL(request.url);
+  const origin = request.headers.get("origin");
+  const secFetchSite = request.headers.get("sec-fetch-site");
+  if (origin && origin !== url.origin) return false;
+  if (secFetchSite && !["same-origin", "none"].includes(secFetchSite)) return false;
+  return true;
+};
+
+const edgeProtectedAdminIdentity = (request, env) => {
+  if (env.APP_ENV !== "production") return null;
+  if (!env.CF_ACCESS_TEAM_DOMAIN && !env.CF_ACCESS_AUD) return null;
+  if (!sameOriginAdminRequest(request)) return null;
+  const cookies = cookieMap(request);
+  if (!cookies.CF_Authorization) return null;
+  return { email: "cloudflare-access-edge", method: "cloudflare_access_edge_cookie" };
+};
+
 const getAdminIdentity = async (request, env) => {
   const accessIdentity = await getCloudflareAccessIdentity(request, env);
   if (accessIdentity) return accessIdentity;
+  const edgeIdentity = edgeProtectedAdminIdentity(request, env);
+  if (edgeIdentity) return edgeIdentity;
 
   if (!passwordFallbackEnabled(env)) return null;
 

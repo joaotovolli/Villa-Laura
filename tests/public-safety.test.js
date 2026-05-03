@@ -30,7 +30,12 @@ test("production admin bundle does not contain password form text", () => {
 
   assert.equal(adminBundle.includes("Admin login"), false);
   assert.equal(adminBundle.includes("This admin area is protected by Cloudflare Access. Open it through the approved admin email account."), false);
-  assert.equal(adminBundle.includes("Admin API access denied. Please log out and log in again through Cloudflare Access."), true);
+  assert.equal(adminBundle.includes("credentials: \"include\""), true);
+  assert.equal(adminBundle.includes("villa-laura-btk.pages.dev"), false);
+  assert.equal(adminBundle.includes("pages.dev/api/admin"), false);
+  assert.equal(adminBundle.includes("Admin API request failed. Please log out through Cloudflare Access and log in again."), true);
+  assert.equal(adminBundle.includes("HTTP "), true);
+  assert.equal(adminBundle.includes("JSON response"), true);
   assert.equal(adminBundle.includes("Log out through Cloudflare Access"), true);
   assert.equal(/<input[^>]+password/i.test(adminBundle), false);
   assert.equal(adminBundle.toLowerCase().includes("password fallback"), false);
