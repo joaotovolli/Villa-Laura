@@ -65,8 +65,14 @@ export const checkinText = {
     documentUpload: "Document upload",
     privacy: "I confirm this information is accurate and accept the privacy notice.",
     privacyNotice:
-      "Identity document data is used only for required accommodation registration and operational check-in. Uploaded documents are private and deleted after processing or the applicable retention period.",
+      "Identity data and documents are used only for mandatory accommodation registration and operational check-in. Documents remain private and are deleted after processing or according to the applicable retention period.",
     submit: "Submit secure check-in",
+    saveDraft: "Save progress",
+    draftSaving: "Saving progress...",
+    draftSaved: "Progress saved. You can return to this link later to complete the check-in.",
+    draftDocumentWarning: "Progress saved, but one or more documents were not saved. This file type is not accepted. Please upload PDF, JPG, JPEG, PNG or WebP.",
+    documentUploaded: "Document uploaded",
+    language: "Language",
     submitting: "Submitting...",
     thankYou: "Thank you",
     success: "Check-in submitted securely. Thank you.",
@@ -74,7 +80,8 @@ export const checkinText = {
     missingToken: "Missing check-in token.",
     unavailable: "Check-in unavailable",
     genericError: "Please check the required fields",
-    uploadError: "Invalid document upload"
+    uploadError: "This file type is not accepted. Please upload PDF, JPG, JPEG, PNG or WebP.",
+    heicError: "HEIC/HEIF files are not accepted. Please upload PDF, JPG, JPEG, PNG or WebP."
   },
   fr: {
     title: "Check-in securise",
@@ -104,10 +111,16 @@ export const checkinText = {
     documentIssuingCountry: "Pays/lieu de delivrance",
     documentExpiryDate: "Date d'expiration du document",
     documentUpload: "Importer le document",
-    privacy: "Je confirme que ces informations sont exactes et j'accepte la notice de confidentialite.",
+    privacy: "Je confirme que ces informations sont exactes et j'accepte la politique de confidentialite.",
     privacyNotice:
-      "Les donnees des documents d'identite sont utilisees uniquement pour l'enregistrement obligatoire de l'hebergement et le check-in operationnel. Les documents importes restent prives et sont supprimes apres traitement ou selon la periode de conservation applicable.",
+      "Les donnees et documents d'identite sont utilises uniquement pour l'enregistrement obligatoire de l'hebergement et la gestion du check-in. Les documents restent prives et sont supprimes apres traitement ou selon la periode de conservation applicable.",
     submit: "Envoyer le check-in securise",
+    saveDraft: "Enregistrer le brouillon",
+    draftSaving: "Enregistrement du brouillon...",
+    draftSaved: "Brouillon enregistre. Vous pouvez revenir a ce lien plus tard pour terminer le check-in.",
+    draftDocumentWarning: "Brouillon enregistre, mais un ou plusieurs documents n'ont pas ete sauvegardes. Ce type de fichier n'est pas accepte. Veuillez importer un PDF, JPG, JPEG, PNG ou WebP.",
+    documentUploaded: "Document importe",
+    language: "Langue",
     submitting: "Envoi en cours...",
     thankYou: "Merci",
     success: "Check-in envoye de maniere securisee. Merci.",
@@ -115,7 +128,8 @@ export const checkinText = {
     missingToken: "Jeton de check-in manquant.",
     unavailable: "Check-in indisponible",
     genericError: "Veuillez verifier les champs obligatoires",
-    uploadError: "Document importe invalide"
+    uploadError: "Ce type de fichier n'est pas accepte. Veuillez importer un PDF, JPG, JPEG, PNG ou WebP.",
+    heicError: "Les fichiers HEIC/HEIF ne sont pas acceptes. Veuillez importer un PDF, JPG, JPEG, PNG ou WebP."
   },
   it: {
     title: "Check-in sicuro",
@@ -149,6 +163,12 @@ export const checkinText = {
     privacyNotice:
       "I dati dei documenti di identita sono usati solo per la registrazione obbligatoria degli ospiti e per il check-in operativo. I documenti caricati sono privati e vengono eliminati dopo l'elaborazione o secondo il periodo di conservazione applicabile.",
     submit: "Invia check-in sicuro",
+    saveDraft: "Salva bozza",
+    draftSaving: "Salvataggio bozza...",
+    draftSaved: "Bozza salvata. Puoi tornare a questo link piu tardi per completare il check-in.",
+    draftDocumentWarning: "Bozza salvata, ma uno o piu documenti non sono stati salvati. Questo tipo di file non e accettato. Carica PDF, JPG, JPEG, PNG o WebP.",
+    documentUploaded: "Documento caricato",
+    language: "Lingua",
     submitting: "Invio in corso...",
     thankYou: "Grazie",
     success: "Check-in inviato in modo sicuro. Grazie.",
@@ -156,7 +176,8 @@ export const checkinText = {
     missingToken: "Token check-in mancante.",
     unavailable: "Check-in non disponibile",
     genericError: "Controlla i campi obbligatori",
-    uploadError: "Documento caricato non valido"
+    uploadError: "Questo tipo di file non e accettato. Carica PDF, JPG, JPEG, PNG o WebP.",
+    heicError: "I file HEIC/HEIF non sono accettati. Carica PDF, JPG, JPEG, PNG o WebP."
   },
   pt: {
     title: "Check-in seguro",
@@ -190,6 +211,12 @@ export const checkinText = {
     privacyNotice:
       "Os dados dos documentos de identidade sao usados apenas para o registo obrigatorio do alojamento e para o check-in operacional. Os documentos enviados sao privados e eliminados apos o processamento ou de acordo com o periodo de retencao aplicavel.",
     submit: "Enviar check-in seguro",
+    saveDraft: "Salvar rascunho",
+    draftSaving: "A guardar rascunho...",
+    draftSaved: "Progresso guardado. Pode voltar a este link mais tarde para concluir o check-in.",
+    draftDocumentWarning: "Progresso guardado, mas um ou mais documentos nao foram guardados. Este tipo de ficheiro nao e aceite. Envie PDF, JPG, JPEG, PNG ou WebP.",
+    documentUploaded: "Documento enviado",
+    language: "Idioma",
     submitting: "A enviar...",
     thankYou: "Obrigado",
     success: "Check-in enviado com seguranca. Obrigado.",
@@ -197,7 +224,8 @@ export const checkinText = {
     missingToken: "Token de check-in em falta.",
     unavailable: "Check-in indisponivel",
     genericError: "Verifique os campos obrigatorios",
-    uploadError: "Documento enviado invalido"
+    uploadError: "Este tipo de ficheiro nao e aceite. Envie PDF, JPG, JPEG, PNG ou WebP.",
+    heicError: "Ficheiros HEIC/HEIF nao sao aceites. Envie PDF, JPG, JPEG, PNG ou WebP."
   },
   de: {
     title: "Sicherer Check-in",
@@ -231,6 +259,12 @@ export const checkinText = {
     privacyNotice:
       "Ausweisdaten werden nur fuer die erforderliche Unterkunftsregistrierung und den operativen Check-in verwendet. Hochgeladene Dokumente bleiben privat und werden nach der Bearbeitung oder gemaess der geltenden Aufbewahrungsfrist geloescht.",
     submit: "Sicheren Check-in senden",
+    saveDraft: "Entwurf speichern",
+    draftSaving: "Entwurf wird gespeichert...",
+    draftSaved: "Fortschritt gespeichert. Sie koennen diesen Link spaeter erneut oeffnen, um den Check-in abzuschliessen.",
+    draftDocumentWarning: "Fortschritt gespeichert, aber ein oder mehrere Dokumente wurden nicht gespeichert. Dieser Dateityp wird nicht akzeptiert. Bitte PDF, JPG, JPEG, PNG oder WebP hochladen.",
+    documentUploaded: "Dokument hochgeladen",
+    language: "Sprache",
     submitting: "Wird gesendet...",
     thankYou: "Vielen Dank",
     success: "Check-in sicher gesendet. Vielen Dank.",
@@ -238,7 +272,8 @@ export const checkinText = {
     missingToken: "Check-in-Token fehlt.",
     unavailable: "Check-in nicht verfuegbar",
     genericError: "Bitte pruefen Sie die Pflichtfelder",
-    uploadError: "Ungueltiger Dokument-Upload"
+    uploadError: "Dieser Dateityp wird nicht akzeptiert. Bitte PDF, JPG, JPEG, PNG oder WebP hochladen.",
+    heicError: "HEIC/HEIF-Dateien werden nicht akzeptiert. Bitte PDF, JPG, JPEG, PNG oder WebP hochladen."
   },
   es: {
     title: "Check-in seguro",
@@ -272,6 +307,12 @@ export const checkinText = {
     privacyNotice:
       "Los datos de documentos de identidad se utilizan solo para el registro obligatorio del alojamiento y el check-in operativo. Los documentos subidos son privados y se eliminan despues del procesamiento o segun el periodo de conservacion aplicable.",
     submit: "Enviar check-in seguro",
+    saveDraft: "Guardar borrador",
+    draftSaving: "Guardando borrador...",
+    draftSaved: "Progreso guardado. Puede volver a este enlace mas tarde para completar el check-in.",
+    draftDocumentWarning: "Progreso guardado, pero uno o mas documentos no se guardaron. Este tipo de archivo no se acepta. Suba PDF, JPG, JPEG, PNG o WebP.",
+    documentUploaded: "Documento subido",
+    language: "Idioma",
     submitting: "Enviando...",
     thankYou: "Gracias",
     success: "Check-in enviado de forma segura. Gracias.",
@@ -279,7 +320,8 @@ export const checkinText = {
     missingToken: "Falta el token de check-in.",
     unavailable: "Check-in no disponible",
     genericError: "Revise los campos obligatorios",
-    uploadError: "Documento subido no valido"
+    uploadError: "Este tipo de archivo no se acepta. Suba PDF, JPG, JPEG, PNG o WebP.",
+    heicError: "Los archivos HEIC/HEIF no se aceptan. Suba PDF, JPG, JPEG, PNG o WebP."
   }
 };
 

@@ -85,7 +85,13 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(i18nBundle.includes("Vorname"), true);
   assert.equal(i18nBundle.includes("Nombre"), true);
   assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("adult-count"), true);
-  assert.equal(readText(path.join(root, "dist", "assets", "checkin.js")).includes("responsibleGuestId"), true);
+  const checkinBundle = readText(path.join(root, "dist", "assets", "checkin.js"));
+  assert.equal(checkinBundle.includes("responsibleGuestId"), true);
+  assert.equal(checkinBundle.includes("language-select"), true);
+  assert.equal(checkinBundle.includes("/api/checkin/draft"), true);
+  assert.equal(checkinBundle.includes("save-draft"), true);
+  assert.equal(checkinBundle.includes(".jpg,.jpeg,.png,.webp"), true);
+  assert.equal(checkinBundle.includes("image/pjpeg"), true);
 });
 
 test("blocked date renderer does not expose check-in data controls", () => {

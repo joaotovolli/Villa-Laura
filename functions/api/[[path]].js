@@ -124,6 +124,8 @@ const listReservations = async (storage) => {
     .map((reservation) => {
       const token = tokenByUid.get(reservation.uid);
       const submission = token ? submissionByToken.get(token.token) : null;
+      const isDraft = submission?.status === "draft_saved" || token?.status === "draft_saved";
+      const isFinal = Boolean(submission && !isDraft);
       return {
         ...reservation,
         status: normalizeStatus(reservation.status, reservation.type === "blocked" ? "blocked" : "imported"),
@@ -131,9 +133,11 @@ const listReservations = async (storage) => {
         tokenStatus: token?.status || "",
         tokenCreatedAt: token?.createdAt || reservation.tokenCreatedAt || "",
         tokenExpiresAt: token?.expiresAt || "",
-        checkinSubmitted: token ? submissionByToken.has(token.token) : false,
-        submissionStatus: submission ? (submission.personalDataDeletedAt ? "personal_data_deleted" : "submitted") : "",
-        submittedAt: submission?.submittedAt || "",
+        checkinSubmitted: isFinal,
+        draftSaved: isDraft,
+        draftSavedAt: submission?.draftSavedAt || token?.draftSavedAt || reservation.draftSavedAt || "",
+        submissionStatus: submission ? (isDraft ? "draft_saved" : submission.personalDataDeletedAt ? "data_redacted" : submission.status || "pending_review") : "",
+        submittedAt: isFinal ? submission?.submittedAt || "" : "",
         submittedGuests: submission?.numberOfGuests || 0,
         submittedAdults: submission?.adults || 0,
         submittedMinors: submission?.minors || 0,
@@ -237,12 +241,14 @@ const updateReservation = async (request, storage, identity) => {
     "imported",
     "waiting_for_guest",
     "checkin_sent",
+    "draft_saved",
     "pending_review",
     "approved",
     "rejected",
     "submitted_to_alloggiati",
     "submitted_to_ross1000",
-    "documents_deleted"
+    "documents_deleted",
+    "data_redacted"
   ]);
   const next = {
     ...existing,
@@ -312,10 +318,34 @@ const getPublicToken = async (request, storage) => {
     return json({ error: "Invalid or expired check-in link" }, { status: 404 });
   }
   const reservation = await storage.getJson(keys.reservation(record.reservationUid));
+  const draft = await storage.getJson(keys.submission(token));
+  const safeDraft = draft?.status === "draft_saved"
+    ? {
+        status: draft.status,
+        savedAt: draft.draftSavedAt || "",
+        language: normalizeLanguage(draft.language || ""),
+        arrivalDate: draft.arrivalDate || "",
+        departureDate: draft.departureDate || "",
+        numberOfGuests: draft.numberOfGuests || 1,
+        adults: draft.adults || 1,
+        minors: draft.minors || 0,
+        infants: draft.infants || 0,
+        mainGuestEmail: draft.mainGuestEmail || "",
+        mainGuestPhone: draft.mainGuestPhone || "",
+        guests: draft.guests || [],
+        documents: (draft.documents || []).map((doc) => ({
+          guestId: doc.guestId,
+          originalName: doc.originalName || "document",
+          size: doc.size || 0,
+          type: doc.type || ""
+        }))
+      }
+    : null;
   const language = normalizeLanguage(reservation?.preferredLanguage || record.language || "en");
   return json({
     token,
-    language,
+    language: safeDraft?.language || language,
+    draft: safeDraft,
     reservation: {
       checkIn: reservation?.checkIn || record.checkIn || "",
       checkOut: reservation?.checkOut || record.checkOut || "",
@@ -330,13 +360,9 @@ const getPublicToken = async (request, storage) => {
   });
 };
 
-const submitCheckin = async (request, storage) => {
+const parseCheckinForm = async (request) => {
   const form = await request.formData();
   const token = String(form.get("token") || "");
-  const record = await storage.getJson(keys.token(token));
-  if (!record || ["disabled", "expired"].includes(record.status) || Date.parse(record.expiresAt) < Date.now()) {
-    return json({ error: "Invalid or expired check-in link" }, { status: 404 });
-  }
   const numberOfGuests = Number.parseInt(form.get("numberOfGuests"), 10);
   const adults = Number.parseInt(form.get("adults"), 10);
   const minors = Number.parseInt(form.get("minors"), 10) || 0;
@@ -376,27 +402,101 @@ const submitCheckin = async (request, storage) => {
     privacyAccepted: form.get("privacyAccepted"),
     guests
   });
-  const validation = validateSubmission(submission);
-  if (!validation.ok) return json({ error: "Please check the required fields", fields: validation.errors }, { status: 400 });
+  submission.language = normalizeLanguage(form.get("language") || "en");
+  return { form, token, numberOfGuests, guests, submission };
+};
 
-  const documents = [];
+const storeUploadedDocuments = async ({ form, storage, token, numberOfGuests, existingDocuments = [], strict = false, guests = [] }) => {
+  const documents = [...existingDocuments];
+  const warnings = [];
   for (let index = 0; index < numberOfGuests; index += 1) {
+    const guestId = `guest-${index + 1}`;
     const file = form.get(`guest_${index}_documentUpload`);
-    if (guests[index]?.ageCategory === "adult" && (!file || file.size <= 0)) {
-      return json({ error: "Please check the required fields", fields: [`guests.${index}.documentUpload`] }, { status: 400 });
+    if (strict && guests[index]?.ageCategory === "adult" && !documents.some((doc) => doc.guestId === guestId) && (!file || file.size <= 0)) {
+      return { error: "Please check the required fields", fields: [`guests.${index}.documentUpload`], documents };
     }
     if (file && file.size > 0) {
       if (file.size > 8 * 1024 * 1024 || !allowedDocumentType(file)) {
-        return json({ error: "Invalid document upload" }, { status: 400 });
+        if (!strict) {
+          warnings.push({ guestId, code: "invalid_document" });
+          continue;
+        }
+        return { error: "Invalid document upload", documents };
+      }
+      for (const doc of documents.filter((entry) => entry.guestId === guestId)) {
+        await storage.delete(keys.document(token, doc.guestId, doc.filename));
       }
       const safeName = `${randomId()}-${sanitizeFilename(file.name)}`;
-      await storage.putBytes(keys.document(token, `guest-${index + 1}`, safeName), file, file.type);
-      documents.push({ guestId: `guest-${index + 1}`, filename: safeName, originalName: sanitizeFilename(file.name), size: file.size, type: file.type });
+      await storage.putBytes(keys.document(token, guestId, safeName), file, file.type || "application/octet-stream");
+      const nextDoc = { guestId, filename: safeName, originalName: sanitizeFilename(file.name), size: file.size, type: file.type };
+      const withoutGuest = documents.filter((entry) => entry.guestId !== guestId);
+      documents.length = 0;
+      documents.push(...withoutGuest, nextDoc);
     }
   }
+  return { documents, warnings };
+};
+
+const saveDraftCheckin = async (request, storage) => {
+  const { form, token, numberOfGuests, guests, submission } = await parseCheckinForm(request);
+  const record = await storage.getJson(keys.token(token));
+  if (!record || ["disabled", "expired"].includes(record.status) || Date.parse(record.expiresAt) < Date.now()) {
+    return json({ error: "Invalid or expired check-in link" }, { status: 404 });
+  }
+  const existing = await storage.getJson(keys.submission(token));
+  const stored = await storeUploadedDocuments({
+    form,
+    storage,
+    token,
+    numberOfGuests: Number.isInteger(numberOfGuests) ? numberOfGuests : 0,
+    existingDocuments: existing?.documents || [],
+    guests
+  });
   const now = new Date().toISOString();
-  await storage.putJson(keys.submission(token), { ...submission, token, reservationUid: record.reservationUid, documents, submittedAt: now });
-  await storage.putJson(keys.token(token), { ...record, status: "submitted", submittedAt: now });
+  await storage.putJson(keys.submission(token), {
+    ...submission,
+    token,
+    reservationUid: record.reservationUid,
+    status: "draft_saved",
+    documents: stored.documents || existing?.documents || [],
+    draftSavedAt: now,
+    submittedAt: ""
+  });
+  await storage.putJson(keys.token(token), { ...record, status: "draft_saved", draftSavedAt: now, language: submission.language || record.language });
+  const reservation = await storage.getJson(keys.reservation(record.reservationUid));
+  if (reservation) {
+    await storage.putJson(keys.reservation(record.reservationUid), { ...reservation, status: "draft_saved", draftSavedAt: now, updatedAt: now });
+  }
+  await storage.audit({ type: "checkin_draft_saved", actor: "guest", reservationUid: record.reservationUid, tokenId: token.slice(0, 10) });
+  return json({
+    ok: true,
+    status: "draft_saved",
+    draftSavedAt: now,
+    warnings: stored.warnings || [],
+    documents: (stored.documents || []).map((doc) => ({
+      guestId: doc.guestId,
+      originalName: doc.originalName || "document",
+      size: doc.size || 0,
+      type: doc.type || ""
+    }))
+  });
+};
+
+const submitCheckin = async (request, storage) => {
+  const { form, token, numberOfGuests, guests, submission } = await parseCheckinForm(request);
+  const record = await storage.getJson(keys.token(token));
+  if (!record || ["disabled", "expired"].includes(record.status) || Date.parse(record.expiresAt) < Date.now()) {
+    return json({ error: "Invalid or expired check-in link" }, { status: 404 });
+  }
+  const validation = validateSubmission(submission);
+  if (!validation.ok) return json({ error: "Please check the required fields", fields: validation.errors }, { status: 400 });
+
+  const existing = await storage.getJson(keys.submission(token));
+  const stored = await storeUploadedDocuments({ form, storage, token, numberOfGuests, existingDocuments: existing?.documents || [], strict: true, guests });
+  if (stored.error) return json({ error: stored.error, fields: stored.fields || [] }, { status: 400 });
+  const now = new Date().toISOString();
+  await storage.putJson(keys.submission(token), { ...submission, token, reservationUid: record.reservationUid, status: "pending_review", documents: stored.documents, submittedAt: now, draftSavedAt: existing?.draftSavedAt || "" });
+  await storage.putJson(keys.token(token), { ...record, status: "pending_review", submittedAt: now, language: submission.language || record.language });
   const reservation = await storage.getJson(keys.reservation(record.reservationUid));
   if (reservation) {
     await storage.putJson(keys.reservation(record.reservationUid), { ...reservation, status: "pending_review", submittedAt: now, updatedAt: now });
@@ -488,7 +588,7 @@ const redactSubmissionData = async (request, storage, identity) => {
   if (reservation) {
     await storage.putJson(keys.reservation(submission.reservationUid), {
       ...reservation,
-      status: "documents_deleted",
+      status: "data_redacted",
       documentsDeletedAt: next.documentsDeletedAt,
       personalDataDeletedAt: now,
       updatedAt: now
@@ -575,6 +675,7 @@ export const onRequest = async (context) => {
     const storage = new CheckinStorage(context.env);
     let response;
     if (path === "/checkin/token" && context.request.method === "GET") response = await getPublicToken(context.request, storage);
+    else if (path === "/checkin/draft" && context.request.method === "POST") response = await saveDraftCheckin(context.request, storage);
     else if (path === "/checkin/submit" && context.request.method === "POST") response = await submitCheckin(context.request, storage);
     else response = await handleAdmin(context, path, storage);
     return securityHeaders(response);
