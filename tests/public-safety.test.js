@@ -9,7 +9,13 @@ const walk = (dir) => {
   const output = [];
   for (const entry of readdirSync(dir)) {
     const full = path.join(dir, entry);
-    if (full.includes(`${path.sep}.git${path.sep}`) || full.includes(`${path.sep}node_modules${path.sep}`)) continue;
+    if (
+      full.includes(`${path.sep}.git${path.sep}`) ||
+      full.includes(`${path.sep}node_modules${path.sep}`) ||
+      full.includes(`${path.sep}.local-data${path.sep}`)
+    ) {
+      continue;
+    }
     const stat = statSync(full);
     if (stat.isDirectory()) output.push(...walk(full));
     else output.push(full);
