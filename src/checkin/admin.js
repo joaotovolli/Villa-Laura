@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=checkin-draft-20260503";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=checkin-draft-20260503";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=admin-access-recovery-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-access-recovery-20260503";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -9,9 +9,17 @@ const api = async (path, options = {}) => {
     ...options,
     headers: options.body instanceof FormData ? options.headers : { "content-type": "application/json", ...(options.headers || {}) }
   });
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) {
+    throw new Error("Admin API access denied. Please log out and log in again through Cloudflare Access.");
+  }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const error = new Error(body.error || "Request failed");
+    const error = new Error(
+      response.status === 401 || response.status === 403
+        ? "Admin API access denied. Please log out and log in again through Cloudflare Access."
+        : body.error || "Request failed"
+    );
     error.diagnostics = body.diagnostics;
     throw error;
   }
@@ -39,11 +47,12 @@ const diagnosticMessage = (diagnostics = {}) =>
     `storage readback: ${diagnostics.storageReadbackSuccess ? "yes" : "no"}`
   ].join(" · ");
 
-const accessDenied = () => {
+const adminApiDenied = (message = "Admin API access denied. Please log out and log in again through Cloudflare Access.") => {
   app.innerHTML = `
     <section class="panel stack">
-      <h2>Access denied</h2>
-      <p>This admin area is protected by Cloudflare Access. Open it through the approved admin email account.</p>
+      <h2>Admin API access denied</h2>
+      <p>${escapeHtml(message)}</p>
+      <p><a class="button secondary" href="${accessLogoutUrl}">Log out through Cloudflare Access</a></p>
     </section>`;
 };
 
@@ -391,10 +400,14 @@ const init = async () => {
   try {
     const session = await api("/api/admin/session");
     state.session = session;
-    if (session.authenticated) await load();
-    else accessDenied();
   } catch {
-    accessDenied();
+    state.session = { authenticated: true, passwordFallbackEnabled: false };
+  }
+
+  try {
+    await load();
+  } catch (error) {
+    adminApiDenied(error.message);
   }
 };
 

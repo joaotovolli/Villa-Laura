@@ -29,6 +29,9 @@ test("production admin bundle does not contain password form text", () => {
   const adminBundle = readText(path.join(root, "dist", "assets", "admin.js"));
 
   assert.equal(adminBundle.includes("Admin login"), false);
+  assert.equal(adminBundle.includes("This admin area is protected by Cloudflare Access. Open it through the approved admin email account."), false);
+  assert.equal(adminBundle.includes("Admin API access denied. Please log out and log in again through Cloudflare Access."), true);
+  assert.equal(adminBundle.includes("Log out through Cloudflare Access"), true);
   assert.equal(/<input[^>]+password/i.test(adminBundle), false);
   assert.equal(adminBundle.toLowerCase().includes("password fallback"), false);
   assert.equal(adminBundle.includes("/api/admin/logout"), false);
