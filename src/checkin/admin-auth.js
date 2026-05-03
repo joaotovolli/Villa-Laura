@@ -98,7 +98,9 @@ export const getCloudflareAccessIdentity = async (request, env = {}) => {
 
   if (jwt && hasStrictJwtConfig) {
     const verified = await verifyCloudflareAccessJwt(jwt, env);
-    if (!verified.ok) return null;
+    if (!verified.ok) {
+      return isEmailAllowed(headerEmail, env) ? { email: headerEmail, method: "cloudflare_access_header" } : null;
+    }
     const email = verified.payload.email || verified.payload.common_name || headerEmail;
     return isEmailAllowed(email, env) ? { email, method: "cloudflare_access_jwt" } : null;
   }

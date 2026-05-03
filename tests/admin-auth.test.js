@@ -45,6 +45,24 @@ test("production mocked Access JWT payload allows configured admin when strict J
   assert.equal(identity.method, "cloudflare_access_edge");
 });
 
+test("strict JWT failure can fall back to allowed Cloudflare Access email header", async () => {
+  const identity = await getCloudflareAccessIdentity(
+    requestWithHeaders({
+      "cf-access-jwt-assertion": fakeJwt({ email: "admin@example.com", exp: 4102444800, nbf: 0, iss: "https://wrong.example" }),
+      "cf-access-authenticated-user-email": "admin@example.com"
+    }),
+    {
+      APP_ENV: "production",
+      ALLOWED_ADMIN_EMAILS: "admin@example.com",
+      CF_ACCESS_TEAM_DOMAIN: "team.example",
+      CF_ACCESS_AUD: "expected-audience"
+    }
+  );
+
+  assert.equal(identity.email, "admin@example.com");
+  assert.equal(identity.method, "cloudflare_access_header");
+});
+
 test("local development can keep app fallback enabled", () => {
   assert.equal(passwordFallbackEnabled({ APP_ENV: "local" }), true);
   assert.equal(passwordFallbackEnabled({}), true);

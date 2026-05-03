@@ -1,4 +1,4 @@
-import { getCheckinText, languageLabels, normalizeLanguage } from "./i18n.js?v=checkin-draft-20260503";
+import { getCheckinText, languageLabels, normalizeLanguage } from "./i18n.js?v=admin-access-recovery-20260503";
 
 const params = new URLSearchParams(location.search);
 const state = {
