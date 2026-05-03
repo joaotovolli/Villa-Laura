@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=delete-test-data-20260502";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=delete-test-data-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=data-management-20260503";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=data-management-20260503";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -79,20 +79,69 @@ const buildGuestMessage = (reservation) => {
 const whatsappWebUrl = (phone, message) =>
   `https://web.whatsapp.com/send?phone=${String(phone || "").replace(/\D/g, "")}&text=${encodeURIComponent(message)}`;
 
+const documentStatusFor = (reservation) => {
+  if (reservation.documentsDeletedAt) return `Documents deleted ${escapeHtml(reservation.documentsDeletedAt)}`;
+  if (reservation.documentsPresent) return "documents present";
+  return "No documents uploaded yet";
+};
+
+const dataManagementSection = (reservation, checkinLink) => {
+  const hasSubmission = Boolean(reservation.checkinSubmitted);
+  const canReset = Boolean(checkinLink || reservation.token);
+  const submittedSummary = hasSubmission
+    ? `<dl class="summary-list">
+        <div><dt>Submission status</dt><dd>${escapeHtml(reservation.submissionStatus || "submitted")}</dd></div>
+        <div><dt>Submitted at</dt><dd>${escapeHtml(reservation.submittedAt || "")}</dd></div>
+        <div><dt>Guests submitted</dt><dd>${reservation.submittedGuests || 0}</dd></div>
+        <div><dt>Guest mix</dt><dd>${reservation.submittedAdults || 0} adults · ${reservation.submittedMinors || 0} minors · ${reservation.submittedInfants || 0} infants</dd></div>
+        <div><dt>Document count</dt><dd>${reservation.documentCount || 0}</dd></div>
+        <div><dt>Document status</dt><dd>${documentStatusFor(reservation)}</dd></div>
+      </dl>`
+    : `<dl class="summary-list">
+        <div><dt>Submission status</dt><dd>Not submitted yet</dd></div>
+        <div><dt>Documents</dt><dd>No documents uploaded yet</dd></div>
+        <div><dt>Guest data</dt><dd>No guest data submitted yet</dd></div>
+      </dl>`;
+
+  return `
+    <section class="notice data-management">
+      <h4>Check-in data management</h4>
+      ${
+        checkinLink
+          ? `<p>Check-in link created: yes${reservation.tokenCreatedAt ? ` · Created ${escapeHtml(reservation.tokenCreatedAt)}` : ""}</p>`
+          : `<p>Check-in link created: no</p>`
+      }
+      ${submittedSummary}
+      <p class="muted">Delete uploaded documents removes files from private R2 storage.</p>
+      <p class="muted">Delete/redact guest data removes submitted personal details but keeps safe operational metadata.</p>
+      <p class="muted">Reset check-in prepares this reservation for another test or new submission.</p>
+      <div class="actions">
+        ${checkinLink ? `<button class="secondary" data-action="copy-link">Copy check-in link</button>` : ""}
+        <button class="secondary" data-action="submission" ${hasSubmission ? "" : "disabled"}>View submitted check-in</button>
+        <button class="secondary" data-action="submission" ${hasSubmission && reservation.documentCount ? "" : "disabled"}>View/download documents</button>
+        <button class="danger" data-action="delete-documents" ${hasSubmission && reservation.documentCount ? "" : "disabled"}>Delete uploaded documents</button>
+        <button class="danger" data-action="redact-data" ${hasSubmission ? "" : "disabled"}>Delete/redact guest data</button>
+        <button class="danger" data-action="reset-checkin" ${canReset ? "" : "disabled"}>Reset check-in</button>
+      </div>
+      <details>
+        <summary>Fake test checklist</summary>
+        <ol>
+          <li>Generate check-in link.</li>
+          <li>Submit fake check-in with fake document.</li>
+          <li>Confirm submission appears here.</li>
+          <li>Delete uploaded documents.</li>
+          <li>Delete/redact guest data.</li>
+          <li>Reset check-in if needed.</li>
+        </ol>
+      </details>
+    </section>`;
+};
+
 const row = (reservation) => {
   const phone = reservation.fullPhone || "";
   const whatsAppDisabled = !phone;
   const checkinLink = checkinLinkFor(reservation);
   const language = normalizeLanguage(reservation.preferredLanguage);
-  const submissionSummary = reservation.checkinSubmitted
-    ? `<section class="notice">
-        <strong>Submitted check-in</strong><br>
-        Status: ${escapeHtml(reservation.submissionStatus || "submitted")}<br>
-        Submitted: ${escapeHtml(reservation.submittedAt || "")}<br>
-        Guests: ${reservation.submittedGuests || 0} (${reservation.submittedAdults || 0} adults, ${reservation.submittedMinors || 0} minors, ${reservation.submittedInfants || 0} infants)<br>
-        Documents: ${reservation.documentCount || 0} ${reservation.documentsPresent ? "present" : "available"}${reservation.documentsDeletedAt ? ` · Documents deleted ${escapeHtml(reservation.documentsDeletedAt)}` : ""}${reservation.personalDataDeletedAt ? ` · Guest data deleted ${escapeHtml(reservation.personalDataDeletedAt)}` : ""}
-      </section>`
-    : "";
   return `
     <article class="reservation stack" data-uid="${escapeHtml(reservation.uid)}">
       <div class="top">
@@ -126,11 +175,10 @@ const row = (reservation) => {
           : ""
       }
       <label>Notes<textarea name="notes">${escapeHtml(reservation.notes || "")}</textarea></label>
-      ${submissionSummary}
+      ${dataManagementSection(reservation, checkinLink)}
       <div class="actions">
         <button data-action="save">Save</button>
         <button class="secondary" data-action="token">Create check-in link</button>
-        ${checkinLink ? `<button class="secondary" data-action="copy-link">Copy check-in link</button>` : ""}
         ${reservation.reservationUrl ? `<a class="button secondary" href="${escapeHtml(reservation.reservationUrl)}" target="_blank" rel="noopener">Open Airbnb</a>` : ""}
         <button class="secondary" data-action="copy">Copy Airbnb message</button>
         ${
@@ -139,10 +187,6 @@ const row = (reservation) => {
             : `<a class="button secondary" data-whatsapp href="#" target="_blank" rel="noopener">Open WhatsApp Web</a>`
         }
         <button class="secondary" data-action="copy-whatsapp">Copy WhatsApp message</button>
-        ${reservation.checkinSubmitted ? `<button class="secondary" data-action="submission">View submission</button>` : ""}
-        ${reservation.checkinSubmitted ? `<button class="danger" data-action="delete-documents">Delete uploaded documents</button>` : ""}
-        ${reservation.checkinSubmitted ? `<button class="danger" data-action="redact-data">Delete/redact guest data</button>` : ""}
-        ${reservation.checkinSubmitted ? `<button class="danger" data-action="reset-checkin">Reset check-in</button>` : ""}
       </div>
       <p class="muted">To use WhatsApp Business, open this link in a browser/profile linked to your WhatsApp Business account.</p>
       <div class="notice hidden" data-output></div>

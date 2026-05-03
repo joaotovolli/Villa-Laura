@@ -157,6 +157,33 @@ button:disabled,
   background: rgba(183, 105, 37, 0.1);
 }
 
+.data-management h4 {
+  margin: 0 0 0.5rem;
+}
+
+.summary-list {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin: 0.7rem 0;
+}
+
+.summary-list div {
+  padding: 0.55rem;
+  border: 1px solid rgba(33, 73, 85, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.summary-list dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.summary-list dd {
+  margin: 0.2rem 0 0;
+}
+
 .error {
   color: var(--bad);
   font-weight: 800;
