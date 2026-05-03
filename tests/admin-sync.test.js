@@ -66,6 +66,65 @@ const adminPost = (path, env, body) =>
     params: { path: path.replace(/^\//, "").split("/") }
   });
 
+const unauthenticatedPost = (path, env, body) =>
+  onRequest({
+    request: new Request(`https://villa-laura.it/api${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    }),
+    env,
+    params: { path: path.replace(/^\//, "").split("/") }
+  });
+
+const fakeSubmittedCheckin = async (storage, checkinToken = "vl_fake_cleanup_token") => {
+  await storage.putJson(keys.reservation("cleanup-reservation"), {
+    uid: "cleanup-reservation",
+    type: "reservation",
+    status: "pending_review",
+    checkIn: "2026-10-01",
+    checkOut: "2026-10-05",
+    nights: 4
+  });
+  await storage.putJson(keys.token(checkinToken), {
+    checkinToken,
+    reservationUid: "cleanup-reservation",
+    status: "submitted",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    submittedAt: "2026-01-02T00:00:00.000Z",
+    expiresAt: "2099-01-01T00:00:00.000Z"
+  });
+  await storage.putJson(keys.submission(checkinToken), {
+    checkinToken,
+    reservationUid: "cleanup-reservation",
+    arrivalDate: "2026-10-01",
+    departureDate: "2026-10-05",
+    numberOfGuests: 1,
+    adults: 1,
+    minors: 0,
+    infants: 0,
+    mainGuestEmail: "fake@example.test",
+    mainGuestPhone: "+390000000000",
+    submittedAt: "2026-01-02T00:00:00.000Z",
+    guests: [
+      {
+        id: "guest-1",
+        firstName: "Fake",
+        lastName: "Guest",
+        dateOfBirth: "1990-01-01",
+        citizenship: "Testland",
+        documentNumber: "FAKE123",
+        ageCategory: "adult",
+        guestType: "single_guest",
+        documentAvailable: true
+      }
+    ],
+    documents: [{ guestId: "guest-1", filename: "fake.pdf", originalName: "fake.pdf", size: 4, type: "application/pdf" }]
+  });
+  await storage.putBytes(keys.document(checkinToken, "guest-1", "fake.pdf"), new Blob(["fake"], { type: "application/pdf" }), "application/pdf");
+  return checkinToken;
+};
+
 test("admin sync returns safe diagnostics when iCal URL is missing", async () => {
   const response = await adminRequest("/admin/sync", {
     APP_ENV: "production",
@@ -124,7 +183,7 @@ test("blocked items ignore guest fields and remain blocked on save", async () =>
   }
 });
 
-test("token creation preserves reservation language and localized message", async () => {
+test("checkinToken creation preserves reservation language and localized message", async () => {
   const env = {
     APP_ENV: "production",
     ALLOWED_ADMIN_EMAILS: "admin@example.com",
@@ -198,5 +257,58 @@ test("admin sync writes reservations to the same storage list endpoint reads", a
   } finally {
     globalThis.fetch = originalFetch;
     await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("admin cleanup deletes documents, redacts personal data, and resets check-in", async () => {
+  const env = {
+    APP_ENV: "production",
+    ALLOWED_ADMIN_EMAILS: "admin@example.com"
+  };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    const checkinToken = await fakeSubmittedCheckin(storage);
+    const deleteResponse = await adminPost("/admin/documents/delete", env, { token: checkinToken });
+    const afterDelete = await storage.getJson(keys.submission(checkinToken));
+    const deletedObject = await storage.getObject(keys.document(checkinToken, "guest-1", "fake.pdf"));
+
+    assert.equal(deleteResponse.status, 200);
+    assert.equal(afterDelete.documents.length, 0);
+    assert.equal(Boolean(afterDelete.documentsDeletedAt), true);
+    assert.equal(deletedObject, null);
+
+    afterDelete.documents = [{ guestId: "guest-1", filename: "fake.pdf", originalName: "fake.pdf", size: 4, type: "application/pdf" }];
+    await storage.putJson(keys.submission(checkinToken), afterDelete);
+    await storage.putBytes(keys.document(checkinToken, "guest-1", "fake.pdf"), new Blob(["fake"], { type: "application/pdf" }), "application/pdf");
+
+    const redactResponse = await adminPost("/admin/submission/redact", env, { token: checkinToken });
+    const redacted = await storage.getJson(keys.submission(checkinToken));
+    assert.equal(redactResponse.status, 200);
+    assert.equal(redacted.mainGuestEmail, undefined);
+    assert.equal(redacted.mainGuestPhone, undefined);
+    assert.equal(redacted.guests[0].firstName, undefined);
+    assert.equal(redacted.guests[0].documentNumber, undefined);
+    assert.equal(redacted.guests[0].personalDataDeleted, true);
+
+    const resetTokenValue = await fakeSubmittedCheckin(storage, "vl_fake_reset_token");
+    const resetResponse = await adminPost("/admin/checkin/reset", env, { token: resetTokenValue });
+    const resetSubmission = await storage.getJson(keys.submission(resetTokenValue));
+    const resetRecord = await storage.getJson(keys.token(resetTokenValue));
+    assert.equal(resetResponse.status, 200);
+    assert.equal(resetSubmission.resetAt.length > 0, true);
+    assert.equal(resetSubmission.mainGuestEmail, undefined);
+    assert.equal(resetRecord.status, "created");
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
+test("admin deletion endpoints require authentication", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  for (const path of ["/admin/documents/delete", "/admin/submission/redact", "/admin/checkin/reset"]) {
+    const response = await unauthenticatedPost(path, env, { token: "vl_fake" });
+    assert.equal(response.status, 401);
   }
 });

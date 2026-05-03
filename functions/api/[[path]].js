@@ -123,6 +123,7 @@ const listReservations = async (storage) => {
   return reservations
     .map((reservation) => {
       const token = tokenByUid.get(reservation.uid);
+      const submission = token ? submissionByToken.get(token.token) : null;
       return {
         ...reservation,
         status: normalizeStatus(reservation.status, reservation.type === "blocked" ? "blocked" : "imported"),
@@ -131,7 +132,16 @@ const listReservations = async (storage) => {
         tokenCreatedAt: token?.createdAt || reservation.tokenCreatedAt || "",
         tokenExpiresAt: token?.expiresAt || "",
         checkinSubmitted: token ? submissionByToken.has(token.token) : false,
-        documentsDeletedAt: reservation.documentsDeletedAt || ""
+        submissionStatus: submission ? (submission.personalDataDeletedAt ? "personal_data_deleted" : "submitted") : "",
+        submittedAt: submission?.submittedAt || "",
+        submittedGuests: submission?.numberOfGuests || 0,
+        submittedAdults: submission?.adults || 0,
+        submittedMinors: submission?.minors || 0,
+        submittedInfants: submission?.infants || 0,
+        documentCount: submission?.documents?.length || 0,
+        documentsPresent: Boolean(submission?.documents?.length),
+        documentsDeletedAt: submission?.documentsDeletedAt || reservation.documentsDeletedAt || "",
+        personalDataDeletedAt: submission?.personalDataDeletedAt || ""
       };
     })
     .sort((a, b) => String(a.checkIn || "").localeCompare(String(b.checkIn || "")));
@@ -440,6 +450,80 @@ const deleteDocuments = async (request, storage, identity) => {
   return json({ ok: true, documentsDeletedAt: now });
 };
 
+const redactedSubmission = (submission, now) => ({
+  token: submission.token,
+  reservationUid: submission.reservationUid,
+  arrivalDate: submission.arrivalDate,
+  departureDate: submission.departureDate,
+  numberOfGuests: submission.numberOfGuests,
+  adults: submission.adults || 0,
+  minors: submission.minors || 0,
+  infants: submission.infants || 0,
+  submittedAt: submission.submittedAt || "",
+  documentsDeletedAt: submission.documentsDeletedAt || "",
+  personalDataDeletedAt: now,
+  documents: [],
+  guests: (submission.guests || []).map((guest) => ({
+    id: guest.id,
+    ageCategory: guest.ageCategory || "",
+    guestType: guest.guestType || "",
+    relationshipRole: guest.relationshipRole || "",
+    responsibleGuestId: guest.responsibleGuestId || "",
+    documentAvailable: Boolean(guest.documentAvailable),
+    personalDataDeleted: true
+  }))
+});
+
+const redactSubmissionData = async (request, storage, identity) => {
+  const { token } = await request.json();
+  const submission = await storage.getJson(keys.submission(token));
+  if (!submission) return json({ error: "Submission not found" }, { status: 404 });
+  for (const doc of submission.documents || []) {
+    await storage.delete(keys.document(token, doc.guestId, doc.filename));
+  }
+  const now = new Date().toISOString();
+  const next = redactedSubmission({ ...submission, documentsDeletedAt: submission.documentsDeletedAt || now }, now);
+  await storage.putJson(keys.submission(token), next);
+  const reservation = await storage.getJson(keys.reservation(submission.reservationUid));
+  if (reservation) {
+    await storage.putJson(keys.reservation(submission.reservationUid), {
+      ...reservation,
+      status: "documents_deleted",
+      documentsDeletedAt: next.documentsDeletedAt,
+      personalDataDeletedAt: now,
+      updatedAt: now
+    });
+  }
+  await storage.audit({ type: "personal_data_deleted", actor: identity.email, reservationUid: submission.reservationUid, tokenId: token.slice(0, 10) });
+  return json({ ok: true, personalDataDeletedAt: now, documentsDeletedAt: next.documentsDeletedAt });
+};
+
+const resetCheckin = async (request, storage, identity) => {
+  const { token } = await request.json();
+  const submission = await storage.getJson(keys.submission(token));
+  if (!submission) return json({ error: "Submission not found" }, { status: 404 });
+  for (const doc of submission.documents || []) {
+    await storage.delete(keys.document(token, doc.guestId, doc.filename));
+  }
+  const now = new Date().toISOString();
+  await storage.putJson(keys.submission(token), { ...redactedSubmission({ ...submission, documentsDeletedAt: submission.documentsDeletedAt || now }, now), resetAt: now });
+  const record = await storage.getJson(keys.token(token));
+  if (record) await storage.putJson(keys.token(token), { ...record, status: "created", resetAt: now });
+  const reservation = await storage.getJson(keys.reservation(submission.reservationUid));
+  if (reservation) {
+    await storage.putJson(keys.reservation(submission.reservationUid), {
+      ...reservation,
+      status: reservation.tokenCreatedAt ? "checkin_sent" : "waiting_for_guest",
+      documentsDeletedAt: submission.documentsDeletedAt || now,
+      personalDataDeletedAt: now,
+      resetAt: now,
+      updatedAt: now
+    });
+  }
+  await storage.audit({ type: "checkin_reset", actor: identity.email, reservationUid: submission.reservationUid, tokenId: token.slice(0, 10) });
+  return json({ ok: true, resetAt: now });
+};
+
 const handleAdmin = async (context, path, storage) => {
   const { request, env } = context;
   if (path === "/admin/session") {
@@ -480,6 +564,8 @@ const handleAdmin = async (context, path, storage) => {
   if (path === "/admin/submission" && request.method === "GET") return getSubmission(request, storage);
   if (path === "/admin/document" && request.method === "GET") return getDocument(request, storage, auth.identity);
   if (path === "/admin/documents/delete" && request.method === "POST") return deleteDocuments(request, storage, auth.identity);
+  if (path === "/admin/submission/redact" && request.method === "POST") return redactSubmissionData(request, storage, auth.identity);
+  if (path === "/admin/checkin/reset" && request.method === "POST") return resetCheckin(request, storage, auth.identity);
   return json({ error: "Not found" }, { status: 404 });
 };
 

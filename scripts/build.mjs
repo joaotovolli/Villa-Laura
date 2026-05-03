@@ -1497,7 +1497,7 @@ const renderCheckinShell = ({ title, script }) => `<!doctype html>
         <section class="panel"><p>Loading...</p></section>
       </div>
     </main>
-    <script type="module" src="../assets/${script}?v=minor-guest-flow-20260502"></script>
+    <script type="module" src="../assets/${script}?v=delete-test-data-20260502"></script>
   </body>
 </html>`;
 

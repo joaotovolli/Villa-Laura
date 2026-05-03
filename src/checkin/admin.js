@@ -1,5 +1,5 @@
-import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=minor-guest-flow-20260502";
-import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=minor-guest-flow-20260502";
+import { accessLogoutUrl, usesCloudflareAccessSession } from "./admin-client.js?v=delete-test-data-20260502";
+import { buildLocalizedGuestMessage, languageLabels, normalizeLanguage } from "./i18n.js?v=delete-test-data-20260502";
 
 const app = document.querySelector("#app");
 const state = { reservations: [], session: null, syncStatus: "" };
@@ -84,6 +84,15 @@ const row = (reservation) => {
   const whatsAppDisabled = !phone;
   const checkinLink = checkinLinkFor(reservation);
   const language = normalizeLanguage(reservation.preferredLanguage);
+  const submissionSummary = reservation.checkinSubmitted
+    ? `<section class="notice">
+        <strong>Submitted check-in</strong><br>
+        Status: ${escapeHtml(reservation.submissionStatus || "submitted")}<br>
+        Submitted: ${escapeHtml(reservation.submittedAt || "")}<br>
+        Guests: ${reservation.submittedGuests || 0} (${reservation.submittedAdults || 0} adults, ${reservation.submittedMinors || 0} minors, ${reservation.submittedInfants || 0} infants)<br>
+        Documents: ${reservation.documentCount || 0} ${reservation.documentsPresent ? "present" : "available"}${reservation.documentsDeletedAt ? ` · Documents deleted ${escapeHtml(reservation.documentsDeletedAt)}` : ""}${reservation.personalDataDeletedAt ? ` · Guest data deleted ${escapeHtml(reservation.personalDataDeletedAt)}` : ""}
+      </section>`
+    : "";
   return `
     <article class="reservation stack" data-uid="${escapeHtml(reservation.uid)}">
       <div class="top">
@@ -117,6 +126,7 @@ const row = (reservation) => {
           : ""
       }
       <label>Notes<textarea name="notes">${escapeHtml(reservation.notes || "")}</textarea></label>
+      ${submissionSummary}
       <div class="actions">
         <button data-action="save">Save</button>
         <button class="secondary" data-action="token">Create check-in link</button>
@@ -130,6 +140,9 @@ const row = (reservation) => {
         }
         <button class="secondary" data-action="copy-whatsapp">Copy WhatsApp message</button>
         ${reservation.checkinSubmitted ? `<button class="secondary" data-action="submission">View submission</button>` : ""}
+        ${reservation.checkinSubmitted ? `<button class="danger" data-action="delete-documents">Delete uploaded documents</button>` : ""}
+        ${reservation.checkinSubmitted ? `<button class="danger" data-action="redact-data">Delete/redact guest data</button>` : ""}
+        ${reservation.checkinSubmitted ? `<button class="danger" data-action="reset-checkin">Reset check-in</button>` : ""}
       </div>
       <p class="muted">To use WhatsApp Business, open this link in a browser/profile linked to your WhatsApp Business account.</p>
       <div class="notice hidden" data-output></div>
@@ -169,6 +182,7 @@ const render = () => {
       <section class="stack">
         <h2>Reservations</h2>
         <p class="muted">Use real reservations to generate guest check-in links. Blocked dates cannot be used for check-in.</p>
+        <p class="muted">Use fake documents for testing. Do not upload real passports until upload, review, and deletion have been verified.</p>
         <div class="stack">${reservations.map(row).join("") || `<p>No reservations imported yet.</p>`}</div>
       </section>
       <section class="stack">
@@ -262,12 +276,31 @@ const render = () => {
               )
               .join(" · ");
             output.classList.remove("hidden");
-            output.innerHTML = `Submission received for ${result.submission.numberOfGuests} guest(s). Documents: ${docs || "none"} <button class="danger" data-delete-docs>Delete documents</button>`;
-            output.querySelector("[data-delete-docs]")?.addEventListener("click", async () => {
-              await api("/api/admin/documents/delete", { method: "POST", body: JSON.stringify({ token }) });
-              setOutput("Documents deleted and metadata retained.");
-              await load(false);
-            });
+            output.innerHTML = `Submission received for ${result.submission.numberOfGuests} guest(s). Adults: ${result.submission.adults || 0}. Minors: ${result.submission.minors || 0}. Infants: ${result.submission.infants || 0}. Documents: ${docs || "none"}`;
+          }
+          if (button.dataset.action === "delete-documents") {
+            const token = reservation.token;
+            if (!token) return setOutput("No check-in token is available for this reservation.");
+            if (!confirm("Delete uploaded documents for this reservation? This cannot be undone.")) return;
+            await api("/api/admin/documents/delete", { method: "POST", body: JSON.stringify({ token }) });
+            setOutput("Documents deleted. No documents available.");
+            await load(false);
+          }
+          if (button.dataset.action === "redact-data") {
+            const token = reservation.token;
+            if (!token) return setOutput("No check-in token is available for this reservation.");
+            if (!confirm("Delete/redact guest personal data? This cannot be undone.")) return;
+            await api("/api/admin/submission/redact", { method: "POST", body: JSON.stringify({ token }) });
+            setOutput("Guest personal data deleted/redacted.");
+            await load(false);
+          }
+          if (button.dataset.action === "reset-checkin") {
+            const token = reservation.token;
+            if (!token) return setOutput("No check-in token is available for this reservation.");
+            if (!confirm("Reset check-in for this reservation? Uploaded documents and submitted guest data will be deleted/redacted. This cannot be undone.")) return;
+            await api("/api/admin/checkin/reset", { method: "POST", body: JSON.stringify({ token }) });
+            setOutput("Check-in reset. The existing link can be used for another test.");
+            await load(false);
           }
         } catch (error) {
           setOutput(error.message);

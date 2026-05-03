@@ -9,7 +9,13 @@ const walk = (dir) => {
   const output = [];
   for (const entry of readdirSync(dir)) {
     const full = path.join(dir, entry);
-    if (full.includes(`${path.sep}.git${path.sep}`) || full.includes(`${path.sep}node_modules${path.sep}`)) continue;
+    if (
+      full.includes(`${path.sep}.git${path.sep}`) ||
+      full.includes(`${path.sep}node_modules${path.sep}`) ||
+      full.includes(`${path.sep}.local-data${path.sep}`)
+    ) {
+      continue;
+    }
     const stat = statSync(full);
     if (stat.isDirectory()) output.push(...walk(full));
     else output.push(full);
@@ -46,6 +52,11 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Blocked dates cannot be used for guest check-in links or messages."), true);
   assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
   assert.equal(adminBundle.includes("Copy check-in link"), true);
+  assert.equal(adminBundle.includes("Use fake documents for testing."), true);
+  assert.equal(adminBundle.includes("Delete uploaded documents"), true);
+  assert.equal(adminBundle.includes("Delete/redact guest data"), true);
+  assert.equal(adminBundle.includes("Reset check-in"), true);
+  assert.equal(adminBundle.includes("Delete uploaded documents for this reservation? This cannot be undone."), true);
   assert.equal(adminBundle.includes("Open WhatsApp Web"), true);
   assert.equal(adminBundle.includes("web.whatsapp.com/send"), true);
   assert.equal(adminBundle.includes("wa.me"), false);
