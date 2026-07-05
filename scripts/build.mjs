@@ -13,6 +13,7 @@ const appScriptPath = path.join(root, "src", "app.js");
 const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
 const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
 const adminClientScriptPath = path.join(root, "src", "checkin", "admin-client.js");
+const adminOpsScriptPath = path.join(root, "src", "checkin", "admin-ops.js");
 const checkinScriptPath = path.join(root, "src", "checkin", "checkin.js");
 const checkinI18nScriptPath = path.join(root, "src", "checkin", "i18n.js");
 const sourceDocsDir = path.join(root, "src", "docs");
@@ -946,6 +947,7 @@ const appScript = await readFile(appScriptPath, "utf8");
 await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
 await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
 await copyFile(adminClientScriptPath, path.join(assetsDir, "admin-client.js"));
+await copyFile(adminOpsScriptPath, path.join(assetsDir, "admin-ops.js"));
 await copyFile(checkinScriptPath, path.join(assetsDir, "checkin.js"));
 await copyFile(checkinI18nScriptPath, path.join(assetsDir, "i18n.js"));
 
@@ -1497,7 +1499,7 @@ const renderCheckinShell = ({ title, script }) => `<!doctype html>
         <section class="panel"><p>Loading...</p></section>
       </div>
     </main>
-    <script type="module" src="../assets/${script}?v=admin-workflow-20260503"></script>
+    <script type="module" src="../assets/${script}?v=admin-dashboard-20260705"></script>
   </body>
 </html>`;
 

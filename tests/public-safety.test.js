@@ -45,7 +45,20 @@ test("production admin bundle does not contain password form text", () => {
 
 test("production admin bundle exposes final reservation workflow controls", () => {
   const adminBundle = readText(path.join(root, "dist", "assets", "admin.js"));
+  const adminOpsBundle = readText(path.join(root, "dist", "assets", "admin-ops.js"));
+  const adminText = `${adminBundle}\n${adminOpsBundle}`;
 
+  assert.equal(adminText.includes("Admin operations"), true);
+  assert.equal(adminText.includes("Needs attention"), true);
+  assert.equal(adminText.includes("Waiting for guest"), true);
+  assert.equal(adminText.includes("Ready for authority submission"), true);
+  assert.equal(adminText.includes("Upcoming arrivals"), true);
+  assert.equal(adminText.includes("Completed / archived"), true);
+  assert.equal(adminText.includes("Needs manual details"), true);
+  assert.equal(adminText.includes("Check-in link/message not yet sent"), true);
+  assert.equal(adminText.includes("Waiting for guest submission"), true);
+  assert.equal(adminText.includes("Documents/guest data cleanup required"), true);
+  assert.equal(adminText.includes("Upcoming but not urgent"), true);
   assert.equal(adminBundle.includes("Email"), true);
   assert.equal(adminBundle.includes("Adults"), true);
   assert.equal(adminBundle.includes("Children / minors"), true);
@@ -56,41 +69,35 @@ test("production admin bundle exposes final reservation workflow controls", () =
   assert.equal(adminBundle.includes("Import started."), true);
   assert.equal(adminBundle.includes("Import failed:"), true);
   assert.equal(adminBundle.includes("Imported "), true);
-  assert.equal(adminBundle.includes("Blocked dates"), true);
-  assert.equal(adminBundle.includes("Blocked dates cannot be used for guest check-in links or messages."), true);
-  assert.equal(adminBundle.includes("Use real reservations to generate guest check-in links."), true);
+  assert.equal(adminText.includes("Blocked dates"), true);
   assert.equal(adminBundle.includes("Copy check-in link"), true);
+  assert.equal(adminBundle.includes("Create check-in link"), true);
   assert.equal(adminBundle.includes("Regenerate check-in link"), true);
   assert.equal(adminBundle.includes("The old link will stop working"), true);
-  assert.equal(adminBundle.includes("Use fake documents for testing."), true);
-  assert.equal(adminBundle.includes("Check-in data management"), true);
-  assert.equal(adminBundle.includes("Operational checklist"), true);
-  assert.equal(adminBundle.includes("Pending review"), true);
-  assert.equal(adminBundle.includes("Approved / completed"), true);
+  assert.equal(adminBundle.includes("Full checklist"), true);
+  assert.equal(adminBundle.includes("Submitted check-in metadata"), true);
+  assert.equal(adminBundle.includes("Message templates"), true);
+  assert.equal(adminBundle.includes("Raw data/debug information"), true);
+  assert.equal(adminBundle.includes("Dangerous actions"), true);
   assert.equal(adminBundle.includes("Notifications"), true);
   assert.equal(adminBundle.includes("Download JSON"), true);
   assert.equal(adminBundle.includes("Download CSV"), true);
   assert.equal(adminBundle.includes("Submitted check-in details"), true);
   assert.equal(adminBundle.includes("Submission status"), true);
   assert.equal(adminBundle.includes("Not submitted yet"), true);
-  assert.equal(adminBundle.includes("No documents uploaded yet"), true);
-  assert.equal(adminBundle.includes("No guest data submitted yet"), true);
-  assert.equal(adminBundle.includes("Check-in link created: yes"), true);
-  assert.equal(adminBundle.includes("Check-in link created: no"), true);
+  assert.equal(adminBundle.includes("No documents uploaded"), true);
   assert.equal(adminBundle.includes("View submitted check-in"), true);
   assert.equal(adminBundle.includes("View/download documents"), true);
   assert.equal(adminBundle.includes("Delete uploaded documents"), true);
   assert.equal(adminBundle.includes("Delete/redact guest data"), true);
   assert.equal(adminBundle.includes("Reset check-in"), true);
-  assert.equal(adminBundle.includes("Delete uploaded documents removes files from private R2 storage."), true);
-  assert.equal(adminBundle.includes("Delete/redact guest data removes submitted personal details but keeps safe operational metadata."), true);
-  assert.equal(adminBundle.includes("Reset check-in prepares this reservation for another test or new submission."), true);
-  assert.equal(adminBundle.includes("Fake test checklist"), true);
   assert.equal(adminBundle.includes("Delete uploaded documents for this reservation? This cannot be undone."), true);
   const tokenParam = ["to", "ken"].join("");
   assert.equal(adminBundle.includes(`/api/admin/document?${tokenParam}=`), true);
   assert.equal(adminBundle.includes(`/api/admin/export?${tokenParam}=`), true);
   assert.equal(adminBundle.includes("/api/admin/token/regenerate"), true);
+  assert.equal(adminBundle.includes("<code>${escapeHtml(checkinLink)}</code>"), false);
+  assert.equal(adminBundle.includes("Link: ${result.link}"), false);
   assert.equal(adminBundle.includes("https://villa-laura-checkins"), false);
   assert.equal(adminBundle.includes("Open WhatsApp Web"), true);
   assert.equal(adminBundle.includes("web.whatsapp.com/send"), true);
@@ -116,11 +123,11 @@ test("production admin bundle exposes final reservation workflow controls", () =
 
 test("blocked date renderer does not expose check-in data controls", () => {
   const source = readText(path.join(root, "src", "checkin", "admin.js"));
-  const blockedStart = source.indexOf("const blockedRow");
-  const renderStart = source.indexOf("const render", blockedStart);
+  const blockedStart = source.indexOf("const blockedCard");
+  const renderStart = source.indexOf("const notificationItem", blockedStart);
   const blockedRenderer = source.slice(blockedStart, renderStart);
 
-  assert.equal(blockedRenderer.includes("Check-in data management"), false);
+  assert.equal(blockedRenderer.includes("Submitted check-in metadata"), false);
   assert.equal(blockedRenderer.includes("Delete uploaded documents"), false);
   assert.equal(blockedRenderer.includes("Delete/redact guest data"), false);
   assert.equal(blockedRenderer.includes("Reset check-in"), false);
