@@ -552,6 +552,45 @@ test("final submit queues minimal admin notification without document data", asy
   }
 });
 
+test("admin notifications endpoint deduplicates repeated submission notifications", async () => {
+  const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
+  const storage = new CheckinStorage(env);
+
+  try {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+    await storage.putJson(keys.notification("2026-07-01", "old"), {
+      id: "old",
+      type: "checkin_submitted",
+      createdAt: "2026-07-01T10:00:00.000Z",
+      reservationUid: "duplicate-reservation",
+      checkIn: "2026-07-10",
+      checkOut: "2026-07-14",
+      numberOfGuests: 2,
+      submittedAt: "2026-07-01T10:00:00.000Z"
+    });
+    await storage.putJson(keys.notification("2026-07-01", "new"), {
+      id: "new",
+      type: "checkin_submitted",
+      createdAt: "2026-07-01T11:00:00.000Z",
+      reservationUid: "duplicate-reservation",
+      checkIn: "2026-07-10",
+      checkOut: "2026-07-14",
+      numberOfGuests: 2,
+      submittedAt: "2026-07-01T11:00:00.000Z"
+    });
+
+    const response = await adminGet("/admin/notifications", env);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.notifications.length, 1);
+    assert.equal(body.notifications[0].id, "new");
+    assert.equal(body.notifications[0].duplicateCount, 1);
+  } finally {
+    await rm(".local-data/checkins", { recursive: true, force: true });
+  }
+});
+
 test("admin deletion endpoints require authentication", async () => {
   const env = { APP_ENV: "production", ALLOWED_ADMIN_EMAILS: "admin@example.com" };
   for (const path of ["/admin/documents/delete", "/admin/submission/redact", "/admin/checkin/reset"]) {

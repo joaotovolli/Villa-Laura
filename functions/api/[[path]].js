@@ -4,6 +4,7 @@ import { allowedDocumentType, randomId, randomToken, sanitizeFilename, signValue
 import { CheckinStorage, keys } from "../../src/checkin/storage.js";
 import { publicSubmission, validateSubmission } from "../../src/checkin/validation.js";
 import { buildLocalizedGuestMessage, normalizeLanguage } from "../../src/checkin/i18n.js";
+import { dedupeNotifications } from "../../src/checkin/admin-ops.js";
 
 const SESSION_COOKIE = "vl_admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 4;
@@ -753,8 +754,8 @@ const queueNotification = async (storage, event) => {
 
 const listNotifications = async (storage) => {
   const notifications = (await storage.listJson("checkins/notifications/")).filter(Boolean);
-  return notifications
-    .map((notification) => ({
+  return dedupeNotifications(
+    notifications.map((notification) => ({
       id: notification.id || "",
       type: notification.type || "",
       createdAt: notification.createdAt || "",
@@ -771,8 +772,7 @@ const listNotifications = async (storage) => {
       submittedAt: notification.submittedAt || "",
       adminPath: notification.adminPath || "/admin"
     }))
-    .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
-    .slice(0, 50);
+  );
 };
 
 const getSubmission = async (request, storage) => {
