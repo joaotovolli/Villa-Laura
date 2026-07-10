@@ -140,7 +140,7 @@ test("public repository text does not contain private admin address pattern", ()
     const relative = path.relative(root, file);
     if (relative.startsWith("dist")) return false;
     if (relative.startsWith("docs")) return false;
-    if (/\.(jpg|jpeg|png|webp|gif|zip|mov|mp4|heic)$/i.test(file)) return false;
+    if (/\.(jpg|jpeg|png|webp|gif|pdf|zip|mov|mp4|heic)$/i.test(file)) return false;
     return true;
   });
 

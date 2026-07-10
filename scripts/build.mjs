@@ -1,6 +1,28 @@
 import { cp, mkdir, readFile, rm, writeFile, copyFile } from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import sharp from "sharp";
+import {
+  dateInTimeZone,
+  RECYCLING_LOCALES
+} from "../src/recycling/calendar-core.js";
+import {
+  findCalendarForDate,
+  findNearestRegisteredCalendar,
+  findNextRegisteredCollection,
+  getRegisteredDateWindow,
+  recyclingCalendars
+} from "../src/recycling/calendars.js";
+import { recyclingTranslations } from "../src/recycling/i18n.js";
+import {
+  formatCalendarDate,
+  formatCategoryList,
+  localizeRecyclingTranslation,
+  renderCalendarWindow,
+  renderFullHouseholdSchedule,
+  renderRecyclingGuide,
+  replaceTokens
+} from "../src/recycling/render.js";
 
 const root = process.cwd();
 const distDir = path.join(root, "dist");
@@ -10,6 +32,8 @@ const sourceImagesDir = path.join(root, "assets", "source");
 const publicDir = path.join(root, "public");
 const stylesPath = path.join(root, "src", "styles.css");
 const appScriptPath = path.join(root, "src", "app.js");
+const recyclingSourceDir = path.join(root, "src", "recycling");
+const recyclingStylesPath = path.join(recyclingSourceDir, "styles.css");
 const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
 const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
 const adminClientScriptPath = path.join(root, "src", "checkin", "admin-client.js");
@@ -58,6 +82,10 @@ const ui = {
       guides: {
         title: "Browse video guides",
         body: "Step-by-step help for the TV, kitchen, air conditioning, keys, and more."
+      },
+      recycling: {
+        title: "Check the recycling calendar",
+        body: "See today's household collection and the next 14 days in Tresnuraghes."
       }
     },
     aboutKicker: "About Villa Laura",
@@ -167,6 +195,10 @@ const ui = {
       guides: {
         title: "Sfoglia le video guide",
         body: "Istruzioni rapide per TV, cucina, aria condizionata, chiavi e altro."
+      },
+      recycling: {
+        title: "Consulta il calendario rifiuti",
+        body: "Controlla la raccolta domestica di oggi e i prossimi 14 giorni a Tresnuraghes."
       }
     },
     aboutKicker: "Villa Laura",
@@ -276,6 +308,10 @@ const ui = {
       guides: {
         title: "Ver guias en video",
         body: "Ayuda paso a paso para TV, cocina, aire acondicionado, llaves y mas."
+      },
+      recycling: {
+        title: "Consultar el calendario de residuos",
+        body: "Comprueba la recogida doméstica de hoy y los próximos 14 días en Tresnuraghes."
       }
     },
     aboutKicker: "Villa Laura",
@@ -385,6 +421,10 @@ const ui = {
       guides: {
         title: "Videoanleitungen ansehen",
         body: "Schritt-fuer-Schritt Hilfe fuer TV, Kueche, Klimaanlage, Schluessel und mehr."
+      },
+      recycling: {
+        title: "Abfallkalender ansehen",
+        body: "Prüfe die heutige Haushaltsabholung und die nächsten 14 Tage in Tresnuraghes."
       }
     },
     aboutKicker: "Villa Laura",
@@ -494,6 +534,10 @@ const ui = {
       guides: {
         title: "Ver guias em video",
         body: "Ajuda passo a passo para TV, cozinha, ar condicionado, chaves e mais."
+      },
+      recycling: {
+        title: "Consultar o calendário de resíduos",
+        body: "Veja a coleta doméstica de hoje e os próximos 14 dias em Tresnuraghes."
       }
     },
     aboutKicker: "Villa Laura",
@@ -603,6 +647,10 @@ const ui = {
       guides: {
         title: "Parcourir les guides video",
         body: "Aide pas a pas pour la TV, la cuisine, la climatisation, les cles et plus encore."
+      },
+      recycling: {
+        title: "Consulter le calendrier des déchets",
+        body: "Vérifiez la collecte domestique d’aujourd’hui et les 14 prochains jours à Tresnuraghes."
       }
     },
     aboutKicker: "Villa Laura",
@@ -933,17 +981,37 @@ const videoCopy = {
 
 const rawConfig = await readFile(configPath, "utf8");
 const config = JSON.parse(rawConfig);
+const recyclingAssetFiles = [
+  "app.js",
+  "calendar-2026.js",
+  "calendar-core.js",
+  "calendars.js",
+  "i18n.js",
+  "render.js",
+  "styles.css"
+];
+const recyclingAssetContents = await Promise.all(
+  recyclingAssetFiles.map((file) => readFile(path.join(recyclingSourceDir, file)))
+);
+const recyclingAssetVersion = createHash("sha256")
+  .update(Buffer.concat(recyclingAssetContents))
+  .digest("hex")
+  .slice(0, 12);
+const recyclingAssetDirectory = `recycling-${recyclingAssetVersion}`;
 
 await rm(distDir, { recursive: true, force: true });
 await rm(docsDir, { recursive: true, force: true });
 await mkdir(assetsDir, { recursive: true });
-
-for (const file of ["_headers", "favicon.svg", "robots.txt"]) {
-  await copyFile(path.join(publicDir, file), path.join(distDir, file));
-}
+await cp(publicDir, distDir, { recursive: true });
 
 const styles = await readFile(stylesPath, "utf8");
 const appScript = await readFile(appScriptPath, "utf8");
+const recyclingStyles = await readFile(recyclingStylesPath, "utf8");
+const recyclingBrowserAssetsDir = path.join(assetsDir, recyclingAssetDirectory);
+await mkdir(recyclingBrowserAssetsDir, { recursive: true });
+for (const file of recyclingAssetFiles.filter((entry) => entry.endsWith(".js"))) {
+  await copyFile(path.join(recyclingSourceDir, file), path.join(recyclingBrowserAssetsDir, file));
+}
 await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
 await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
 await copyFile(adminClientScriptPath, path.join(assetsDir, "admin-client.js"));
@@ -1011,6 +1079,11 @@ const icon = {
   arrow: `
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
+    </svg>
+  `,
+  recycle: `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>
     </svg>
   `
 };
@@ -1151,6 +1224,7 @@ const renderHomepage = (locale) => {
   const currentSegments = locale === "en" ? [] : [locale];
   const homeSegments = currentSegments;
   const heroImage = imageOutputs[0];
+  const recyclingSegments = locale === "en" ? ["recycling"] : [locale, "recycling"];
   const supportCards = [
     {
       href: whatsappHref,
@@ -1174,6 +1248,15 @@ const renderHomepage = (locale) => {
       body: t.supportCards.guides.body,
       theme: "guides",
       iconSvg: icon.play,
+      external: false
+    },
+    {
+      href: hrefFrom(currentSegments, recyclingSegments),
+      title: t.supportCards.recycling.title,
+      body: t.supportCards.recycling.body,
+      theme: "guides",
+      kind: "recycling",
+      iconSvg: icon.recycle,
       external: false
     }
   ];
@@ -1271,7 +1354,7 @@ ${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, co
               ${supportCards
                 .map(
                   (card) => `
-                    <a class="support-card support-card--${card.theme}" href="${card.href}"${card.external ? ' target="_blank" rel="noreferrer"' : ""}>
+                    <a class="support-card${card.kind ? ` support-card--${card.kind}` : ""} support-card--${card.theme}" href="${card.href}"${card.external ? ' target="_blank" rel="noreferrer"' : ""}>
                       <span class="support-card__icon">${card.iconSvg}</span>
                       <span class="support-card__text">
                         <strong>${escapeHtml(card.title)}</strong>
@@ -1281,7 +1364,8 @@ ${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, co
                     </a>
                   `
                 )
-                .join("")}
+                .join("")
+                .trimEnd()}
             </div>
           </aside>
         </section>
@@ -1470,10 +1554,253 @@ ${pageMeta(locale, currentSegments, `${video.title} | ${config.site.name}`, vide
 </html>`;
 };
 
-const writePage = async (segments, html) => {
+const recyclingSegmentsFor = (locale) =>
+  locale === "en" ? ["recycling"] : [locale, "recycling"];
+
+const recyclingHomeSegmentsFor = (locale) => {
+  if (locale === "en" || locale === "nl") return [];
+  return [locale];
+};
+
+const renderRecyclingMeta = (locale, translation, segments, prefix) => {
+  const canonical = `${config.site.domain}${canonicalPath(segments)}`;
+  return `
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${escapeHtml(translation.meta.title)}</title>
+    <meta name="description" content="${escapeHtml(translation.meta.description)}" />
+    <meta name="theme-color" content="#214955" />
+    <meta property="og:title" content="${escapeHtml(translation.meta.title)}" />
+    <meta property="og:description" content="${escapeHtml(translation.meta.description)}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${escapeHtml(canonical)}" />
+    <meta property="og:image" content="${escapeHtml(`${config.site.domain}/${imageOutputs[0].jpeg}`)}" />
+    <link rel="canonical" href="${escapeHtml(canonical)}" />
+    ${RECYCLING_LOCALES.map((entry) => {
+      const href = `${config.site.domain}${canonicalPath(recyclingSegmentsFor(entry))}`;
+      return `<link rel="alternate" hreflang="${entry}" href="${escapeHtml(href)}" />`;
+    }).join("\n    ")}
+    <link rel="alternate" hreflang="x-default" href="${escapeHtml(
+      `${config.site.domain}/recycling/`
+    )}" />
+    <link rel="icon" href="${prefix}favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>${styles}\n${recyclingStyles}</style>
+  `;
+};
+
+const renderRecyclingLanguageSwitcher = (locale, translation, currentSegments) => {
+  return `
+    <div class="lang-switcher" aria-label="${escapeHtml(translation.header.language)}">
+      ${RECYCLING_LOCALES.map((entry) => {
+        const href = hrefFrom(currentSegments, recyclingSegmentsFor(entry));
+        const languageName = recyclingTranslations[entry].languageName;
+        return `<a href="${href}" lang="${entry}" hreflang="${entry}" data-recycling-locale-switch="${entry}" class="lang-switcher__link${
+          entry === locale ? " is-current" : ""
+        }"${entry === locale ? ' aria-current="page"' : ""} aria-label="${escapeHtml(
+          languageName
+        )}"><span aria-hidden="true">${entry.toUpperCase()}</span><span class="sr-only">${escapeHtml(
+          languageName
+        )}</span></a>`;
+      }).join("")}
+    </div>`;
+};
+
+const renderRecyclingHeader = (locale, translation, currentSegments) => {
+  const homeSegments = recyclingHomeSegmentsFor(locale);
+  return `
+    <header class="topbar">
+      <div class="topbar__inner">
+        <a class="brand" href="${hrefFrom(currentSegments, homeSegments)}" aria-label="${escapeHtml(
+          translation.header.homeLabel
+        )}">
+          <span class="brand__name">${escapeHtml(config.site.name)}</span>
+          <span class="brand__tag">${escapeHtml(translation.header.tagline)}</span>
+        </a>
+        <nav class="nav" aria-label="${escapeHtml(translation.header.navigationLabel)}">
+          <a href="${hrefFrom(currentSegments, homeSegments)}">${escapeHtml(translation.header.home)}</a>
+          <a href="${hrefFrom(currentSegments, homeSegments, "#info")}">${escapeHtml(
+            translation.header.houseGuide
+          )}</a>
+          <a href="${hrefFrom(currentSegments, homeSegments, "#contact")}">${escapeHtml(
+            translation.header.support
+          )}</a>
+        </nav>
+        ${renderRecyclingLanguageSwitcher(locale, translation, currentSegments)}
+      </div>
+    </header>`;
+};
+
+const renderRecyclingPage = (locale) => {
+  const currentSegments = recyclingSegmentsFor(locale);
+  const prefix = relPrefix(currentSegments);
+  const buildToday = dateInTimeZone(
+    new Date(),
+    recyclingCalendars[0]?.timeZone ?? "Europe/Rome"
+  );
+  const pageCalendar =
+    findCalendarForDate(buildToday) ?? findNearestRegisteredCalendar(buildToday);
+  const translation = localizeRecyclingTranslation(
+    recyclingTranslations[locale],
+    pageCalendar,
+    locale
+  );
+  const days = getRegisteredDateWindow(buildToday, 14);
+  const nextCollection = findNextRegisteredCollection(buildToday);
+  const rangeEnd = days.at(-1).date;
+  const includesUnavailableDates = days.some((day) => day.status === "unavailable");
+  const rangeText = replaceTokens(translation.calendar.range, {
+    start: formatCalendarDate(buildToday, translation, { weekday: false }),
+    end: formatCalendarDate(rangeEnd, translation, { weekday: false })
+  });
+  const nextCollectionText = nextCollection
+    ? replaceTokens(translation.calendar.nextCollection, {
+        date: formatCalendarDate(nextCollection.date, translation, { weekday: true }),
+        categories: formatCategoryList(nextCollection.categories, translation)
+      })
+    : translation.calendar.noFutureCollection;
+  const availableRangeText = replaceTokens(translation.calendar.availableRange, {
+    start: formatCalendarDate(pageCalendar.validFrom, translation, { weekday: false }),
+    end: formatCalendarDate(pageCalendar.validTo, translation, { weekday: false })
+  });
+  const officialPdfHref = `${prefix}${pageCalendar.source.documents.it.path.slice(1)}`;
+  const translatedPdfHref = `${prefix}${pageCalendar.source.documents[locale].path.slice(1)}`;
+  const guideMarkup = renderRecyclingGuide(pageCalendar, translation);
+  const fullScheduleMarkup = renderFullHouseholdSchedule(pageCalendar, translation);
+  const dayMarkup = renderCalendarWindow(days, {
+    calendar: pageCalendar,
+    calendars: recyclingCalendars,
+    translation,
+    today: buildToday,
+    nextCollectionDate: nextCollection?.date ?? null
+  });
+
+  return `<!doctype html>
+<html lang="${escapeHtml(translation.htmlLang)}">
+  <head>
+${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
+  </head>
+  <body class="recycling-page" data-page="recycling" data-locale="${locale}">
+    <div class="site-shell">
+      ${renderRecyclingHeader(locale, translation, currentSegments)}
+      <main id="top">
+        <section class="recycling-hero" aria-labelledby="recycling-title">
+          <div class="recycling-hero__main">
+            <div class="eyebrow">${escapeHtml(translation.page.kicker)}</div>
+            <h1 id="recycling-title">${escapeHtml(translation.page.title)}</h1>
+            <p class="recycling-hero__intro">${escapeHtml(translation.page.intro)}</p>
+          </div>
+          <aside class="recycling-hero__facts" aria-label="${escapeHtml(translation.page.zone)}">
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">B</span><span>${escapeHtml(
+              translation.page.zone
+            )}</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">⌂</span><span>${escapeHtml(
+              translation.page.audience
+            )}</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">✓</span><span>${escapeHtml(
+              translation.page.validPeriod
+            )}</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">i</span><span>${escapeHtml(
+              translation.page.householdOnly
+            )}</span></p>
+          </aside>
+        </section>
+
+        <section class="recycling-section" id="calendar" data-recycling-app data-locale="${locale}" data-calendar-id="${escapeHtml(
+          pageCalendar.id
+        )}" data-valid-from="${pageCalendar.validFrom}" data-valid-to="${pageCalendar.validTo}">
+          <div class="calendar-panel">
+            <div class="calendar-panel__top">
+              <div class="calendar-panel__heading">
+                <div class="section__kicker">${escapeHtml(translation.page.audience)}</div>
+                <h2>${escapeHtml(translation.calendar.title)}</h2>
+                <p>${escapeHtml(translation.calendar.intro)}</p>
+              </div>
+              <div class="calendar-controls" aria-label="${escapeHtml(translation.calendar.title)}">
+                <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
+                  <span class="calendar-control__arrow" aria-hidden="true">←</span>
+                  <span>${escapeHtml(translation.calendar.previousWeek)}</span>
+                </button>
+                <button class="calendar-control calendar-control--today" type="button" data-calendar-today disabled>
+                  ${escapeHtml(translation.calendar.today)}
+                </button>
+                <button class="calendar-control calendar-control--next" type="button" data-calendar-next disabled>
+                  <span>${escapeHtml(translation.calendar.nextWeek)}</span>
+                  <span class="calendar-control__arrow" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+            <div class="calendar-summary" aria-live="polite" aria-atomic="true">
+              <p class="calendar-summary__range" data-calendar-range>${escapeHtml(rangeText)}</p>
+              <p class="calendar-summary__next" data-next-collection>${escapeHtml(nextCollectionText)}</p>
+            </div>
+            <div class="calendar-coverage" data-coverage-message${includesUnavailableDates ? "" : " hidden"}>
+              <p data-coverage-text>${escapeHtml(`${translation.calendar.outsideCoverage} ${availableRangeText}`)}</p>
+              <button class="calendar-control" type="button" data-calendar-available disabled>${escapeHtml(
+                translation.calendar.viewAvailable
+              )}</button>
+            </div>
+            <ol class="collection-days" data-calendar-list>${dayMarkup}</ol>
+          </div>
+        </section>
+
+        <section class="recycling-section" id="recycling-guide" aria-labelledby="recycling-guide-title">
+          <div class="recycling-section__heading">
+            <div class="section__kicker">${escapeHtml(translation.guide.kicker)}</div>
+            <h2 id="recycling-guide-title">${escapeHtml(translation.guide.title)}</h2>
+            <p>${escapeHtml(translation.guide.intro)}</p>
+          </div>
+          <div class="recycling-guide-list">${guideMarkup}</div>
+        </section>
+
+        <section class="recycling-section" id="official-calendar">
+          <div class="recycling-reference-grid">
+            <article class="recycling-source-card">
+              <div class="section__kicker">${escapeHtml(translation.sources.kicker)}</div>
+              <h2>${escapeHtml(translation.sources.title)}</h2>
+              <p>${escapeHtml(translation.sources.intro)}</p>
+              <div class="recycling-source-card__actions">
+                <a class="recycling-source-link" href="${officialPdfHref}" type="application/pdf" target="_blank" rel="noreferrer">
+                  ${escapeHtml(translation.sources.originalPdf)}
+                  <span class="sr-only"> — ${escapeHtml(translation.sources.pdfFormat)}</span>
+                </a>
+                ${
+                  locale === "it"
+                    ? ""
+                    : `<a class="recycling-source-link" href="${translatedPdfHref}" type="application/pdf" target="_blank" rel="noreferrer">${escapeHtml(
+                        translation.sources.translatedPdf
+                      )}<span class="sr-only"> — ${escapeHtml(translation.sources.pdfFormat)}</span></a>`
+                }
+              </div>
+              <p class="recycling-source-note">${escapeHtml(translation.sources.translatedLimit)}</p>
+            </article>
+
+            <article class="full-schedule-card">
+              <div class="section__kicker">${escapeHtml(translation.fullSchedule.kicker)}</div>
+              <h2>${escapeHtml(translation.fullSchedule.title)}</h2>
+              <p>${escapeHtml(translation.fullSchedule.intro)}</p>
+              <noscript><p class="no-script-note">${escapeHtml(translation.fullSchedule.noScript)}</p></noscript>
+              <div class="full-schedule">${fullScheduleMarkup}</div>
+            </article>
+          </div>
+        </section>
+      </main>
+      <footer class="footer"><p>${escapeHtml(translation.footer)} | ${escapeHtml(config.site.name)}</p></footer>
+    </div>
+    <script type="module" src="${prefix}assets/${recyclingAssetDirectory}/app.js"></script>
+  </body>
+</html>`;
+};
+
+const sitemapRoutes = [];
+
+const writePage = async (segments, html, { indexable = true } = {}) => {
   const dir = path.join(distDir, ...segments);
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, "index.html"), html);
+  if (indexable) sitemapRoutes.push(canonicalPath(segments));
 };
 
 const renderCheckinShell = ({ title, script }) => `<!doctype html>
@@ -1514,8 +1841,26 @@ for (const locale of localeOrder) {
   }
 }
 
-await writePage(["admin"], renderCheckinShell({ title: "Admin", script: "admin.js" }));
-await writePage(["checkin"], renderCheckinShell({ title: "Secure Check-In", script: "checkin.js" }));
+for (const locale of RECYCLING_LOCALES) {
+  const recyclingPage = renderRecyclingPage(locale).replace(/[ \t]+$/gm, "");
+  await writePage(recyclingSegmentsFor(locale), recyclingPage);
+}
+
+await writePage(["admin"], renderCheckinShell({ title: "Admin", script: "admin.js" }), {
+  indexable: false
+});
+await writePage(["checkin"], renderCheckinShell({ title: "Secure Check-In", script: "checkin.js" }), {
+  indexable: false
+});
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${[...new Set(sitemapRoutes)]
+  .map((route) => `  <url><loc>${escapeHtml(`${config.site.domain}${route}`)}</loc></url>`)
+  .join("\n")}
+</urlset>
+`;
+await writeFile(path.join(distDir, "sitemap.xml"), sitemap);
 
 await cp(distDir, docsDir, { recursive: true });
 await writeFile(path.join(docsDir, ".nojekyll"), "");

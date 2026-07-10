@@ -35,6 +35,7 @@ The site is designed to sit between booking platforms and day-to-day operations,
 - Structured house information and operational guidance
 - Clear support and booking-platform calls to action
 - Multilingual interface support
+- Seven-language Zone B recycling calendar for Tresnuraghes at `/recycling`
 - Simple content update model driven by a single configuration file
 - Image optimisation during build for lightweight delivery
 - Secure digital check-in MVP at `/checkin`
@@ -94,6 +95,13 @@ Primary editable files:
 - `src/styles.css` for styling
 - `src/app.js` for lightweight client-side behaviour
 - `scripts/build.mjs` for static site generation
+- `src/recycling/` for calendar data, translations, rendering, and date logic
+
+## Recycling Calendar
+
+The public recycling page is generated at `/recycling/`, with Italian, Spanish, French, Dutch, German, and Portuguese route variants. It uses `Europe/Rome` civil dates and initially shows today plus the following 13 days.
+
+The structured 2026 Zone B household schedule lives in `src/recycling/calendar-2026.js`. The original Italian municipality calendar is authoritative; commercial-only organic collections remain represented separately and are never emitted as Villa Laura household collections. See [recycling_calendar.md](src/docs/recycling_calendar.md) for source coverage, validation rules, and the process for adding a future calendar.
 
 ## Deployment
 
