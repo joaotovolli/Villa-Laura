@@ -1,0 +1,2132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026 recycling collection calendar | Villa Laura</title>
+    <meta name="description" content="Zone B household collection calendar for Tresnuraghes, with the next 14 days and the local recycling guide." />
+    <meta name="theme-color" content="#214955" />
+    <meta property="og:title" content="2026 recycling collection calendar | Villa Laura" />
+    <meta property="og:description" content="Zone B household collection calendar for Tresnuraghes, with the next 14 days and the local recycling guide." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://villa-laura.it/recycling/" />
+    <meta property="og:image" content="https://villa-laura.it/assets/photo-1.jpg" />
+    <link rel="canonical" href="https://villa-laura.it/recycling/" />
+    <link rel="alternate" hreflang="it" href="https://villa-laura.it/it/recycling/" />
+    <link rel="alternate" hreflang="en" href="https://villa-laura.it/recycling/" />
+    <link rel="alternate" hreflang="es" href="https://villa-laura.it/es/recycling/" />
+    <link rel="alternate" hreflang="fr" href="https://villa-laura.it/fr/recycling/" />
+    <link rel="alternate" hreflang="nl" href="https://villa-laura.it/nl/recycling/" />
+    <link rel="alternate" hreflang="de" href="https://villa-laura.it/de/recycling/" />
+    <link rel="alternate" hreflang="pt" href="https://villa-laura.it/pt/recycling/" />
+    <link rel="alternate" hreflang="x-default" href="https://villa-laura.it/recycling/" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>:root {
+  --sand: #f1e5d4;
+  --sand-strong: #d9bea1;
+  --stone: #fbf7f1;
+  --ink: #233038;
+  --ink-soft: rgba(35, 48, 56, 0.72);
+  --sea: #6e98a3;
+  --sea-deep: #214955;
+  --sun: #d38a3a;
+  --sun-soft: rgba(211, 138, 58, 0.14);
+  --olive: #68754c;
+  --white: #fffdf9;
+  --border: rgba(35, 48, 56, 0.1);
+  --shadow: 0 24px 60px rgba(18, 32, 38, 0.12);
+  --shadow-soft: 0 18px 40px rgba(18, 32, 38, 0.08);
+  --radius: 30px;
+  --content: 1200px;
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --wa: #25d366;
+  --wa-deep: #128c7e;
+  --airbnb: #ff5a5f;
+  --airbnb-deep: #e74349;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(211, 138, 58, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(110, 152, 163, 0.18), transparent 28%),
+    linear-gradient(180deg, #fcfaf5 0%, #f5ede1 42%, #fcfaf6 100%);
+  line-height: 1.6;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+.button {
+  font: inherit;
+}
+
+.site-shell {
+  overflow: clip;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 24;
+  backdrop-filter: blur(18px);
+  background: rgba(252, 248, 242, 0.78);
+  border-bottom: 1px solid rgba(35, 48, 56, 0.07);
+}
+
+.topbar__inner,
+.section,
+.hero,
+.footer {
+  width: min(calc(100% - 2rem), var(--content));
+  margin: 0 auto;
+}
+
+.topbar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.9rem 0;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.brand__tag {
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.nav {
+  display: none;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.93rem;
+  color: var(--ink-soft);
+}
+
+.nav a:hover,
+.lang-switcher__link:hover {
+  color: var(--sea-deep);
+}
+
+.lang-switcher {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.lang-switcher__link {
+  min-width: 2.5rem;
+  padding: 0.42rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(35, 48, 56, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.lang-switcher__link.is-current {
+  color: var(--white);
+  background: var(--sea-deep);
+  border-color: var(--sea-deep);
+}
+
+.hero {
+  display: grid;
+  gap: 1.4rem;
+  margin-top: 1.2rem;
+}
+
+.hero__media,
+.support-panel,
+.guide-hero {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.hero__media {
+  position: relative;
+  min-height: 68svh;
+  background: linear-gradient(160deg, #688a94 0%, #28444d 100%);
+}
+
+.hero__image-wrap,
+.hero__image-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__image-wrap img {
+  object-fit: cover;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(18, 32, 38, 0.08) 0%, rgba(18, 32, 38, 0.62) 100%),
+    radial-gradient(circle at 20% 20%, rgba(255, 245, 228, 0.22), transparent 32%);
+}
+
+.hero__copy {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  padding: 1.5rem;
+  color: var(--white);
+}
+
+.eyebrow,
+.guide-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.95rem;
+  padding: 0.38rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.16);
+  font-size: 0.73rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero h1,
+.section h2,
+.panel__title,
+.contact-card h2,
+.guide-card h3,
+.guide-hero h1,
+.mini-guide-card strong {
+  margin: 0;
+  font-family: var(--font-display);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.hero h1,
+.guide-hero h1 {
+  max-width: 11ch;
+  font-size: clamp(3.2rem, 10vw, 6.4rem);
+}
+
+.hero__lede,
+.section__intro,
+.panel p,
+.guide-list li,
+.guide-card p,
+.contact-card p,
+.mini-guide-card span,
+.footer p {
+  color: var(--ink-soft);
+}
+
+.hero__lede {
+  max-width: 38rem;
+  margin-top: 1rem;
+  color: rgba(255, 253, 249, 0.88);
+  font-size: 1rem;
+}
+
+.hero__actions,
+.panel__actions,
+.contact-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.3rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 3rem;
+  padding: 0.85rem 1.18rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button svg,
+.support-card__icon svg,
+.guide-card__play svg,
+.back-link svg,
+.guide-card__cta svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
+.button--solid {
+  background: var(--white);
+  color: var(--sea-deep);
+}
+
+.button--ghost {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: var(--white);
+}
+
+.button--soft {
+  background: rgba(255, 253, 249, 0.72);
+  border-color: rgba(35, 48, 56, 0.08);
+  color: var(--sea-deep);
+}
+
+.support-panel,
+.guide-hero {
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.94), rgba(245, 238, 228, 0.96));
+  padding: 1.25rem;
+}
+
+.support-grid,
+.panel-grid,
+.guide-grid,
+.gallery-grid,
+.mini-guide-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.support-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 1.05rem;
+  border-radius: 24px;
+  border: 1px solid rgba(35, 48, 56, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-soft);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.support-card:hover,
+.guide-card__link:hover,
+.mini-guide-card a:hover {
+  transform: translateY(-2px);
+}
+
+.support-card--whatsapp {
+  border-color: rgba(37, 211, 102, 0.3);
+}
+
+.support-card--airbnb {
+  border-color: rgba(255, 90, 95, 0.24);
+}
+
+.support-card__icon,
+.guide-card__play {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  color: var(--white);
+}
+
+.support-card--whatsapp .support-card__icon {
+  background: linear-gradient(160deg, var(--wa), var(--wa-deep));
+}
+
+.support-card--airbnb .support-card__icon {
+  background: linear-gradient(160deg, var(--airbnb), var(--airbnb-deep));
+}
+
+.support-card--guides .support-card__icon {
+  background: linear-gradient(160deg, var(--sea), var(--sea-deep));
+}
+
+.support-card__text {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.support-card__text strong {
+  font-size: 1rem;
+}
+
+.support-card__text span {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.support-card__arrow,
+.guide-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--sea-deep);
+}
+
+.section {
+  padding: 5rem 0 0;
+}
+
+.section--tight {
+  padding-top: 3.5rem;
+}
+
+.section--split {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.section__kicker {
+  margin-bottom: 0.55rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--sun);
+}
+
+.section h2 {
+  font-size: clamp(2.6rem, 7vw, 4.4rem);
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel,
+.contact-card,
+.guide-card__link,
+.mini-guide-card a {
+  padding: 1.35rem;
+  border-radius: 26px;
+  background: rgba(255, 253, 249, 0.82);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.panel--accent {
+  background:
+    radial-gradient(circle at top right, rgba(110, 152, 163, 0.22), transparent 38%),
+    rgba(255, 253, 249, 0.9);
+}
+
+.panel__title {
+  margin-bottom: 0.8rem;
+  font-size: 2rem;
+}
+
+.highlight-list,
+.guide-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.guide-grid--cards {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.guide-card {
+  min-width: 0;
+}
+
+.guide-card__link {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.guide-card__thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(110, 152, 163, 0.4), rgba(33, 73, 85, 0.75));
+}
+
+.guide-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guide-card__thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.28));
+}
+
+.guide-card__play {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  z-index: 1;
+  background: rgba(255, 253, 249, 0.92);
+  color: var(--sea-deep);
+}
+
+.guide-card__body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.15rem 1.15rem 1.25rem;
+}
+
+.guide-card__eyebrow {
+  margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--sun);
+}
+
+.guide-card h3 {
+  font-size: 2rem;
+}
+
+.gallery-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gallery-card {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: var(--shadow-soft);
+}
+
+.gallery-card__media,
+.gallery-card__media img {
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-card__media img {
+  min-height: 100%;
+  object-fit: cover;
+}
+
+.gallery-card {
+  min-height: 16rem;
+}
+
+.gallery-card--large {
+  grid-column: span 2;
+  min-height: 24rem;
+}
+
+.contact-card {
+  display: grid;
+  gap: 1.4rem;
+  background:
+    radial-gradient(circle at top right, rgba(211, 138, 58, 0.14), transparent 36%),
+    rgba(255, 253, 249, 0.9);
+}
+
+.guide-hero {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.guide-hero__copy {
+  min-width: 0;
+}
+
+.guide-hero__frame {
+  min-width: 0;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  color: var(--sea-deep);
+  font-weight: 700;
+}
+
+.video-frame {
+  width: 100%;
+  min-height: 260px;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 24px;
+  background: #111;
+}
+
+.mini-guide-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.mini-guide-card a {
+  display: grid;
+  gap: 0.6rem;
+  height: 100%;
+}
+
+.mini-guide-card strong {
+  font-size: 1.65rem;
+}
+
+.footer {
+  padding: 4rem 0 3rem;
+}
+
+.footer p {
+  margin: 0;
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 760px) {
+  .nav {
+    display: flex;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.95fr);
+    align-items: stretch;
+  }
+
+  .support-grid,
+  .panel-grid,
+  .guide-grid,
+  .contact-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section--split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .guide-hero {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: center;
+  }
+
+  .section-heading {
+    flex-direction: row;
+    align-items: end;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 1024px) {
+  .guide-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gallery-card--large {
+    grid-column: span 2;
+    grid-row: span 2;
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 759px) {
+  .hero h1,
+  .guide-hero h1 {
+    max-width: 8ch;
+    font-size: clamp(2.55rem, 12vw, 4.1rem);
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .hero__media {
+    min-height: clamp(35rem, 92svh, 42rem);
+  }
+
+  .hero__copy {
+    padding: 1.2rem 1.15rem 1.3rem;
+  }
+
+  .hero__lede {
+    max-width: 30ch;
+    margin-top: 0.8rem;
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .hero__actions {
+    gap: 0.65rem;
+    margin-top: 1.05rem;
+  }
+
+  .hero__actions .button {
+    min-height: 2.9rem;
+    padding-inline: 1rem;
+  }
+
+  .topbar__inner {
+    align-items: flex-start;
+  }
+
+  .lang-switcher {
+    width: 100%;
+  }
+
+  .support-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .support-card__arrow {
+    display: none;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-card--large {
+    grid-column: auto;
+    min-height: 18rem;
+  }
+}
+
+.recycling-page {
+  --paper: #f2a300;
+  --paper-soft: #fff1bd;
+  --glass: #68a846;
+  --glass-soft: #e4f3dc;
+  --plastic: #26aae0;
+  --plastic-soft: #ddf4fb;
+  --organic: #773e1a;
+  --organic-soft: #f4e3d6;
+  --residual: #77879a;
+  --residual-soft: #e5e9ed;
+}
+
+.recycling-page main,
+.recycling-page button,
+.recycling-page summary,
+.recycling-page a {
+  min-width: 0;
+}
+
+.recycling-page :focus-visible {
+  outline: 3px solid #d36f19;
+  outline-offset: 3px;
+}
+
+.recycling-page [hidden] {
+  display: none !important;
+}
+
+.recycling-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.recycling-page .lang-switcher__link {
+  display: inline-grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  place-items: center;
+  padding: 0.45rem 0.68rem;
+}
+
+.recycling-hero,
+.recycling-section {
+  width: min(calc(100% - 2rem), var(--content));
+  margin-inline: auto;
+}
+
+.recycling-hero {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.recycling-hero__main,
+.recycling-hero__facts,
+.calendar-panel,
+.recycling-source-card,
+.full-schedule-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.recycling-hero__main {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 5vw, 3.25rem);
+  color: var(--white);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(208, 230, 130, 0.28), transparent 34%),
+    linear-gradient(145deg, #214955, #356c70 58%, #68754c);
+}
+
+.recycling-hero__main::after {
+  position: absolute;
+  right: -3rem;
+  bottom: -6rem;
+  width: 18rem;
+  height: 18rem;
+  border: 2.5rem solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  content: "";
+}
+
+.recycling-hero .eyebrow {
+  position: relative;
+  z-index: 1;
+}
+
+.recycling-hero h1 {
+  position: relative;
+  z-index: 1;
+  max-width: 13ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 5.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.recycling-hero__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 58ch;
+  margin: 1.1rem 0 0;
+  color: rgba(255, 253, 249, 0.9);
+  font-size: clamp(1rem, 2vw, 1.14rem);
+}
+
+.recycling-hero__facts {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  padding: 1.35rem;
+  background: rgba(255, 253, 249, 0.9);
+}
+
+.recycling-fact {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  margin: 0;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recycling-fact:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.recycling-fact__mark {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun-soft);
+  color: #9d5514;
+  font-weight: 800;
+}
+
+.recycling-fact span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.recycling-section {
+  padding-top: clamp(3rem, 7vw, 5.5rem);
+}
+
+.recycling-section__heading {
+  max-width: 50rem;
+  margin-bottom: 1.3rem;
+}
+
+.recycling-section__heading h2,
+.calendar-panel__heading h2,
+.recycling-source-card h2,
+.full-schedule-card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.recycling-section__heading p,
+.calendar-panel__heading p,
+.recycling-source-card p,
+.full-schedule-card p {
+  color: var(--ink-soft);
+}
+
+.calendar-panel {
+  padding: clamp(1rem, 3vw, 1.65rem);
+  background: rgba(255, 253, 249, 0.94);
+}
+
+.calendar-panel__top {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.calendar-panel__heading p {
+  margin: 0.55rem 0 0;
+}
+
+.calendar-controls {
+  display: grid;
+  grid-template-areas:
+    "today today"
+    "previous next";
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.calendar-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(33, 73, 85, 0.22);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--sea-deep);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.calendar-control:hover:not(:disabled) {
+  border-color: var(--sea-deep);
+  background: #f2f8f7;
+}
+
+.calendar-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.calendar-control--previous {
+  grid-area: previous;
+}
+
+.calendar-control--today {
+  grid-area: today;
+  color: var(--white);
+  background: var(--sea-deep);
+}
+
+.calendar-control--today:hover:not(:disabled) {
+  color: var(--white);
+  background: #173b45;
+}
+
+.calendar-control--next {
+  grid-area: next;
+}
+
+.calendar-control__arrow {
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+}
+
+.calendar-summary {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: #edf4f2;
+}
+
+.calendar-summary p {
+  margin: 0;
+}
+
+.calendar-summary__range {
+  font-weight: 800;
+  color: var(--sea-deep);
+}
+
+.calendar-summary__next {
+  color: var(--ink-soft);
+}
+
+.calendar-coverage {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(211, 138, 58, 0.35);
+  border-radius: 18px;
+  background: #fff6e8;
+}
+
+.calendar-coverage p {
+  margin: 0 0 0.75rem;
+}
+
+.calendar-coverage .calendar-control {
+  width: 100%;
+  max-width: 22rem;
+}
+
+.collection-days {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection-day {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid rgba(35, 48, 56, 0.1);
+  border-radius: 22px;
+  background: #fffdfa;
+}
+
+.collection-day.is-today {
+  border: 2px solid var(--sea-deep);
+  background: #f5fbfa;
+  box-shadow: 0 10px 28px rgba(33, 73, 85, 0.12);
+}
+
+.collection-day.is-next:not(.is-today) {
+  border-color: #bd741f;
+  box-shadow: inset 4px 0 0 #d38a3a;
+}
+
+.collection-day--unavailable {
+  border-style: dashed;
+  background: rgba(243, 239, 233, 0.7);
+}
+
+.collection-day__date,
+.collection-day__result {
+  min-width: 0;
+}
+
+.collection-day__date time {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.collection-day__weekday {
+  color: var(--ink-soft);
+  font-size: 0.83rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.collection-day__date strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.day-badges,
+.waste-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.day-badges {
+  margin-top: 0.55rem;
+}
+
+.day-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.65rem;
+  padding: 0.24rem 0.52rem;
+  border-radius: 999px;
+  background: #ece8e1;
+  color: #4a5459;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.day-badge--today {
+  background: var(--sea-deep);
+  color: var(--white);
+}
+
+.day-badge--next {
+  background: #fff0d7;
+  color: #8b4c0c;
+}
+
+.day-badge--holiday {
+  background: #fde5e5;
+  color: #9f2e33;
+}
+
+.collection-day__label,
+.collection-day__empty,
+.collection-day__note {
+  margin: 0;
+}
+
+.collection-day__label {
+  margin-bottom: 0.5rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.collection-day__empty {
+  color: #59656a;
+  font-weight: 700;
+}
+
+.collection-day__empty--unavailable {
+  color: #7c6044;
+}
+
+.collection-day__note {
+  margin-top: 0.65rem;
+  padding-left: 0.65rem;
+  border-left: 3px solid #d34e55;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+}
+
+.waste-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 2.25rem;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #263239;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.waste-chip__icon,
+.recycling-guide__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.waste-chip__icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.waste-chip--paper,
+.recycling-guide--paper > summary .recycling-guide__icon {
+  border-color: var(--paper);
+  background: var(--paper-soft);
+  color: #8c5c00;
+}
+
+.waste-chip--glass,
+.recycling-guide--glass > summary .recycling-guide__icon {
+  border-color: var(--glass);
+  background: var(--glass-soft);
+  color: #346e1f;
+}
+
+.waste-chip--plastic,
+.recycling-guide--plastic > summary .recycling-guide__icon {
+  border-color: var(--plastic);
+  background: var(--plastic-soft);
+  color: #126f91;
+}
+
+.waste-chip--organic,
+.recycling-guide--organic > summary .recycling-guide__icon {
+  border-color: var(--organic);
+  background: var(--organic-soft);
+  color: #6d350f;
+}
+
+.waste-chip--residual,
+.recycling-guide--residual > summary .recycling-guide__icon {
+  border-color: var(--residual);
+  background: var(--residual-soft);
+  color: #4c5c6c;
+}
+
+.recycling-guide-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recycling-guide {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(255, 253, 249, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.recycling-guide summary,
+.full-schedule__month summary {
+  display: flex;
+  align-items: center;
+  min-height: 3.75rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+
+.recycling-guide summary::-webkit-details-marker,
+.full-schedule__month summary::-webkit-details-marker {
+  display: none;
+}
+
+.recycling-guide summary {
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+}
+
+.recycling-guide__icon {
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.recycling-guide__icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.recycling-guide__chevron {
+  margin-left: auto;
+  color: var(--sea-deep);
+  font-size: 1.45rem;
+  transition: transform 160ms ease;
+}
+
+.recycling-guide[open] .recycling-guide__chevron {
+  transform: rotate(45deg);
+}
+
+.recycling-guide__body {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1rem 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+.recycling-guide__section {
+  padding-top: 0.95rem;
+}
+
+.recycling-guide__section h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.83rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recycling-guide__section ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.recycling-guide__section li + li {
+  margin-top: 0.4rem;
+}
+
+.recycling-guide__rule {
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: #f0f5f3;
+}
+
+.recycling-guide__rule p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+}
+
+.recycling-reference-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.recycling-source-card,
+.full-schedule-card {
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  background: rgba(255, 253, 249, 0.9);
+}
+
+.recycling-source-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.recycling-source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(33, 73, 85, 0.24);
+  border-radius: 999px;
+  color: var(--sea-deep);
+  font-weight: 800;
+  text-align: center;
+}
+
+.recycling-source-link:first-child {
+  color: var(--white);
+  background: var(--sea-deep);
+}
+
+.recycling-source-note {
+  font-size: 0.88rem;
+}
+
+.no-script-note {
+  margin: 0 0 1rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: #fff1d8;
+  color: #70420e;
+  font-weight: 700;
+}
+
+.full-schedule {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.full-schedule__month {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: #fffdfa;
+}
+
+.full-schedule__month summary {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
+  text-transform: capitalize;
+}
+
+.full-schedule__count {
+  display: grid;
+  min-width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f0ee;
+  color: var(--sea-deep);
+  font-size: 0.78rem;
+}
+
+.full-schedule__month ol {
+  margin: 0;
+  padding: 0 1rem 1rem 2.6rem;
+}
+
+.full-schedule__month li + li {
+  margin-top: 0.38rem;
+}
+
+.full-schedule__holiday {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: #fde5e5;
+  color: #9f2e33;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.recycling-page .footer {
+  padding-top: 4rem;
+}
+
+@media (min-width: 700px) {
+  .recycling-hero {
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
+  }
+
+  .calendar-panel__top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .calendar-controls {
+    grid-template-areas: "previous today next";
+    grid-template-columns: repeat(3, minmax(8rem, auto));
+  }
+
+  .collection-day {
+    grid-template-columns: minmax(12rem, 0.68fr) minmax(0, 1.6fr);
+    align-items: center;
+  }
+
+  .recycling-reference-grid {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    align-items: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .recycling-hero,
+  .recycling-section {
+    width: min(calc(100% - 1rem), var(--content));
+  }
+
+  .recycling-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.8rem);
+  }
+
+  .recycling-page .topbar__inner {
+    width: min(calc(100% - 1rem), var(--content));
+  }
+
+  .recycling-page .brand__tag {
+    max-width: 18rem;
+    letter-spacing: 0.1em;
+  }
+
+  .calendar-control {
+    padding-inline: 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  .recycling-source-card__actions,
+  .recycling-source-link {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recycling-page *,
+  .recycling-page *::before,
+  .recycling-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .recycling-page .topbar,
+  .calendar-controls,
+  .recycling-source-card {
+    display: none;
+  }
+
+  .recycling-page body,
+  .calendar-panel,
+  .collection-day,
+  .full-schedule-card {
+    background: #fff;
+    box-shadow: none;
+  }
+}
+</style>
+
+  </head>
+  <body class="recycling-page" data-page="recycling" data-locale="en">
+    <div class="site-shell">
+
+    <header class="topbar">
+      <div class="topbar__inner">
+        <a class="brand" href="../" aria-label="Villa Laura homepage">
+          <span class="brand__name">Villa Laura</span>
+          <span class="brand__tag">Recycling collection calendar</span>
+        </a>
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="../">Home</a>
+          <a href="../#info">House guide</a>
+          <a href="../#contact">Contact</a>
+        </nav>
+
+    <div class="lang-switcher" aria-label="Language">
+      <a href="../it/recycling/" lang="it" hreflang="it" data-recycling-locale-switch="it" class="lang-switcher__link" aria-label="Italiano"><span aria-hidden="true">IT</span><span class="sr-only">Italiano</span></a><a href="../recycling/" lang="en" hreflang="en" data-recycling-locale-switch="en" class="lang-switcher__link is-current" aria-current="page" aria-label="English"><span aria-hidden="true">EN</span><span class="sr-only">English</span></a><a href="../es/recycling/" lang="es" hreflang="es" data-recycling-locale-switch="es" class="lang-switcher__link" aria-label="Español"><span aria-hidden="true">ES</span><span class="sr-only">Español</span></a><a href="../fr/recycling/" lang="fr" hreflang="fr" data-recycling-locale-switch="fr" class="lang-switcher__link" aria-label="Français"><span aria-hidden="true">FR</span><span class="sr-only">Français</span></a><a href="../nl/recycling/" lang="nl" hreflang="nl" data-recycling-locale-switch="nl" class="lang-switcher__link" aria-label="Nederlands"><span aria-hidden="true">NL</span><span class="sr-only">Nederlands</span></a><a href="../de/recycling/" lang="de" hreflang="de" data-recycling-locale-switch="de" class="lang-switcher__link" aria-label="Deutsch"><span aria-hidden="true">DE</span><span class="sr-only">Deutsch</span></a><a href="../pt/recycling/" lang="pt" hreflang="pt" data-recycling-locale-switch="pt" class="lang-switcher__link" aria-label="Português"><span aria-hidden="true">PT</span><span class="sr-only">Português</span></a>
+    </div>
+      </div>
+    </header>
+      <main id="top">
+        <section class="recycling-hero" aria-labelledby="recycling-title">
+          <div class="recycling-hero__main">
+            <div class="eyebrow">Useful guest information</div>
+            <h1 id="recycling-title">Waste collection in Tresnuraghes</h1>
+            <p class="recycling-hero__intro">See at a glance what is collected today and over the next 14 days. Dates come from the official 2026 Zone B calendar.</p>
+          </div>
+          <aside class="recycling-hero__facts" aria-label="Zone B · Tresnuraghes, Sagama and Montresta">
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">B</span><span>Zone B · Tresnuraghes, Sagama and Montresta</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">⌂</span><span>Household users · Villa Laura</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">✓</span><span>Official period available: 1 January 2026 – 31 December 2026</span></p>
+            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">i</span><span>Additional collections marked exclusively for commercial users are not shown as Villa Laura household collections.</span></p>
+          </aside>
+        </section>
+
+        <section class="recycling-section" id="calendar" data-recycling-app data-locale="en" data-calendar-id="planargia-zone-b-household-2026" data-valid-from="2026-01-01" data-valid-to="2026-12-31">
+          <div class="calendar-panel">
+            <div class="calendar-panel__top">
+              <div class="calendar-panel__heading">
+                <div class="section__kicker">Household users · Villa Laura</div>
+                <h2>The next 14 days</h2>
+                <p>The view starts from the current date at Villa Laura (Europe/Rome time).</p>
+              </div>
+              <div class="calendar-controls" aria-label="The next 14 days">
+                <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
+                  <span class="calendar-control__arrow" aria-hidden="true">←</span>
+                  <span>Previous week</span>
+                </button>
+                <button class="calendar-control calendar-control--today" type="button" data-calendar-today disabled>
+                  Today
+                </button>
+                <button class="calendar-control calendar-control--next" type="button" data-calendar-next disabled>
+                  <span>Next week</span>
+                  <span class="calendar-control__arrow" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+            <div class="calendar-summary" aria-live="polite" aria-atomic="true">
+              <p class="calendar-summary__range" data-calendar-range>10 July 2026 to 23 July 2026</p>
+              <p class="calendar-summary__next" data-next-collection>Next collection: Friday 10 July 2026 — Paper and Organic</p>
+            </div>
+            <div class="calendar-coverage" data-coverage-message hidden>
+              <p data-coverage-text>The available official calendar does not cover this date. The 2026 pattern is never repeated automatically. Official dates are available from 1 January 2026 to 31 December 2026.</p>
+              <button class="calendar-control" type="button" data-calendar-available disabled>View the 2026 calendar</button>
+            </div>
+            <ol class="collection-days" data-calendar-list>
+    <li class="collection-day collection-day--collection is-today is-next" data-calendar-date="2026-07-10" data-calendar-status="collection" aria-current="date">
+      <div class="collection-day__date">
+        <time datetime="2026-07-10">
+          <span class="collection-day__weekday">Friday</span>
+          <strong>10 July 2026</strong>
+        </time>
+        <div class="day-badges"><span class="day-badge day-badge--today">Today</span><span class="day-badge day-badge--next">Next collection</span></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--paper" data-category="paper">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
+    </g>
+  </svg></span>
+    <span>Paper</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-11" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-11">
+          <span class="collection-day__weekday">Saturday</span>
+          <strong>11 July 2026</strong>
+        </time>
+        <div class="day-badges"><span class="day-badge">Tomorrow</span></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-12" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-12">
+          <span class="collection-day__weekday">Sunday</span>
+          <strong>12 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-13" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-13">
+          <span class="collection-day__weekday">Monday</span>
+          <strong>13 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--residual" data-category="residual">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 7h12l-1 14H7zM5 7h14M9 7V4h6v3M10 11v6M14 11v6"/>
+    </g>
+  </svg></span>
+    <span>Residual</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span>
+  <span class="waste-chip waste-chip--glass" data-category="glass">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 4h4v3l-1 2v10H5V9L4 7V4z"/><path d="M14 7h5v12h-5zM14 11h5"/>
+    </g>
+  </svg></span>
+    <span>Glass</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-14" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-14">
+          <span class="collection-day__weekday">Tuesday</span>
+          <strong>14 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-15" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-15">
+          <span class="collection-day__weekday">Wednesday</span>
+          <strong>15 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--plastic" data-category="plastic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3h4v3l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9l2-3z"/><path d="M8 11h8M10 3h4"/>
+    </g>
+  </svg></span>
+    <span>Plastic</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-16" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-16">
+          <span class="collection-day__weekday">Thursday</span>
+          <strong>16 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-17" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-17">
+          <span class="collection-day__weekday">Friday</span>
+          <strong>17 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--paper" data-category="paper">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
+    </g>
+  </svg></span>
+    <span>Paper</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-18" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-18">
+          <span class="collection-day__weekday">Saturday</span>
+          <strong>18 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-19" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-19">
+          <span class="collection-day__weekday">Sunday</span>
+          <strong>19 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-20" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-20">
+          <span class="collection-day__weekday">Monday</span>
+          <strong>20 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--glass" data-category="glass">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 4h4v3l-1 2v10H5V9L4 7V4z"/><path d="M14 7h5v12h-5zM14 11h5"/>
+    </g>
+  </svg></span>
+    <span>Glass</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-21" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-21">
+          <span class="collection-day__weekday">Tuesday</span>
+          <strong>21 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-22" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-22">
+          <span class="collection-day__weekday">Wednesday</span>
+          <strong>22 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--plastic" data-category="plastic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3h4v3l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9l2-3z"/><path d="M8 11h8M10 3h4"/>
+    </g>
+  </svg></span>
+    <span>Plastic</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-23" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-23">
+          <span class="collection-day__weekday">Thursday</span>
+          <strong>23 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li></ol>
+          </div>
+        </section>
+
+        <section class="recycling-section" id="recycling-guide" aria-labelledby="recycling-guide-title">
+          <div class="recycling-section__heading">
+            <div class="section__kicker">Local guide</div>
+            <h2 id="recycling-guide-title">What to recycle</h2>
+            <p>The guidance below comes only from the supplied official calendar. Open a category to see the examples.</p>
+          </div>
+          <div class="recycling-guide-list">
+        <details class="recycling-guide recycling-guide--paper" open>
+          <summary>
+            <span class="recycling-guide__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
+    </g>
+  </svg></span>
+            <span>Paper &amp; cardboard</span>
+            <span class="recycling-guide__chevron" aria-hidden="true">+</span>
+          </summary>
+          <div class="recycling-guide__body">
+            <div class="recycling-guide__section"><h3>What to include</h3><ul><li>Newspapers, magazines, leaflets, folded brochures and other printed material.</li><li>Paper bags, including handled bags, and empty cigarette packets after removing plastic and foil.</li><li>Fruit-juice and milk cartons, empty pizza boxes, shoe boxes, and cardboard packaging for wine, pasta, rice and detergents.</li></ul></div>
+            <div class="recycling-guide__section"><h3>How to prepare it</h3><ul><li>Empty pizza boxes and remove plastic and foil from cigarette packets.</li></ul></div>
+
+
+          </div>
+        </details>
+        <details class="recycling-guide recycling-guide--glass">
+          <summary>
+            <span class="recycling-guide__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 4h4v3l-1 2v10H5V9L4 7V4z"/><path d="M14 7h5v12h-5zM14 11h5"/>
+    </g>
+  </svg></span>
+            <span>Glass, cans &amp; aluminium</span>
+            <span class="recycling-guide__chevron" aria-hidden="true">+</span>
+          </summary>
+          <div class="recycling-guide__body">
+            <div class="recycling-guide__section"><h3>What to include</h3><ul><li>Glass bottles, jars and containers, including broken glass from bottles and jars.</li><li>Oil, drink and peeled-tomato cans; metal tuna and meat tins; tinplate containers.</li></ul></div>
+
+
+
+          </div>
+        </details>
+        <details class="recycling-guide recycling-guide--plastic">
+          <summary>
+            <span class="recycling-guide__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3h4v3l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9l2-3z"/><path d="M8 11h8M10 3h4"/>
+    </g>
+  </svg></span>
+            <span>Plastic</span>
+            <span class="recycling-guide__chevron" aria-hidden="true">+</span>
+          </summary>
+          <div class="recycling-guide__body">
+            <div class="recycling-guide__section"><h3>What to include</h3><ul><li>Clean PET and HDPE bottles and containers for water, drinks, oil and juice.</li><li>Syrup, cream, sauce, detergent, soap, household-care, personal-care and distilled-water containers up to 5 litres.</li><li>Blister packs, rigid stationery containers, polyethylene wrapping film, carrier bags and secondary bottle packaging.</li></ul></div>
+            <div class="recycling-guide__section"><h3>How to prepare it</h3><ul><li>Containers must be clean and free of residue; the stated maximum capacity is 5 litres.</li></ul></div>
+            <div class="recycling-guide__section"><h3>Do not include in this category</h3><ul><li>Bulky plastic items such as toys, basins, small tables and chairs.</li></ul></div>
+            <div class="recycling-guide__rule"><strong>Local rule</strong><p>Treat bulky plastic objects as bulky waste: call the freephone number 800 362662 or take them to the recycling centre.</p></div>
+          </div>
+        </details>
+        <details class="recycling-guide recycling-guide--organic">
+          <summary>
+            <span class="recycling-guide__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+            <span>Organic waste</span>
+            <span class="recycling-guide__chevron" aria-hidden="true">+</span>
+          </summary>
+          <div class="recycling-guide__body">
+            <div class="recycling-guide__section"><h3>What to include</h3><ul><li>Kitchen scraps, bones and meat or fish waste, eggs and shells, and coffee grounds.</li><li>Leftover bread, pasta, rice and flour; mussel, clam and similar shells.</li><li>Leaves and cut flowers, fresh or dry; spoiled food; small amounts of grass; unprinted paper napkins and tissues.</li></ul></div>
+
+
+
+          </div>
+        </details>
+        <details class="recycling-guide recycling-guide--residual">
+          <summary>
+            <span class="recycling-guide__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 7h12l-1 14H7zM5 7h14M9 7V4h6v3M10 11v6M14 11v6"/>
+    </g>
+  </svg></span>
+            <span>Non-recyclable waste</span>
+            <span class="recycling-guide__chevron" aria-hidden="true">+</span>
+          </summary>
+          <div class="recycling-guide__body">
+            <div class="recycling-guide__section"><h3>What to include</h3><ul><li>Contaminated paper and cardboard.</li><li>CDs, audio and video cassettes and their cases; composite materials such as deli paper.</li><li>Non-recyclable durable goods and anything that cannot go into the other recycling categories.</li></ul></div>
+
+
+            <div class="recycling-guide__rule"><strong>Local rule</strong><p>The official calendar describes this as a fortnightly, alternate-week collection; always follow the exact dates above.</p></div>
+          </div>
+        </details></div>
+        </section>
+
+        <section class="recycling-section" id="official-calendar">
+          <div class="recycling-reference-grid">
+            <article class="recycling-source-card">
+              <div class="section__kicker">Reference documents</div>
+              <h2>Official calendar</h2>
+              <p>Every date was checked against the Italian original issued by the Union of Municipalities of Planargia.</p>
+              <div class="recycling-source-card__actions">
+                <a class="recycling-source-link" href="../recycling/2026/calendario-rifiuti-zona-b-2026-it.pdf" type="application/pdf" target="_blank" rel="noreferrer">
+                  Open the complete official Italian PDF
+                  <span class="sr-only"> — PDF, opens in a new tab</span>
+                </a>
+                <a class="recycling-source-link" href="../recycling/2026/recycling-calendar-zone-b-2026-en.pdf" type="application/pdf" target="_blank" rel="noreferrer">Open the translated PDF (1 July 2026 – 31 December 2026)<span class="sr-only"> — PDF, opens in a new tab</span></a>
+              </div>
+              <p class="recycling-source-note">The supplied translated editions cover 1 July 2026 – 31 December 2026; the Italian original is authoritative for 1 January 2026 – 31 December 2026.</p>
+            </article>
+
+            <article class="full-schedule-card">
+              <div class="section__kicker">Works without JavaScript</div>
+              <h2>All 2026 household collections</h2>
+              <p>Every date with a household collection is listed. All other dates within the official period have no household collection.</p>
+              <noscript><p class="no-script-note">Automatic selection of the next 14 days needs JavaScript. The complete schedule below remains available.</p></noscript>
+              <div class="full-schedule">
+        <details class="full-schedule__month">
+          <summary>
+            <span>January 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-01-02"><time datetime="2026-01-02">Friday 2 January 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-01-05"><time datetime="2026-01-05">Monday 5 January 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-01-07"><time datetime="2026-01-07">Wednesday 7 January 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-01-09"><time datetime="2026-01-09">Friday 9 January 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-01-12"><time datetime="2026-01-12">Monday 12 January 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-01-14"><time datetime="2026-01-14">Wednesday 14 January 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-01-16"><time datetime="2026-01-16">Friday 16 January 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-01-19"><time datetime="2026-01-19">Monday 19 January 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-01-21"><time datetime="2026-01-21">Wednesday 21 January 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-01-23"><time datetime="2026-01-23">Friday 23 January 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-01-26"><time datetime="2026-01-26">Monday 26 January 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-01-28"><time datetime="2026-01-28">Wednesday 28 January 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-01-30"><time datetime="2026-01-30">Friday 30 January 2026</time>: <span>Paper and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>February 2026</span>
+            <span class="full-schedule__count">12</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-02-02"><time datetime="2026-02-02">Monday 2 February 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-02-04"><time datetime="2026-02-04">Wednesday 4 February 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-02-06"><time datetime="2026-02-06">Friday 6 February 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-02-09"><time datetime="2026-02-09">Monday 9 February 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-02-11"><time datetime="2026-02-11">Wednesday 11 February 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-02-13"><time datetime="2026-02-13">Friday 13 February 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-02-16"><time datetime="2026-02-16">Monday 16 February 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-02-18"><time datetime="2026-02-18">Wednesday 18 February 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-02-20"><time datetime="2026-02-20">Friday 20 February 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-02-23"><time datetime="2026-02-23">Monday 23 February 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-02-25"><time datetime="2026-02-25">Wednesday 25 February 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-02-27"><time datetime="2026-02-27">Friday 27 February 2026</time>: <span>Paper and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>March 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-03-02"><time datetime="2026-03-02">Monday 2 March 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-03-04"><time datetime="2026-03-04">Wednesday 4 March 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-03-06"><time datetime="2026-03-06">Friday 6 March 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-03-09"><time datetime="2026-03-09">Monday 9 March 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-03-11"><time datetime="2026-03-11">Wednesday 11 March 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-03-13"><time datetime="2026-03-13">Friday 13 March 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-03-16"><time datetime="2026-03-16">Monday 16 March 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-03-18"><time datetime="2026-03-18">Wednesday 18 March 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-03-20"><time datetime="2026-03-20">Friday 20 March 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-03-23"><time datetime="2026-03-23">Monday 23 March 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-03-25"><time datetime="2026-03-25">Wednesday 25 March 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-03-27"><time datetime="2026-03-27">Friday 27 March 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-03-30"><time datetime="2026-03-30">Monday 30 March 2026</time>: <span>Glass and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>April 2026</span>
+            <span class="full-schedule__count">14</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-04-01"><time datetime="2026-04-01">Wednesday 1 April 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-04-03"><time datetime="2026-04-03">Friday 3 April 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-04-07"><time datetime="2026-04-07">Tuesday 7 April 2026</time>: <span>Organic</span> <span class="full-schedule__holiday">Holiday change</span></li><li data-full-schedule-date="2026-04-08"><time datetime="2026-04-08">Wednesday 8 April 2026</time>: <span>Residual and Glass</span> <span class="full-schedule__holiday">Holiday change</span></li><li data-full-schedule-date="2026-04-09"><time datetime="2026-04-09">Thursday 9 April 2026</time>: <span>Plastic and Organic</span> <span class="full-schedule__holiday">Holiday change</span></li><li data-full-schedule-date="2026-04-10"><time datetime="2026-04-10">Friday 10 April 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-04-13"><time datetime="2026-04-13">Monday 13 April 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-04-15"><time datetime="2026-04-15">Wednesday 15 April 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-04-17"><time datetime="2026-04-17">Friday 17 April 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-04-20"><time datetime="2026-04-20">Monday 20 April 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-04-22"><time datetime="2026-04-22">Wednesday 22 April 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-04-24"><time datetime="2026-04-24">Friday 24 April 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-04-27"><time datetime="2026-04-27">Monday 27 April 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-04-29"><time datetime="2026-04-29">Wednesday 29 April 2026</time>: <span>Plastic and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>May 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-05-02"><time datetime="2026-05-02">Saturday 2 May 2026</time>: <span>Paper and Organic</span> <span class="full-schedule__holiday">Holiday change</span></li><li data-full-schedule-date="2026-05-04"><time datetime="2026-05-04">Monday 4 May 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-05-06"><time datetime="2026-05-06">Wednesday 6 May 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-05-08"><time datetime="2026-05-08">Friday 8 May 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-05-11"><time datetime="2026-05-11">Monday 11 May 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-05-13"><time datetime="2026-05-13">Wednesday 13 May 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-05-15"><time datetime="2026-05-15">Friday 15 May 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-05-18"><time datetime="2026-05-18">Monday 18 May 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-05-20"><time datetime="2026-05-20">Wednesday 20 May 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-05-22"><time datetime="2026-05-22">Friday 22 May 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-05-25"><time datetime="2026-05-25">Monday 25 May 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-05-27"><time datetime="2026-05-27">Wednesday 27 May 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-05-29"><time datetime="2026-05-29">Friday 29 May 2026</time>: <span>Paper and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>June 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-06-01"><time datetime="2026-06-01">Monday 1 June 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-06-03"><time datetime="2026-06-03">Wednesday 3 June 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-06-05"><time datetime="2026-06-05">Friday 5 June 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-06-08"><time datetime="2026-06-08">Monday 8 June 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-06-10"><time datetime="2026-06-10">Wednesday 10 June 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-06-12"><time datetime="2026-06-12">Friday 12 June 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-06-15"><time datetime="2026-06-15">Monday 15 June 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-06-17"><time datetime="2026-06-17">Wednesday 17 June 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-06-19"><time datetime="2026-06-19">Friday 19 June 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-06-22"><time datetime="2026-06-22">Monday 22 June 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-06-24"><time datetime="2026-06-24">Wednesday 24 June 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-06-26"><time datetime="2026-06-26">Friday 26 June 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-06-29"><time datetime="2026-06-29">Monday 29 June 2026</time>: <span>Residual, Organic and Glass</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>July 2026</span>
+            <span class="full-schedule__count">14</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-07-02"><time datetime="2026-07-02">Thursday 2 July 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-07-04"><time datetime="2026-07-04">Saturday 4 July 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-07-06"><time datetime="2026-07-06">Monday 6 July 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-07-08"><time datetime="2026-07-08">Wednesday 8 July 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-07-10"><time datetime="2026-07-10">Friday 10 July 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-07-13"><time datetime="2026-07-13">Monday 13 July 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-07-15"><time datetime="2026-07-15">Wednesday 15 July 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-07-17"><time datetime="2026-07-17">Friday 17 July 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-07-20"><time datetime="2026-07-20">Monday 20 July 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-07-22"><time datetime="2026-07-22">Wednesday 22 July 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-07-24"><time datetime="2026-07-24">Friday 24 July 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-07-27"><time datetime="2026-07-27">Monday 27 July 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-07-29"><time datetime="2026-07-29">Wednesday 29 July 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-07-31"><time datetime="2026-07-31">Friday 31 July 2026</time>: <span>Paper and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>August 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-08-03"><time datetime="2026-08-03">Monday 3 August 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-08-05"><time datetime="2026-08-05">Wednesday 5 August 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-08-07"><time datetime="2026-08-07">Friday 7 August 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-08-10"><time datetime="2026-08-10">Monday 10 August 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-08-12"><time datetime="2026-08-12">Wednesday 12 August 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-08-14"><time datetime="2026-08-14">Friday 14 August 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-08-17"><time datetime="2026-08-17">Monday 17 August 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-08-19"><time datetime="2026-08-19">Wednesday 19 August 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-08-21"><time datetime="2026-08-21">Friday 21 August 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-08-24"><time datetime="2026-08-24">Monday 24 August 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-08-26"><time datetime="2026-08-26">Wednesday 26 August 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-08-28"><time datetime="2026-08-28">Friday 28 August 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-08-31"><time datetime="2026-08-31">Monday 31 August 2026</time>: <span>Glass and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>September 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-09-02"><time datetime="2026-09-02">Wednesday 2 September 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-09-04"><time datetime="2026-09-04">Friday 4 September 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-09-07"><time datetime="2026-09-07">Monday 7 September 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-09-09"><time datetime="2026-09-09">Wednesday 9 September 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-09-11"><time datetime="2026-09-11">Friday 11 September 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-09-14"><time datetime="2026-09-14">Monday 14 September 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-09-16"><time datetime="2026-09-16">Wednesday 16 September 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-09-18"><time datetime="2026-09-18">Friday 18 September 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-09-21"><time datetime="2026-09-21">Monday 21 September 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-09-23"><time datetime="2026-09-23">Wednesday 23 September 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-09-25"><time datetime="2026-09-25">Friday 25 September 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-09-28"><time datetime="2026-09-28">Monday 28 September 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-09-30"><time datetime="2026-09-30">Wednesday 30 September 2026</time>: <span>Plastic and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>October 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-10-02"><time datetime="2026-10-02">Friday 2 October 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-10-05"><time datetime="2026-10-05">Monday 5 October 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-10-07"><time datetime="2026-10-07">Wednesday 7 October 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-10-09"><time datetime="2026-10-09">Friday 9 October 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-10-12"><time datetime="2026-10-12">Monday 12 October 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-10-14"><time datetime="2026-10-14">Wednesday 14 October 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-10-16"><time datetime="2026-10-16">Friday 16 October 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-10-19"><time datetime="2026-10-19">Monday 19 October 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-10-21"><time datetime="2026-10-21">Wednesday 21 October 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-10-23"><time datetime="2026-10-23">Friday 23 October 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-10-26"><time datetime="2026-10-26">Monday 26 October 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-10-28"><time datetime="2026-10-28">Wednesday 28 October 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-10-30"><time datetime="2026-10-30">Friday 30 October 2026</time>: <span>Paper and Organic</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>November 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-11-02"><time datetime="2026-11-02">Monday 2 November 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-11-04"><time datetime="2026-11-04">Wednesday 4 November 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-11-06"><time datetime="2026-11-06">Friday 6 November 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-11-09"><time datetime="2026-11-09">Monday 9 November 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-11-11"><time datetime="2026-11-11">Wednesday 11 November 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-11-13"><time datetime="2026-11-13">Friday 13 November 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-11-16"><time datetime="2026-11-16">Monday 16 November 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-11-18"><time datetime="2026-11-18">Wednesday 18 November 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-11-20"><time datetime="2026-11-20">Friday 20 November 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-11-23"><time datetime="2026-11-23">Monday 23 November 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-11-25"><time datetime="2026-11-25">Wednesday 25 November 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-11-27"><time datetime="2026-11-27">Friday 27 November 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-11-30"><time datetime="2026-11-30">Monday 30 November 2026</time>: <span>Residual, Organic and Glass</span></li>
+          </ol>
+        </details>
+        <details class="full-schedule__month">
+          <summary>
+            <span>December 2026</span>
+            <span class="full-schedule__count">13</span>
+          </summary>
+          <ol>
+            <li data-full-schedule-date="2026-12-02"><time datetime="2026-12-02">Wednesday 2 December 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-12-04"><time datetime="2026-12-04">Friday 4 December 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-12-07"><time datetime="2026-12-07">Monday 7 December 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-12-09"><time datetime="2026-12-09">Wednesday 9 December 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-12-11"><time datetime="2026-12-11">Friday 11 December 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-12-14"><time datetime="2026-12-14">Monday 14 December 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-12-16"><time datetime="2026-12-16">Wednesday 16 December 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-12-18"><time datetime="2026-12-18">Friday 18 December 2026</time>: <span>Paper and Organic</span></li><li data-full-schedule-date="2026-12-21"><time datetime="2026-12-21">Monday 21 December 2026</time>: <span>Glass and Organic</span></li><li data-full-schedule-date="2026-12-23"><time datetime="2026-12-23">Wednesday 23 December 2026</time>: <span>Plastic and Organic</span></li><li data-full-schedule-date="2026-12-26"><time datetime="2026-12-26">Saturday 26 December 2026</time>: <span>Paper and Organic</span> <span class="full-schedule__holiday">Holiday change</span></li><li data-full-schedule-date="2026-12-28"><time datetime="2026-12-28">Monday 28 December 2026</time>: <span>Residual, Organic and Glass</span></li><li data-full-schedule-date="2026-12-30"><time datetime="2026-12-30">Wednesday 30 December 2026</time>: <span>Plastic and Organic</span></li>
+          </ol>
+        </details></div>
+            </article>
+          </div>
+        </section>
+      </main>
+      <footer class="footer"><p>Waste collection information for Villa Laura guests | Villa Laura</p></footer>
+    </div>
+    <script type="module" src="../assets/recycling-ea93366d620d/app.js"></script>
+  </body>
+</html>

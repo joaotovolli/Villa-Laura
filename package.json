@@ -8,6 +8,7 @@
     "preview": "npx serve dist",
     "check": "npm run build && npm test && npm run security:scan",
     "test": "node --test tests",
+    "test:e2e": "playwright test",
     "security:scan": "node scripts/security-scan.mjs",
     "dev:pages": "npx wrangler pages dev dist --compatibility-date=2026-05-02"
   },
@@ -23,6 +24,8 @@
   },
   "homepage": "https://github.com/joaotovolli/Villa-Laura#readme",
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.1",
     "serve": "^14.2.6",
     "sharp": "^0.34.5"
   },

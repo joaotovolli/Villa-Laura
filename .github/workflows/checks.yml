@@ -35,6 +35,12 @@ jobs:
       - name: Secret scan
         run: npm run security:scan
 
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser, mobile, and accessibility tests
+        run: npm run test:e2e
+
   dependency-audit:
     runs-on: ubuntu-latest
     steps:

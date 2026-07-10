@@ -1,0 +1,762 @@
+.recycling-page {
+  --paper: #f2a300;
+  --paper-soft: #fff1bd;
+  --glass: #68a846;
+  --glass-soft: #e4f3dc;
+  --plastic: #26aae0;
+  --plastic-soft: #ddf4fb;
+  --organic: #773e1a;
+  --organic-soft: #f4e3d6;
+  --residual: #77879a;
+  --residual-soft: #e5e9ed;
+}
+
+.recycling-page main,
+.recycling-page button,
+.recycling-page summary,
+.recycling-page a {
+  min-width: 0;
+}
+
+.recycling-page :focus-visible {
+  outline: 3px solid #d36f19;
+  outline-offset: 3px;
+}
+
+.recycling-page [hidden] {
+  display: none !important;
+}
+
+.recycling-page .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.recycling-page .lang-switcher__link {
+  display: inline-grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  place-items: center;
+  padding: 0.45rem 0.68rem;
+}
+
+.recycling-hero,
+.recycling-section {
+  width: min(calc(100% - 2rem), var(--content));
+  margin-inline: auto;
+}
+
+.recycling-hero {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.recycling-hero__main,
+.recycling-hero__facts,
+.calendar-panel,
+.recycling-source-card,
+.full-schedule-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+.recycling-hero__main {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 5vw, 3.25rem);
+  color: var(--white);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(208, 230, 130, 0.28), transparent 34%),
+    linear-gradient(145deg, #214955, #356c70 58%, #68754c);
+}
+
+.recycling-hero__main::after {
+  position: absolute;
+  right: -3rem;
+  bottom: -6rem;
+  width: 18rem;
+  height: 18rem;
+  border: 2.5rem solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  content: "";
+}
+
+.recycling-hero .eyebrow {
+  position: relative;
+  z-index: 1;
+}
+
+.recycling-hero h1 {
+  position: relative;
+  z-index: 1;
+  max-width: 13ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 5.8rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.recycling-hero__intro {
+  position: relative;
+  z-index: 1;
+  max-width: 58ch;
+  margin: 1.1rem 0 0;
+  color: rgba(255, 253, 249, 0.9);
+  font-size: clamp(1rem, 2vw, 1.14rem);
+}
+
+.recycling-hero__facts {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  padding: 1.35rem;
+  background: rgba(255, 253, 249, 0.9);
+}
+
+.recycling-fact {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  margin: 0;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recycling-fact:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.recycling-fact__mark {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sun-soft);
+  color: #9d5514;
+  font-weight: 800;
+}
+
+.recycling-fact span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.recycling-section {
+  padding-top: clamp(3rem, 7vw, 5.5rem);
+}
+
+.recycling-section__heading {
+  max-width: 50rem;
+  margin-bottom: 1.3rem;
+}
+
+.recycling-section__heading h2,
+.calendar-panel__heading h2,
+.recycling-source-card h2,
+.full-schedule-card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 6vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.recycling-section__heading p,
+.calendar-panel__heading p,
+.recycling-source-card p,
+.full-schedule-card p {
+  color: var(--ink-soft);
+}
+
+.calendar-panel {
+  padding: clamp(1rem, 3vw, 1.65rem);
+  background: rgba(255, 253, 249, 0.94);
+}
+
+.calendar-panel__top {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.calendar-panel__heading p {
+  margin: 0.55rem 0 0;
+}
+
+.calendar-controls {
+  display: grid;
+  grid-template-areas:
+    "today today"
+    "previous next";
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.calendar-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(33, 73, 85, 0.22);
+  border-radius: 16px;
+  background: var(--white);
+  color: var(--sea-deep);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.calendar-control:hover:not(:disabled) {
+  border-color: var(--sea-deep);
+  background: #f2f8f7;
+}
+
+.calendar-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.calendar-control--previous {
+  grid-area: previous;
+}
+
+.calendar-control--today {
+  grid-area: today;
+  color: var(--white);
+  background: var(--sea-deep);
+}
+
+.calendar-control--today:hover:not(:disabled) {
+  color: var(--white);
+  background: #173b45;
+}
+
+.calendar-control--next {
+  grid-area: next;
+}
+
+.calendar-control__arrow {
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+}
+
+.calendar-summary {
+  display: grid;
+  gap: 0.35rem;
+  margin: 1rem 0;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: #edf4f2;
+}
+
+.calendar-summary p {
+  margin: 0;
+}
+
+.calendar-summary__range {
+  font-weight: 800;
+  color: var(--sea-deep);
+}
+
+.calendar-summary__next {
+  color: var(--ink-soft);
+}
+
+.calendar-coverage {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(211, 138, 58, 0.35);
+  border-radius: 18px;
+  background: #fff6e8;
+}
+
+.calendar-coverage p {
+  margin: 0 0 0.75rem;
+}
+
+.calendar-coverage .calendar-control {
+  width: 100%;
+  max-width: 22rem;
+}
+
+.collection-days {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection-day {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid rgba(35, 48, 56, 0.1);
+  border-radius: 22px;
+  background: #fffdfa;
+}
+
+.collection-day.is-today {
+  border: 2px solid var(--sea-deep);
+  background: #f5fbfa;
+  box-shadow: 0 10px 28px rgba(33, 73, 85, 0.12);
+}
+
+.collection-day.is-next:not(.is-today) {
+  border-color: #bd741f;
+  box-shadow: inset 4px 0 0 #d38a3a;
+}
+
+.collection-day--unavailable {
+  border-style: dashed;
+  background: rgba(243, 239, 233, 0.7);
+}
+
+.collection-day__date,
+.collection-day__result {
+  min-width: 0;
+}
+
+.collection-day__date time {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.collection-day__weekday {
+  color: var(--ink-soft);
+  font-size: 0.83rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.collection-day__date strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.day-badges,
+.waste-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.day-badges {
+  margin-top: 0.55rem;
+}
+
+.day-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.65rem;
+  padding: 0.24rem 0.52rem;
+  border-radius: 999px;
+  background: #ece8e1;
+  color: #4a5459;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.day-badge--today {
+  background: var(--sea-deep);
+  color: var(--white);
+}
+
+.day-badge--next {
+  background: #fff0d7;
+  color: #8b4c0c;
+}
+
+.day-badge--holiday {
+  background: #fde5e5;
+  color: #9f2e33;
+}
+
+.collection-day__label,
+.collection-day__empty,
+.collection-day__note {
+  margin: 0;
+}
+
+.collection-day__label {
+  margin-bottom: 0.5rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.collection-day__empty {
+  color: #59656a;
+  font-weight: 700;
+}
+
+.collection-day__empty--unavailable {
+  color: #7c6044;
+}
+
+.collection-day__note {
+  margin-top: 0.65rem;
+  padding-left: 0.65rem;
+  border-left: 3px solid #d34e55;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+}
+
+.waste-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 2.25rem;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #263239;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.waste-chip__icon,
+.recycling-guide__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.waste-chip__icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.waste-chip--paper,
+.recycling-guide--paper > summary .recycling-guide__icon {
+  border-color: var(--paper);
+  background: var(--paper-soft);
+  color: #8c5c00;
+}
+
+.waste-chip--glass,
+.recycling-guide--glass > summary .recycling-guide__icon {
+  border-color: var(--glass);
+  background: var(--glass-soft);
+  color: #346e1f;
+}
+
+.waste-chip--plastic,
+.recycling-guide--plastic > summary .recycling-guide__icon {
+  border-color: var(--plastic);
+  background: var(--plastic-soft);
+  color: #126f91;
+}
+
+.waste-chip--organic,
+.recycling-guide--organic > summary .recycling-guide__icon {
+  border-color: var(--organic);
+  background: var(--organic-soft);
+  color: #6d350f;
+}
+
+.waste-chip--residual,
+.recycling-guide--residual > summary .recycling-guide__icon {
+  border-color: var(--residual);
+  background: var(--residual-soft);
+  color: #4c5c6c;
+}
+
+.recycling-guide-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.recycling-guide {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(255, 253, 249, 0.9);
+  box-shadow: var(--shadow-soft);
+}
+
+.recycling-guide summary,
+.full-schedule__month summary {
+  display: flex;
+  align-items: center;
+  min-height: 3.75rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+
+.recycling-guide summary::-webkit-details-marker,
+.full-schedule__month summary::-webkit-details-marker {
+  display: none;
+}
+
+.recycling-guide summary {
+  gap: 0.8rem;
+  padding: 0.75rem 1rem;
+}
+
+.recycling-guide__icon {
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.recycling-guide__icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.recycling-guide__chevron {
+  margin-left: auto;
+  color: var(--sea-deep);
+  font-size: 1.45rem;
+  transition: transform 160ms ease;
+}
+
+.recycling-guide[open] .recycling-guide__chevron {
+  transform: rotate(45deg);
+}
+
+.recycling-guide__body {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1rem 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+.recycling-guide__section {
+  padding-top: 0.95rem;
+}
+
+.recycling-guide__section h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.83rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recycling-guide__section ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.recycling-guide__section li + li {
+  margin-top: 0.4rem;
+}
+
+.recycling-guide__rule {
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: #f0f5f3;
+}
+
+.recycling-guide__rule p {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+}
+
+.recycling-reference-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.recycling-source-card,
+.full-schedule-card {
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  background: rgba(255, 253, 249, 0.9);
+}
+
+.recycling-source-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.recycling-source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(33, 73, 85, 0.24);
+  border-radius: 999px;
+  color: var(--sea-deep);
+  font-weight: 800;
+  text-align: center;
+}
+
+.recycling-source-link:first-child {
+  color: var(--white);
+  background: var(--sea-deep);
+}
+
+.recycling-source-note {
+  font-size: 0.88rem;
+}
+
+.no-script-note {
+  margin: 0 0 1rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: #fff1d8;
+  color: #70420e;
+  font-weight: 700;
+}
+
+.full-schedule {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.full-schedule__month {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: #fffdfa;
+}
+
+.full-schedule__month summary {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 0.85rem;
+  text-transform: capitalize;
+}
+
+.full-schedule__count {
+  display: grid;
+  min-width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f0ee;
+  color: var(--sea-deep);
+  font-size: 0.78rem;
+}
+
+.full-schedule__month ol {
+  margin: 0;
+  padding: 0 1rem 1rem 2.6rem;
+}
+
+.full-schedule__month li + li {
+  margin-top: 0.38rem;
+}
+
+.full-schedule__holiday {
+  display: inline-block;
+  margin-left: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: #fde5e5;
+  color: #9f2e33;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.recycling-page .footer {
+  padding-top: 4rem;
+}
+
+@media (min-width: 700px) {
+  .recycling-hero {
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
+  }
+
+  .calendar-panel__top {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .calendar-controls {
+    grid-template-areas: "previous today next";
+    grid-template-columns: repeat(3, minmax(8rem, auto));
+  }
+
+  .collection-day {
+    grid-template-columns: minmax(12rem, 0.68fr) minmax(0, 1.6fr);
+    align-items: center;
+  }
+
+  .recycling-reference-grid {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    align-items: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .recycling-hero,
+  .recycling-section {
+    width: min(calc(100% - 1rem), var(--content));
+  }
+
+  .recycling-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.8rem);
+  }
+
+  .recycling-page .topbar__inner {
+    width: min(calc(100% - 1rem), var(--content));
+  }
+
+  .recycling-page .brand__tag {
+    max-width: 18rem;
+    letter-spacing: 0.1em;
+  }
+
+  .calendar-control {
+    padding-inline: 0.55rem;
+    font-size: 0.82rem;
+  }
+
+  .recycling-source-card__actions,
+  .recycling-source-link {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recycling-page *,
+  .recycling-page *::before,
+  .recycling-page *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .recycling-page .topbar,
+  .calendar-controls,
+  .recycling-source-card {
+    display: none;
+  }
+
+  .recycling-page body,
+  .calendar-panel,
+  .collection-day,
+  .full-schedule-card {
+    background: #fff;
+    box-shadow: none;
+  }
+}

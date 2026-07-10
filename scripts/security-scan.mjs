@@ -30,7 +30,7 @@ const patterns = [
 
 const contentFindings = [];
 for (const file of files) {
-  if (/\.(jpg|jpeg|png|webp|gif|svg|zip|heic|mov|mp4|lock)$/i.test(file)) continue;
+  if (/\.(jpg|jpeg|png|webp|gif|svg|pdf|zip|heic|mov|mp4|lock)$/i.test(file)) continue;
   const text = await readFile(file, "utf8").catch(() => "");
   for (const pattern of patterns) {
     if (pattern.re.test(text)) contentFindings.push({ file, type: pattern.name });
