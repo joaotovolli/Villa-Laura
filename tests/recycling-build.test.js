@@ -60,6 +60,12 @@ test("build emits complete, canonical recycling pages in all seven languages", (
     assert.equal(html.includes(translation.calendar.previousWeek), true);
     assert.equal(html.includes(translation.calendar.noCollection), true);
     assert.equal(html.includes(translation.guide.title), true);
+    assert.equal(html.includes("recycling-hero__facts"), false);
+    assert.equal(html.includes("recycling-fact"), false);
+    const calendarHeading = html.match(
+      /<div class="calendar-panel__heading">([\s\S]*?)<\/div>\s*<div class="calendar-controls"/
+    )?.[1] ?? "";
+    assert.equal(calendarHeading.includes("<p>"), false);
     assert.equal(
       html.includes(escapeHtml(formatCalendarDate("2026-07-10", translation, { weekday: true }))),
       true

@@ -1692,20 +1692,6 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
             <h1 id="recycling-title">${escapeHtml(translation.page.title)}</h1>
             <p class="recycling-hero__intro">${escapeHtml(translation.page.intro)}</p>
           </div>
-          <aside class="recycling-hero__facts" aria-label="${escapeHtml(translation.page.zone)}">
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">B</span><span>${escapeHtml(
-              translation.page.zone
-            )}</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">⌂</span><span>${escapeHtml(
-              translation.page.audience
-            )}</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">✓</span><span>${escapeHtml(
-              translation.page.validPeriod
-            )}</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">i</span><span>${escapeHtml(
-              translation.page.householdOnly
-            )}</span></p>
-          </aside>
         </section>
 
         <section class="recycling-section" id="calendar" data-recycling-app data-locale="${locale}" data-calendar-id="${escapeHtml(
@@ -1716,7 +1702,6 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
               <div class="calendar-panel__heading">
                 <div class="section__kicker">${escapeHtml(translation.page.audience)}</div>
                 <h2>${escapeHtml(translation.calendar.title)}</h2>
-                <p>${escapeHtml(translation.calendar.intro)}</p>
               </div>
               <div class="calendar-controls" aria-label="${escapeHtml(translation.calendar.title)}">
                 <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
