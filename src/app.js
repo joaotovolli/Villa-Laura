@@ -18,7 +18,7 @@ if ("IntersectionObserver" in window) {
   reveals.forEach((element) => element.classList.add("is-visible"));
 }
 
-const supportedLocales = ["en", "it", "es", "de", "pt", "fr"];
+const supportedLocales = ["en", "it", "es", "fr", "nl", "de", "pt"];
 const savedLocaleKey = "villa-laura-locale";
 
 document.querySelectorAll("[data-locale-switch]").forEach((link) => {
@@ -47,3 +47,24 @@ if (page === "home" && locale === "en") {
     }
   }
 }
+
+document.querySelectorAll("[data-video-facade]").forEach((facade) => {
+  const trigger = facade.querySelector("[data-video-src]");
+  if (!trigger) return;
+
+  trigger.addEventListener("click", (event) => {
+    event.preventDefault();
+    const source = trigger.getAttribute("data-video-src");
+    if (!source) return;
+
+    const frame = document.createElement("iframe");
+    frame.className = "video-frame__embed";
+    frame.src = `${source}?autoplay=1`;
+    frame.title = trigger.getAttribute("aria-label") || "Video";
+    frame.allow =
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    frame.referrerPolicy = "strict-origin-when-cross-origin";
+    frame.allowFullscreen = true;
+    facade.replaceChildren(frame);
+  });
+});

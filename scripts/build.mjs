@@ -29,6 +29,7 @@ const distDir = path.join(root, "dist");
 const docsDir = path.join(root, "docs");
 const assetsDir = path.join(distDir, "assets");
 const sourceImagesDir = path.join(root, "assets", "source");
+const sourceVideoThumbnailsDir = path.join(root, "assets", "video-thumbnails");
 const publicDir = path.join(root, "public");
 const stylesPath = path.join(root, "src", "styles.css");
 const appScriptPath = path.join(root, "src", "app.js");
@@ -43,25 +44,28 @@ const checkinI18nScriptPath = path.join(root, "src", "checkin", "i18n.js");
 const sourceDocsDir = path.join(root, "src", "docs");
 const configPath = path.join(root, "site.config.json");
 
-const localeOrder = ["en", "it", "es", "de", "pt", "fr"];
+const localeOrder = ["en", "it", "es", "fr", "nl", "de", "pt"];
 const localeNames = {
   en: "English",
   it: "Italiano",
   es: "Espanol",
+  fr: "Francais",
+  nl: "Nederlands",
   de: "Deutsch",
-  pt: "Portugues",
-  fr: "Francais"
+  pt: "Portugues"
 };
 
 const ui = {
   en: {
     htmlLang: "en",
     titleSuffix: "Guest Guide",
+    navLabel: "Primary navigation",
     navAbout: "About",
     navGuides: "Guides",
     navInfo: "House Info",
     navGallery: "Gallery",
     navContact: "Contact",
+    navRecycling: "Recycling",
     switcherLabel: "Language",
     supportEyebrow: "Guest Support Site",
     supportTitle: "Everything guests need for a smooth stay at Villa Laura.",
@@ -167,14 +171,143 @@ const ui = {
     relatedIntro: "Other short walkthroughs guests often use during their stay.",
     browserLanguageRedirect: true
   },
+  nl: {
+    htmlLang: "nl",
+    titleSuffix: "Gids voor gasten",
+    metaDescription:
+      "De gastengids van Villa Laura met praktische huisinformatie, video-instructies, afvalinzameling en directe ondersteuning tijdens uw verblijf.",
+    homeLabel: "Startpagina van Villa Laura",
+    siteTagline: "Een rustig verblijf op Sardinië boven de zee.",
+    navLabel: "Hoofdnavigatie",
+    navAbout: "Over de villa",
+    navGuides: "Handleidingen",
+    navInfo: "Huisinformatie",
+    navGallery: "Galerij",
+    navContact: "Contact",
+    navRecycling: "Afvalkalender",
+    switcherLabel: "Taal",
+    supportEyebrow: "Gastenservice",
+    supportTitle: "Alles wat gasten nodig hebben voor een zorgeloos verblijf in Villa Laura.",
+    supportBody:
+      "Gebruik deze website voor snelle huisinstructies, praktische video's, nuttige lokale informatie en directe ondersteuning tijdens uw verblijf.",
+    heroPrimary: "Hulp via WhatsApp",
+    heroSecondary: "Boek via Airbnb",
+    supportHeading: "Snelle acties",
+    supportCards: {
+      whatsapp: {
+        title: "Stuur een WhatsApp-bericht",
+        body: "De snelste manier om tijdens uw verblijf hulp te krijgen."
+      },
+      airbnb: {
+        title: "Open de Airbnb-advertentie",
+        body: "Boekingen, volledige informatie over de woning en de oorspronkelijke advertentie."
+      },
+      guides: {
+        title: "Bekijk de videohandleidingen",
+        body: "Stapsgewijze hulp voor de tv, keuken, airconditioning, sleutels en meer."
+      },
+      recycling: {
+        title: "Bekijk de afvalkalender",
+        body: "Bekijk de huishoudelijke inzameling van vandaag en de komende 14 dagen in Tresnuraghes."
+      }
+    },
+    aboutKicker: "Over Villa Laura",
+    aboutTitle: "Een lichte, ontspannen uitvalsbasis voor dagen op Sardinië.",
+    aboutBody:
+      "Villa Laura is ingericht voor ontspannen verblijven met zeezicht, lichte kamers en het praktische comfort dat families en vrienden nodig hebben. Deze website houdt alle belangrijke informatie overzichtelijk bij elkaar en werkt prettig op een telefoon.",
+    aboutPanelTitle: "Waarvoor deze website bedoeld is",
+    highlights: [
+      "Rustige, luchtige sfeer met uitzicht op zee",
+      "Duidelijke hulp voor apparaten en toegang tot het huis",
+      "Direct contact via WhatsApp tijdens het verblijf",
+      "Airbnb-advertentie voor boekingen en volledige woninginformatie"
+    ],
+    guidesKicker: "Bibliotheek met handleidingen",
+    guidesTitle: "Snel hulp vinden, zonder omwegen.",
+    guidesIntro:
+      "Open een handleiding voor een overzichtelijke pagina met de video, een korte uitleg en directe contactmogelijkheden.",
+    watchGuide: "Open handleiding",
+    watchChannel: "Open het YouTube-kanaal",
+    guideHubLabel: "Handleidingen",
+    playVideo: "Video afspelen",
+    infoKicker: "Huisgids",
+    infoTitle: "Praktische informatie die gemakkelijk te scannen blijft.",
+    infoIntro:
+      "Deze gids behandelt de belangrijkste zaken die gasten tijdens hun verblijf doorgaans nodig hebben.",
+    infoPanels: [
+      { title: "Ondersteuning", text: "WhatsApp is tijdens het verblijf het belangrijkste contactkanaal." },
+      { title: "Boekingen", text: "Alle reserveringen worden via Airbnb afgehandeld." },
+      {
+        title: "Video's",
+        text: "De volledige bibliotheek met handleidingen staat ook op het YouTube-kanaal van Villa Laura."
+      }
+    ],
+    guideSections: [
+      {
+        title: "Aankomst en toegang",
+        items: [
+          "Bekijk vóór de eerste aankomst de handleidingen voor de sleutels en deuren.",
+          "Houd de huissleutels bij elkaar om verwarring bij het afsluiten te voorkomen.",
+          "Stuur bij onduidelijkheden een WhatsApp-bericht voor de snelste hulp."
+        ]
+      },
+      {
+        title: "In het huis",
+        items: [
+          "De videohandleidingen behandelen de tv, oven, afzuigkap, wasmachine, vaatwasser, magnetron, kookplaat, airconditioning en werkplek.",
+          "Bekijk de korte handleiding voordat u een apparaat voor het eerst gebruikt.",
+          "Behandel het huis als een thuis en schakel alles uit wanneer u weggaat."
+        ]
+      },
+      {
+        title: "Voor vertrek",
+        items: [
+          "Controleer deuren en ramen zorgvuldig voordat u vertrekt.",
+          "Leg alle sleutels terug op de afgesproken plaats en bevestig uw vertrek via WhatsApp.",
+          "Meld schade of een defect vóór het uitchecken, zodat dit snel kan worden opgelost."
+        ]
+      }
+    ],
+    galleryKicker: "Galerij",
+    galleryTitle: "Het licht, het uitzicht en de sfeer.",
+    galleryIntro:
+      "Een compacte selectie foto's houdt de website sfeervol en snel.",
+    galleryAlts: [
+      "Eethoek van Villa Laura met vrij uitzicht op zee.",
+      "Licht interieur van Villa Laura met het terras en de zee op de achtergrond.",
+      "Zonsondergang boven de Sardijnse kust, gezien vanuit Villa Laura.",
+      "Regenboog boven de groene heuvels en de zee bij Villa Laura.",
+      "Uitzicht vanaf de tuin naar Villa Laura."
+    ],
+    contactKicker: "Hulp nodig tijdens uw verblijf?",
+    contactTitle: "Ondersteuning blijft eenvoudig.",
+    contactBody:
+      "Stuur voor de snelste hulp een WhatsApp-bericht. Gebruik Airbnb voor boekingen, beschikbaarheid en de volledige advertentie.",
+    contactPrimary: "Open WhatsApp",
+    contactSecondary: "Open Airbnb",
+    footer: "Gastenservice van Villa Laura",
+    videoLabel: "Videohandleiding",
+    notesTitle: "Nuttige tips",
+    notesIntro: "Enkele praktische aandachtspunten voordat u begint.",
+    backHome: "Terug naar de startpagina",
+    backGuides: "Terug naar de handleidingen",
+    guideSupportTitle: "Hulp nodig bij deze handleiding?",
+    guideSupportBody:
+      "Is iets na het bekijken van de video nog onduidelijk? Stuur dan een WhatsApp-bericht voor de snelste hulp.",
+    relatedTitle: "Meer handleidingen",
+    relatedIntro: "Andere korte instructievideo's die gasten vaak gebruiken tijdens hun verblijf.",
+    browserLanguageRedirect: true
+  },
   it: {
     htmlLang: "it",
     titleSuffix: "Guida Ospiti",
+    navLabel: "Navigazione principale",
     navAbout: "Villa",
     navGuides: "Guide",
     navInfo: "Info Casa",
     navGallery: "Foto",
     navContact: "Contatti",
+    navRecycling: "Rifiuti",
     switcherLabel: "Lingua",
     supportEyebrow: "Sito di supporto per gli ospiti",
     supportTitle: "Tutto il necessario per un soggiorno sereno a Villa Laura.",
@@ -283,11 +416,13 @@ const ui = {
   es: {
     htmlLang: "es",
     titleSuffix: "Guia para Huespedes",
+    navLabel: "Navegación principal",
     navAbout: "Villa",
     navGuides: "Guias",
     navInfo: "Info Casa",
     navGallery: "Galeria",
     navContact: "Contacto",
+    navRecycling: "Residuos",
     switcherLabel: "Idioma",
     supportEyebrow: "Sitio de apoyo para huespedes",
     supportTitle: "Todo lo necesario para una estancia comoda en Villa Laura.",
@@ -396,11 +531,13 @@ const ui = {
   de: {
     htmlLang: "de",
     titleSuffix: "Gaesteguide",
+    navLabel: "Hauptnavigation",
     navAbout: "Villa",
     navGuides: "Anleitungen",
     navInfo: "Hausinfos",
     navGallery: "Galerie",
     navContact: "Kontakt",
+    navRecycling: "Abfallkalender",
     switcherLabel: "Sprache",
     supportEyebrow: "Gaesteservice-Website",
     supportTitle: "Alles Wichtige fuer einen entspannten Aufenthalt in Villa Laura.",
@@ -509,11 +646,13 @@ const ui = {
   pt: {
     htmlLang: "pt",
     titleSuffix: "Guia para Hospedes",
+    navLabel: "Navegação principal",
     navAbout: "Villa",
     navGuides: "Guias",
     navInfo: "Info Casa",
     navGallery: "Galeria",
     navContact: "Contato",
+    navRecycling: "Reciclagem",
     switcherLabel: "Idioma",
     supportEyebrow: "Site de apoio ao hospede",
     supportTitle: "Tudo o que os hospedes precisam para uma estadia tranquila na Villa Laura.",
@@ -622,11 +761,13 @@ const ui = {
   fr: {
     htmlLang: "fr",
     titleSuffix: "Guide Sejour",
+    navLabel: "Navigation principale",
     navAbout: "Villa",
     navGuides: "Guides",
     navInfo: "Infos Maison",
     navGallery: "Galerie",
     navContact: "Contact",
+    navRecycling: "Tri des déchets",
     switcherLabel: "Langue",
     supportEyebrow: "Site de support voyageurs",
     supportTitle: "Tout le necessaire pour un sejour fluide a Villa Laura.",
@@ -979,6 +1120,101 @@ const videoCopy = {
   }
 };
 
+const dutchVideoCopy = {
+  "how-to-use-tv": {
+    title: "De tv gebruiken",
+    description: "Korte uitleg voor het inschakelen van de tv, het kiezen van zenders en het openen van streamingapps.",
+    notes: [
+      "Gebruik eerst de afstandsbediening uit de video en wijzig alleen de ingang wanneer dat nodig is.",
+      "Wijzig geen accountinstellingen wanneer apps al zijn aangemeld."
+    ]
+  },
+  "how-to-use-oven": {
+    title: "De oven gebruiken",
+    description: "Stapsgewijze uitleg voor het inschakelen van de oven, het instellen van de temperatuur en het gebruiken van de basisfuncties.",
+    notes: [
+      "Laat de oven voorverwarmen voor een gelijkmatiger resultaat.",
+      "Controleer voordat u het huis verlaat of de oven volledig is uitgeschakeld."
+    ]
+  },
+  "how-to-use-kitchen-hood": {
+    title: "De afzuigkap gebruiken",
+    description: "Zo schakelt u de afzuigkap in, stelt u de ventilatorsnelheid in en gebruikt u de verlichting.",
+    notes: [
+      "Gebruik de afzuigkap tijdens het koken om de keuken fris te houden.",
+      "Laat de afzuigkap na het koken indien nodig nog even draaien."
+    ]
+  },
+  "how-to-use-washing-machine": {
+    title: "De wasmachine gebruiken",
+    description: "Eenvoudige uitleg voor het kiezen van een programma, het toevoegen van wasmiddel en het starten van een wasbeurt.",
+    notes: [
+      "Laad de wasmachine niet te vol.",
+      "Gebruik de aanbevolen hoeveelheid wasmiddel voor een kleine huishoudelijke was."
+    ]
+  },
+  "how-to-use-dishwasher": {
+    title: "De vaatwasser gebruiken",
+    description: "Uitleg voor het inruimen van de vaat, het toevoegen van vaatwasmiddel en het kiezen van het juiste programma.",
+    notes: [
+      "Verwijder etensresten voordat u de vaat inruimt.",
+      "Zet de deur na afloop iets open als u de vaat sneller wilt laten drogen."
+    ]
+  },
+  "how-to-use-microwave": {
+    title: "De magnetron gebruiken",
+    description: "Basisinstructies voor het verwarmen van eten, het instellen van de tijd en het gebruiken van de belangrijkste functies.",
+    notes: [
+      "Gebruik alleen bakjes die geschikt zijn voor de magnetron.",
+      "Gebruik geen metaal of aluminiumfolie, tenzij duidelijk staat aangegeven dat dit veilig is."
+    ]
+  },
+  "how-to-use-cooktop": {
+    title: "De kookplaat gebruiken",
+    description: "Zo schakelt u de kookplaat in, stelt u de warmtestand in en gebruikt u deze veilig.",
+    notes: [
+      "Gebruik waar mogelijk pannen die bij de grootte van de kookzone passen.",
+      "Controleer na het koken of alle zones zijn uitgeschakeld."
+    ]
+  },
+  "how-to-use-air-conditioning": {
+    title: "De airconditioning gebruiken",
+    description: "Zo schakelt u de airconditioning in, stelt u de temperatuur in en wisselt u tussen de standen.",
+    notes: [
+      "Houd deuren en ramen gesloten voor de beste koeling.",
+      "Gebruik een gematigde instelling om het huis comfortabel en energiezuinig te houden."
+    ]
+  },
+  "how-to-use-doors-and-locks": {
+    title: "Deuren en sloten gebruiken",
+    description: "Instructies voor het veilig openen, sluiten en vergrendelen van de deuren.",
+    notes: [
+      "Controleer altijd of een deur volledig gesloten is voordat u deze vergrendelt.",
+      "Oefen lichte druk uit wanneer een deur moet worden uitgelijnd en forceer deze niet."
+    ]
+  },
+  "how-to-use-keys": {
+    title: "De sleutels gebruiken",
+    description: "Uitleg over welke sleutels u gebruikt en hoe u de woning opent en afsluit.",
+    notes: [
+      "Houd de sleutels bij elkaar om verwisseling te voorkomen.",
+      "Stop wanneer een sleutel stroef draait en controleer of u de juiste sleutel gebruikt."
+    ]
+  },
+  "how-to-use-workstation": {
+    title: "De werkplek gebruiken",
+    description: "Uitleg over het bureau, de stopcontacten en de inrichting van de werkplek.",
+    notes: [
+      "De werkplek is bedoeld voor licht werk en het opladen van apparaten.",
+      "Haal persoonlijke apparatuur uit het stopcontact wanneer u weggaat."
+    ]
+  }
+};
+
+for (const [slug, translation] of Object.entries(dutchVideoCopy)) {
+  videoCopy[slug] = { ...videoCopy[slug], nl: translation };
+}
+
 const rawConfig = await readFile(configPath, "utf8");
 const config = JSON.parse(rawConfig);
 const recyclingAssetFiles = [
@@ -1048,44 +1284,34 @@ const relPrefix = (segments) => (segments.length === 0 ? "./" : "../".repeat(seg
 const hrefFrom = (currentSegments, targetSegments = [], hash = "") =>
   `${relPrefix(currentSegments)}${toPath(targetSegments)}${hash}`;
 const canonicalPath = (segments) => (segments.length === 0 ? "/" : `/${segments.join("/")}/`);
+const guideSegmentsFor = (locale, slug) => {
+  if (locale === "en") return [slug];
+  if (locale === "nl") return [locale, "guides", slug];
+  return [locale, slug];
+};
+
+const svgIcon = (content, className = "") => `
+  <svg class="icon${className ? ` ${className}` : ""}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    ${content}
+  </svg>`;
 
 const icon = {
-  whatsapp: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
-      <path d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
-    </svg>
-  `,
-  airbnb: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3-.1-.2-.3-.3-.4-.5-.2.2-.3.3-.4.5-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Z"/>
-    </svg>
-  `,
-  play: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  `,
-  globe: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm6.9 8H15.8a16 16 0 0 0-1-4.6 7 7 0 0 1 4.1 4.6Zm-6.9-5c.6 0 1.8 1.8 2.3 5H9.7c.5-3.2 1.7-5 2.3-5ZM5.1 12c0-.3 0-.6.1-.9h3.3a18.7 18.7 0 0 0 0 1.8H5.2c-.1-.3-.1-.6-.1-.9Zm.9 2.7h3.1c.2 1.7.6 3.3 1.2 4.6A7 7 0 0 1 6 14.7Zm3.1-4.2H6A7 7 0 0 1 10.3 6c-.6 1.3-1 2.9-1.2 4.5Zm2 8.8c-.6 0-1.8-1.8-2.3-4.6h4.6c-.5 2.8-1.7 4.6-2.3 4.6Zm2.5 0c.6-1.3 1-2.9 1.2-4.6H18a7 7 0 0 1-4.4 4.6Zm1.4-6.4a18.7 18.7 0 0 0 0-1.8h3.3c.1.3.1.6.1.9s0 .6-.1.9H15Z"/>
-    </svg>
-  `,
-  home: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.8 3.5 10.6l1.2 1.6 1.3-1v8.9h5.2v-5.4h1.6v5.4H18v-8.9l1.3 1 1.2-1.6L12 3.8Z"/>
-    </svg>
-  `,
-  arrow: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  `,
-  recycle: `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>
-    </svg>
-  `
+  whatsapp: svgIcon(`
+    <path fill="currentColor" d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
+    <path fill="currentColor" d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>`, "icon--brand"),
+  airbnb: svgIcon(`
+    <path fill="currentColor" d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3l-.4-.5-.4.5c-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7s-.3.7-.7.7-.7-.3-.7-.7.3-.7.7-.7Z"/>`, "icon--brand"),
+  youtube: svgIcon(`
+    <path fill="currentColor" d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.8a3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1C22 15 22 12 22 12s0-3-.4-4.8Z"/>
+    <path fill="white" d="m10 15.2 5.2-3.2L10 8.8v6.4Z"/>`, "icon--brand"),
+  video: svgIcon(`
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>`),
+  home: svgIcon(`<path d="m4 10.8 8-6.4 8 6.4M6.5 9.2v10h11v-10M9.5 19.2v-5.5h5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`),
+  arrow: svgIcon(`<path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>`),
+  chevronLeft: svgIcon(`<path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`),
+  chevronRight: svgIcon(`<path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`),
+  recycle: svgIcon(`<path fill="currentColor" d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>`)
 };
 
 const imageOutputs = [];
@@ -1116,18 +1342,41 @@ for (const [index, image] of config.gallery.entries()) {
   });
 }
 
+const videoThumbnailOutputs = new Map();
+
+for (const video of config.videos) {
+  const inputPath = path.join(sourceVideoThumbnailsDir, `${video.slug}.jpg`);
+  const webpName = `video-${video.slug}.webp`;
+  const jpegName = `video-${video.slug}.jpg`;
+
+  await sharp(inputPath)
+    .resize({ width: 960, height: 600, fit: "cover", position: "centre", withoutEnlargement: false })
+    .webp({ quality: 80 })
+    .toFile(path.join(assetsDir, webpName));
+
+  await sharp(inputPath)
+    .resize({ width: 960, height: 600, fit: "cover", position: "centre", withoutEnlargement: false })
+    .jpeg({ quality: 84, mozjpeg: true })
+    .toFile(path.join(assetsDir, jpegName));
+
+  videoThumbnailOutputs.set(video.slug, {
+    webp: `assets/${webpName}`,
+    jpeg: `assets/${jpegName}`
+  });
+}
+
 const enrichVideo = (video, locale) => {
   const translated = videoCopy[video.slug]?.[locale];
   return {
     ...video,
     title: translated?.title ?? video.title,
     description: translated?.description ?? video.description,
-    notes: video.notes,
+    notes: translated?.notes ?? video.notes,
     videoId: extractVideoId(video.url)
   };
 };
 
-const pageMeta = (locale, segments, title, description, prefix) => `
+const pageMeta = (locale, segments, title, description, prefix, guideSlug = null) => `
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(title)}</title>
@@ -1141,15 +1390,11 @@ const pageMeta = (locale, segments, title, description, prefix) => `
     <link rel="canonical" href="${escapeHtml(`${config.site.domain}${canonicalPath(segments)}`)}" />
     ${localeOrder
       .map((entry) => {
-        const localeSegments = entry === "en" ? [] : [entry];
-        if (segments.length > 0) {
-          const slug = segments[segments.length - 1];
-          if (segments.length === 1 && locale === "en") {
-            localeSegments.push(slug);
-          } else if (segments.length === 2) {
-            localeSegments.push(slug);
-          }
-        }
+        const localeSegments = guideSlug
+          ? guideSegmentsFor(entry, guideSlug)
+          : entry === "en"
+            ? []
+            : [entry];
         return `<link rel="alternate" hreflang="${entry}" href="${escapeHtml(`${config.site.domain}${canonicalPath(localeSegments)}`)}" />`;
       })
       .join("\n    ")}
@@ -1165,8 +1410,11 @@ const renderLanguageSwitcher = (locale, currentSegments, slug = null) => `
   <div class="lang-switcher" aria-label="${escapeHtml(ui[locale].switcherLabel)}">
     ${localeOrder
       .map((entry) => {
-        const targetSegments = entry === "en" ? [] : [entry];
-        if (slug) targetSegments.push(slug);
+        const targetSegments = slug
+          ? guideSegmentsFor(entry, slug)
+          : entry === "en"
+            ? []
+            : [entry];
         const href = hrefFrom(currentSegments, targetSegments);
         return `<a href="${href}" data-locale-switch="${entry}" class="lang-switcher__link${entry === locale ? " is-current" : ""}">${entry.toUpperCase()}</a>`;
       })
@@ -1177,18 +1425,20 @@ const renderLanguageSwitcher = (locale, currentSegments, slug = null) => `
 const renderHeader = (locale, currentSegments, slug = null) => {
   const t = ui[locale];
   const homeSegments = locale === "en" ? [] : [locale];
+  const recyclingSegments = locale === "en" ? ["recycling"] : [locale, "recycling"];
   return `
     <header class="topbar">
       <div class="topbar__inner">
-        <a class="brand" href="${hrefFrom(currentSegments, homeSegments)}" aria-label="${escapeHtml(config.site.name)} home">
+        <a class="brand" href="${hrefFrom(currentSegments, homeSegments)}" aria-label="${escapeHtml(t.homeLabel ?? `${config.site.name} home`)}">
           <span class="brand__name">${escapeHtml(config.site.name)}</span>
-          <span class="brand__tag">${escapeHtml(localeNames[locale])} | ${escapeHtml(config.site.tagline)}</span>
+          <span class="brand__tag">${escapeHtml(localeNames[locale])} | ${escapeHtml(t.siteTagline ?? config.site.tagline)}</span>
         </a>
-        <nav class="nav" aria-label="Primary">
+        <nav class="nav" aria-label="${escapeHtml(t.navLabel)}">
           <a href="${hrefFrom(currentSegments, homeSegments, "#about")}">${escapeHtml(t.navAbout)}</a>
           <a href="${hrefFrom(currentSegments, homeSegments, "#guides")}">${escapeHtml(t.navGuides)}</a>
           <a href="${hrefFrom(currentSegments, homeSegments, "#info")}">${escapeHtml(t.navInfo)}</a>
           <a href="${hrefFrom(currentSegments, homeSegments, "#gallery")}">${escapeHtml(t.navGallery)}</a>
+          <a class="nav__recycling" href="${hrefFrom(currentSegments, recyclingSegments)}"><span class="nav__icon">${icon.recycle}</span><span>${escapeHtml(t.navRecycling)}</span></a>
           <a href="${hrefFrom(currentSegments, homeSegments, "#contact")}">${escapeHtml(t.navContact)}</a>
         </nav>
         ${renderLanguageSwitcher(locale, currentSegments, slug)}
@@ -1205,16 +1455,16 @@ const renderFooter = (locale) => `
 
 const renderButton = ({ href, label, variant = "solid", iconSvg = "", external = false }) => `
   <a class="button button--${variant}" href="${href}"${external ? ' target="_blank" rel="noreferrer"' : ""}>
-    ${iconSvg}<span>${escapeHtml(label)}</span>
+    ${iconSvg ? `<span class="button__icon">${iconSvg}</span>` : ""}<span>${escapeHtml(label)}</span>
   </a>
 `;
 
-const renderPicture = (currentSegments, image, className, eager = false) => {
+const renderPicture = (currentSegments, image, className, eager = false, alt = image.alt ?? "") => {
   const prefix = relPrefix(currentSegments);
   return `
     <picture class="${className}">
       <source srcset="${prefix}${image.webp}" type="image/webp" />
-      <img src="${prefix}${image.jpeg}" alt="${escapeHtml(image.alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} />
+      <img src="${prefix}${image.jpeg}" alt="${escapeHtml(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} />
     </picture>
   `;
 };
@@ -1247,7 +1497,7 @@ const renderHomepage = (locale) => {
       title: t.supportCards.guides.title,
       body: t.supportCards.guides.body,
       theme: "guides",
-      iconSvg: icon.play,
+      iconSvg: icon.video,
       external: false
     },
     {
@@ -1264,14 +1514,14 @@ const renderHomepage = (locale) => {
   const guideCards = config.videos
     .map((video) => {
       const localizedVideo = enrichVideo(video, locale);
-      const guideSegments = locale === "en" ? [video.slug] : [locale, video.slug];
-      const thumb = `https://i.ytimg.com/vi/${localizedVideo.videoId}/hqdefault.jpg`;
+      const guideSegments = guideSegmentsFor(locale, video.slug);
+      const thumbnail = videoThumbnailOutputs.get(video.slug);
       return `
         <article class="guide-card reveal">
           <a class="guide-card__link" href="${hrefFrom(currentSegments, guideSegments)}">
             <div class="guide-card__thumb">
-              <img src="${thumb}" alt="${escapeHtml(localizedVideo.title)}" loading="lazy" referrerpolicy="no-referrer" />
-              <span class="guide-card__play">${icon.play}</span>
+              ${renderPicture(currentSegments, thumbnail, "guide-card__image", false, `${t.videoLabel}: ${localizedVideo.title}`)}
+              <span class="guide-card__play">${icon.video}</span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">${escapeHtml(t.videoLabel)}</div>
@@ -1311,9 +1561,9 @@ const renderHomepage = (locale) => {
 
   const galleryCards = imageOutputs
     .map(
-      (image) => `
+      (image, index) => `
         <figure class="gallery-card reveal${image.large ? " gallery-card--large" : ""}">
-          ${renderPicture(currentSegments, image, "gallery-card__media")}
+          ${renderPicture(currentSegments, image, "gallery-card__media", false, t.galleryAlts?.[index] ?? image.alt)}
         </figure>
       `
     )
@@ -1322,7 +1572,7 @@ const renderHomepage = (locale) => {
   return `<!doctype html>
 <html lang="${escapeHtml(t.htmlLang)}">
   <head>
-${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, config.site.description, relPrefix(currentSegments))}
+${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, t.metaDescription ?? config.site.description, relPrefix(currentSegments))}
   </head>
   <body data-page="home" data-locale="${locale}" data-home-path="${hrefFrom(currentSegments, [])}">
     <div class="site-shell">
@@ -1330,7 +1580,7 @@ ${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, co
       <main id="top">
         <section class="hero hero--home">
           <div class="hero__media reveal">
-            ${renderPicture(currentSegments, heroImage, "hero__image-wrap", true)}
+            ${renderPicture(currentSegments, heroImage, "hero__image-wrap", true, t.galleryAlts?.[0] ?? heroImage.alt)}
             <div class="hero__overlay"></div>
             <div class="hero__copy">
               <div class="eyebrow">${escapeHtml(t.supportEyebrow)}</div>
@@ -1394,7 +1644,7 @@ ${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, co
             ${renderButton({
               href: config.links.youtubeChannel,
               label: t.watchChannel,
-              iconSvg: icon.play,
+              iconSvg: icon.youtube,
               variant: "soft",
               external: true
             })}
@@ -1451,16 +1701,17 @@ ${pageMeta(locale, currentSegments, `${config.site.name} | ${t.titleSuffix}`, co
 const renderGuidePage = (locale, videoIndex) => {
   const video = enrichVideo(config.videos[videoIndex], locale);
   const t = ui[locale];
-  const currentSegments = locale === "en" ? [video.slug] : [locale, video.slug];
+  const currentSegments = guideSegmentsFor(locale, video.slug);
   const homeSegments = locale === "en" ? [] : [locale];
   const embed = `https://www.youtube-nocookie.com/embed/${video.videoId}`;
+  const thumbnail = videoThumbnailOutputs.get(video.slug);
   const prefix = relPrefix(currentSegments);
   const related = config.videos
     .filter((entry) => entry.slug !== video.slug)
     .slice(0, 3)
     .map((entry) => {
       const localizedEntry = enrichVideo(entry, locale);
-      const href = hrefFrom(currentSegments, locale === "en" ? [entry.slug] : [locale, entry.slug]);
+      const href = hrefFrom(currentSegments, guideSegmentsFor(locale, entry.slug));
       return `
         <article class="mini-guide-card">
           <a href="${href}">
@@ -1475,7 +1726,7 @@ const renderGuidePage = (locale, videoIndex) => {
   return `<!doctype html>
 <html lang="${escapeHtml(t.htmlLang)}">
   <head>
-${pageMeta(locale, currentSegments, `${video.title} | ${config.site.name}`, video.description, prefix)}
+${pageMeta(locale, currentSegments, `${video.title} | ${config.site.name}`, video.description, prefix, video.slug)}
   </head>
   <body data-page="guide" data-locale="${locale}" data-home-path="${hrefFrom(currentSegments, homeSegments)}">
     <div class="site-shell">
@@ -1500,15 +1751,12 @@ ${pageMeta(locale, currentSegments, `${video.title} | ${config.site.name}`, vide
               </div>
             </div>
             <div class="guide-hero__frame">
-              <iframe
-                class="video-frame"
-                src="${embed}"
-                title="${escapeHtml(video.title)}"
-                loading="eager"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
+              <div class="video-frame" data-video-facade>
+                <a class="video-facade__trigger" href="${escapeHtml(video.url)}" target="_blank" rel="noreferrer" data-video-src="${escapeHtml(embed)}" aria-label="${escapeHtml(`${t.playVideo ?? t.videoLabel}: ${video.title}`)}">
+                  ${renderPicture(currentSegments, thumbnail, "video-facade__media", true, `${t.videoLabel}: ${video.title}`)}
+                  <span class="video-facade__play" aria-hidden="true">${icon.video}</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -1558,7 +1806,7 @@ const recyclingSegmentsFor = (locale) =>
   locale === "en" ? ["recycling"] : [locale, "recycling"];
 
 const recyclingHomeSegmentsFor = (locale) => {
-  if (locale === "en" || locale === "nl") return [];
+  if (locale === "en") return [];
   return [locale];
 };
 
@@ -1624,6 +1872,9 @@ const renderRecyclingHeader = (locale, translation, currentSegments) => {
           <a href="${hrefFrom(currentSegments, homeSegments, "#info")}">${escapeHtml(
             translation.header.houseGuide
           )}</a>
+          <a class="nav__recycling" href="#calendar"><span class="nav__icon">${icon.recycle}</span><span>${escapeHtml(
+            translation.header.recycling
+          )}</span></a>
           <a href="${hrefFrom(currentSegments, homeSegments, "#contact")}">${escapeHtml(
             translation.header.support
           )}</a>
@@ -1705,7 +1956,7 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
               </div>
               <div class="calendar-controls" aria-label="${escapeHtml(translation.calendar.title)}">
                 <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
-                  <span class="calendar-control__arrow" aria-hidden="true">←</span>
+                  <span class="calendar-control__arrow" aria-hidden="true">${icon.chevronLeft}</span>
                   <span>${escapeHtml(translation.calendar.previousWeek)}</span>
                 </button>
                 <button class="calendar-control calendar-control--today" type="button" data-calendar-today disabled>
@@ -1713,7 +1964,7 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
                 </button>
                 <button class="calendar-control calendar-control--next" type="button" data-calendar-next disabled>
                   <span>${escapeHtml(translation.calendar.nextWeek)}</span>
-                  <span class="calendar-control__arrow" aria-hidden="true">→</span>
+                  <span class="calendar-control__arrow" aria-hidden="true">${icon.chevronRight}</span>
                 </button>
               </div>
             </div>
@@ -1784,7 +2035,7 @@ const sitemapRoutes = [];
 const writePage = async (segments, html, { indexable = true } = {}) => {
   const dir = path.join(distDir, ...segments);
   await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, "index.html"), html);
+  await writeFile(path.join(dir, "index.html"), html.replace(/[ \t]+$/gm, ""));
   if (indexable) sitemapRoutes.push(canonicalPath(segments));
 };
 
@@ -1821,7 +2072,7 @@ for (const locale of localeOrder) {
 
   for (let index = 0; index < config.videos.length; index += 1) {
     const video = config.videos[index];
-    const guideSegments = locale === "en" ? [video.slug] : [locale, video.slug];
+    const guideSegments = guideSegmentsFor(locale, video.slug);
     await writePage(guideSegments, renderGuidePage(locale, index));
   }
 }

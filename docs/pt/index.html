@@ -16,9 +16,10 @@
     <link rel="alternate" hreflang="en" href="https://villa-laura.it/" />
     <link rel="alternate" hreflang="it" href="https://villa-laura.it/it/" />
     <link rel="alternate" hreflang="es" href="https://villa-laura.it/es/" />
+    <link rel="alternate" hreflang="fr" href="https://villa-laura.it/fr/" />
+    <link rel="alternate" hreflang="nl" href="https://villa-laura.it/nl/" />
     <link rel="alternate" hreflang="de" href="https://villa-laura.it/de/" />
     <link rel="alternate" hreflang="pt" href="https://villa-laura.it/pt/" />
-    <link rel="alternate" hreflang="fr" href="https://villa-laura.it/fr/" />
     <link rel="alternate" hreflang="x-default" href="https://villa-laura.it" />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -136,11 +137,38 @@ button,
 }
 
 .nav {
-  display: none;
-  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.9rem;
   align-items: center;
-  font-size: 0.93rem;
+  font-size: 0.88rem;
   color: var(--ink-soft);
+}
+
+.nav a,
+.nav__recycling,
+.nav__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav a {
+  min-height: 2.75rem;
+}
+
+.nav__recycling {
+  gap: 0.35rem;
+  color: var(--sea-deep);
+  font-weight: 700;
+}
+
+.nav__icon {
+  justify-content: center;
+}
+
+.nav__icon .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .nav a:hover,
@@ -253,6 +281,12 @@ button,
   font-size: clamp(3.2rem, 10vw, 6.4rem);
 }
 
+.guide-hero h1 {
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
 .hero__lede,
 .section__intro,
 .panel p,
@@ -296,15 +330,29 @@ button,
   transform: translateY(-1px);
 }
 
-.button svg,
-.support-card__icon svg,
-.guide-card__play svg,
-.back-link svg,
-.guide-card__cta svg {
+.icon {
   width: 1.1rem;
   height: 1.1rem;
-  fill: currentColor;
   flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.button__icon {
+  display: inline-grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(110, 152, 163, 0.14);
+}
+
+.button__icon .icon,
+.support-card__icon .icon,
+.guide-card__play .icon,
+.video-facade__play .icon {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .button--solid {
@@ -499,6 +547,12 @@ button,
   object-fit: cover;
 }
 
+.guide-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .guide-card__thumb::after {
   content: "";
   position: absolute;
@@ -580,6 +634,10 @@ button,
   min-width: 0;
 }
 
+.guide-hero .hero__lede {
+  color: var(--ink-soft);
+}
+
 .guide-hero__frame {
   min-width: 0;
 }
@@ -594,12 +652,65 @@ button,
 }
 
 .video-frame {
+  position: relative;
   width: 100%;
   min-height: 260px;
   aspect-ratio: 16 / 9;
-  border: 0;
+  overflow: hidden;
   border-radius: 24px;
   background: #111;
+}
+
+.video-facade__trigger,
+.video-facade__media,
+.video-facade__media img,
+.video-frame__embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-facade__trigger {
+  display: block;
+  color: var(--white);
+}
+
+.video-facade__media img {
+  object-fit: cover;
+}
+
+.video-facade__trigger::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.34));
+  content: "";
+}
+
+.video-facade__play {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: rgba(33, 73, 85, 0.9);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+}
+
+.video-facade__trigger:hover .video-facade__play,
+.video-facade__trigger:focus-visible .video-facade__play {
+  background: var(--sea-deep);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.video-frame__embed {
+  border: 0;
 }
 
 .mini-guide-grid {
@@ -639,7 +750,7 @@ button,
 
 @media (min-width: 760px) {
   .nav {
-    display: flex;
+    flex-wrap: nowrap;
   }
 
   .hero {
@@ -647,7 +758,6 @@ button,
     align-items: stretch;
   }
 
-  .support-grid,
   .panel-grid,
   .guide-grid,
   .contact-card {
@@ -724,6 +834,13 @@ button,
     align-items: flex-start;
   }
 
+  .nav {
+    order: 3;
+    width: 100%;
+    padding-top: 0.25rem;
+    border-top: 1px solid rgba(35, 48, 56, 0.07);
+  }
+
   .lang-switcher {
     width: 100%;
   }
@@ -750,60 +867,64 @@ button,
   </head>
   <body data-page="home" data-locale="pt" data-home-path="../">
     <div class="site-shell">
-      
+
     <header class="topbar">
       <div class="topbar__inner">
         <a class="brand" href="../pt/" aria-label="Villa Laura home">
           <span class="brand__name">Villa Laura</span>
           <span class="brand__tag">Portugues | A calm Sardinian stay above the sea.</span>
         </a>
-        <nav class="nav" aria-label="Primary">
+        <nav class="nav" aria-label="Navegação principal">
           <a href="../pt/#about">Villa</a>
           <a href="../pt/#guides">Guias</a>
           <a href="../pt/#info">Info Casa</a>
           <a href="../pt/#gallery">Galeria</a>
+          <a class="nav__recycling" href="../pt/recycling/"><span class="nav__icon">
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>
+  </svg></span><span>Reciclagem</span></a>
           <a href="../pt/#contact">Contato</a>
         </nav>
-        
+
   <div class="lang-switcher" aria-label="Idioma">
-    <a href="../" data-locale-switch="en" class="lang-switcher__link">EN</a><a href="../it/" data-locale-switch="it" class="lang-switcher__link">IT</a><a href="../es/" data-locale-switch="es" class="lang-switcher__link">ES</a><a href="../de/" data-locale-switch="de" class="lang-switcher__link">DE</a><a href="../pt/" data-locale-switch="pt" class="lang-switcher__link is-current">PT</a><a href="../fr/" data-locale-switch="fr" class="lang-switcher__link">FR</a>
+    <a href="../" data-locale-switch="en" class="lang-switcher__link">EN</a><a href="../it/" data-locale-switch="it" class="lang-switcher__link">IT</a><a href="../es/" data-locale-switch="es" class="lang-switcher__link">ES</a><a href="../fr/" data-locale-switch="fr" class="lang-switcher__link">FR</a><a href="../nl/" data-locale-switch="nl" class="lang-switcher__link">NL</a><a href="../de/" data-locale-switch="de" class="lang-switcher__link">DE</a><a href="../pt/" data-locale-switch="pt" class="lang-switcher__link is-current">PT</a>
   </div>
 
       </div>
     </header>
-  
+
       <main id="top">
         <section class="hero hero--home">
           <div class="hero__media reveal">
-            
+
     <picture class="hero__image-wrap">
       <source srcset="../assets/photo-1.webp" type="image/webp" />
       <img src="../assets/photo-1.jpg" alt="Dining area at Villa Laura with open sea view." fetchpriority="high" />
     </picture>
-  
+
             <div class="hero__overlay"></div>
             <div class="hero__copy">
               <div class="eyebrow">Site de apoio ao hospede</div>
               <h1>Tudo o que os hospedes precisam para uma estadia tranquila na Villa Laura.</h1>
               <p class="hero__lede">Use esta pagina para encontrar rapidamente instrucoes da casa, videos praticos, informacoes uteis e apoio direto durante a estadia.</p>
               <div class="hero__actions">
-                
+
   <a class="button button--solid" href="https://wa.me/393514830318" target="_blank" rel="noreferrer">
-    
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
-      <path d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
-    </svg>
-  <span>Suporte por WhatsApp</span>
+    <span class="button__icon">
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
+    <path fill="currentColor" d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
+  </svg></span><span>Suporte por WhatsApp</span>
   </a>
 
-                
+
   <a class="button button--ghost" href="https://airbnb.co.uk/h/villa-laura-sardinia" target="_blank" rel="noreferrer">
-    
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3-.1-.2-.3-.3-.4-.5-.2.2-.3.3-.4.5-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Z"/>
-    </svg>
-  <span>Reservar no Airbnb</span>
+    <span class="button__icon">
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3l-.4-.5-.4.5c-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7s-.3.7-.7.7-.7-.3-.7-.7.3-.7.7-.7Z"/>
+  </svg></span><span>Reservar no Airbnb</span>
   </a>
 
               </div>
@@ -812,74 +933,70 @@ button,
           <aside class="support-panel reveal">
             <div class="section__kicker">Acoes rapidas</div>
             <div class="support-grid">
-              
+
                     <a class="support-card support-card--whatsapp" href="https://wa.me/393514830318" target="_blank" rel="noreferrer">
                       <span class="support-card__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
-      <path d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
-    </svg>
-  </span>
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
+    <path fill="currentColor" d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
+  </svg></span>
                       <span class="support-card__text">
                         <strong>Falar no WhatsApp</strong>
                         <span>A forma mais rapida de receber ajuda durante a estadia.</span>
                       </span>
                       <span class="support-card__arrow">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
                     </a>
-                  
+
                     <a class="support-card support-card--airbnb" href="https://airbnb.co.uk/h/villa-laura-sardinia" target="_blank" rel="noreferrer">
                       <span class="support-card__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3-.1-.2-.3-.3-.4-.5-.2.2-.3.3-.4.5-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Z"/>
-    </svg>
-  </span>
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3l-.4-.5-.4.5c-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7s-.3.7-.7.7-.7-.3-.7-.7.3-.7.7-.7Z"/>
+  </svg></span>
                       <span class="support-card__text">
                         <strong>Abrir anuncio no Airbnb</strong>
                         <span>Reservas, detalhes completos da casa e a pagina original do anuncio.</span>
                       </span>
                       <span class="support-card__arrow">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
                     </a>
-                  
+
                     <a class="support-card support-card--guides" href="../pt/#guides">
                       <span class="support-card__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
                       <span class="support-card__text">
                         <strong>Ver guias em video</strong>
                         <span>Ajuda passo a passo para TV, cozinha, ar condicionado, chaves e mais.</span>
                       </span>
                       <span class="support-card__arrow">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
                     </a>
-                  
+
                     <a class="support-card support-card--recycling support-card--guides" href="../pt/recycling/">
                       <span class="support-card__icon">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>
+  </svg></span>
                       <span class="support-card__text">
                         <strong>Consultar o calendário de resíduos</strong>
                         <span>Veja a coleta doméstica de hoje e os próximos 14 dias em Tresnuraghes.</span>
                       </span>
                       <span class="support-card__arrow">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
                     </a>
             </div>
           </aside>
@@ -906,13 +1023,14 @@ button,
               <h2>Ajuda rapida, sem complicacao.</h2>
               <p class="section__intro">Abra uma guia para ver uma pagina limpa com video, explicacao curta e links diretos de apoio.</p>
             </div>
-            
+
   <a class="button button--soft" href="https://www.youtube.com/@Villa-Laura" target="_blank" rel="noreferrer">
-    
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  <span>Abrir canal do YouTube</span>
+    <span class="button__icon">
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.8a3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1C22 15 22 12 22 12s0-3-.4-4.8Z"/>
+    <path fill="white" d="m10 15.2 5.2-3.2L10 8.8v6.4Z"/>
+  </svg></span><span>Abrir canal do YouTube</span>
   </a>
 
           </div>
@@ -920,252 +1038,307 @@ button,
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-tv/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/3JqRc2trMb0/hqdefault.jpg" alt="Como usar a TV" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-tv.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-tv.jpg" alt="Guia em video: Como usar a TV" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar a TV</h3>
               <p>Guia rapida para ligar a TV, mudar de canal e abrir as apps de streaming.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-oven/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/8_3PEX86HW0/hqdefault.jpg" alt="Como usar o forno" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-oven.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-oven.jpg" alt="Guia em video: Como usar o forno" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar o forno</h3>
               <p>Instrucoes passo a passo para ligar o forno, ajustar a temperatura e usar as funcoes principais.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-kitchen-hood/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/WX81v13awMs/hqdefault.jpg" alt="Como usar o exaustor" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-kitchen-hood.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-kitchen-hood.jpg" alt="Guia em video: Como usar o exaustor" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar o exaustor</h3>
               <p>Como ligar o exaustor, ajustar a velocidade e usar as luzes.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-washing-machine/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/RHMKJzOEfn0/hqdefault.jpg" alt="Como usar a maquina de lavar roupa" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-washing-machine.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-washing-machine.jpg" alt="Guia em video: Como usar a maquina de lavar roupa" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar a maquina de lavar roupa</h3>
               <p>Guia simples para escolher o programa, colocar detergente e iniciar a lavagem.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-dishwasher/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/3iClICTKZ68/hqdefault.jpg" alt="Como usar a maquina de lavar loica" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-dishwasher.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-dishwasher.jpg" alt="Guia em video: Como usar a maquina de lavar loica" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar a maquina de lavar loica</h3>
               <p>Instrucoes para colocar a loica, adicionar detergente e escolher o programa certo.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-microwave/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/og6Hlir7J9g/hqdefault.jpg" alt="Como usar o micro-ondas" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-microwave.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-microwave.jpg" alt="Guia em video: Como usar o micro-ondas" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar o micro-ondas</h3>
               <p>Instrucoes basicas para aquecer comida, definir o tempo e usar as funcoes principais.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-cooktop/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/BKnn9JZsLkw/hqdefault.jpg" alt="Como usar a placa" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-cooktop.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-cooktop.jpg" alt="Guia em video: Como usar a placa" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar a placa</h3>
               <p>Como ligar a placa, ajustar o calor e usa-la com seguranca.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-air-conditioning/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/-To8ae2-_y0/hqdefault.jpg" alt="Como usar o ar condicionado" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-air-conditioning.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-air-conditioning.jpg" alt="Guia em video: Como usar o ar condicionado" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar o ar condicionado</h3>
               <p>Como ligar o ar condicionado, ajustar a temperatura e mudar de modo.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-doors-and-locks/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/HHHNcUKoLbs/hqdefault.jpg" alt="Como usar portas e fechaduras" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-doors-and-locks.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-doors-and-locks.jpg" alt="Guia em video: Como usar portas e fechaduras" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar portas e fechaduras</h3>
               <p>Instrucoes para abrir, fechar e trancar as portas com seguranca.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-keys/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/Ed7qidXfLpw/hqdefault.jpg" alt="Como usar as chaves" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-keys.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-keys.jpg" alt="Guia em video: Como usar as chaves" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar as chaves</h3>
               <p>Explicacao de quais chaves usar e como abrir e fechar a propriedade.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
-      
+
         <article class="guide-card reveal">
           <a class="guide-card__link" href="../pt/how-to-use-workstation/">
             <div class="guide-card__thumb">
-              <img src="https://i.ytimg.com/vi/BLVhlXxrXOM/hqdefault.jpg" alt="Como usar a area de trabalho" loading="lazy" referrerpolicy="no-referrer" />
+
+    <picture class="guide-card__image">
+      <source srcset="../assets/video-how-to-use-workstation.webp" type="image/webp" />
+      <img src="../assets/video-how-to-use-workstation.jpg" alt="Guia em video: Como usar a area de trabalho" loading="lazy" />
+    </picture>
+
               <span class="guide-card__play">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9Zm-11.5-4.2v8.4l6.5-4.2-6.5-4.2Z"/>
-    </svg>
-  </span>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="m10.3 8.9 5 3.1-5 3.1V8.9Z" fill="currentColor"/>
+  </svg></span>
             </div>
             <div class="guide-card__body">
               <div class="guide-card__eyebrow">Guia em video</div>
               <h3>Como usar a area de trabalho</h3>
               <p>Guia para usar a secretaria, as tomadas e a area de trabalho.</p>
-              <span class="guide-card__cta">Abrir guia 
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m13.4 5.4-1.4 1.4 4.2 4.2H4v2h12.2L12 17.2l1.4 1.4 6.6-6.6-6.6-6.6Z"/>
-    </svg>
-  </span>
+              <span class="guide-card__cta">Abrir guia
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
             </div>
           </a>
         </article>
@@ -1183,12 +1356,12 @@ button,
           <h3 class="panel__title">Apoio</h3>
           <p>O WhatsApp e o principal canal de apoio durante a estadia.</p>
         </article>
-      
+
         <article class="panel reveal">
           <h3 class="panel__title">Reservas</h3>
           <p>Todas as reservas sao tratadas pelo Airbnb.</p>
         </article>
-      
+
         <article class="panel reveal">
           <h3 class="panel__title">Videos</h3>
           <p>A biblioteca completa de guias tambem esta disponivel no canal da Villa Laura no YouTube.</p>
@@ -1201,14 +1374,14 @@ button,
             <li>Veja os videos sobre chaves e portas antes da primeira chegada.</li><li>Mantenha as chaves da casa juntas para evitar confusao ao fechar.</li><li>Se algo nao estiver claro, envie uma mensagem no WhatsApp para obter ajuda rapidamente.</li>
           </ul>
         </article>
-      
+
         <article class="guide-block reveal">
           <h3>Dentro da casa</h3>
           <ul class="guide-list">
             <li>Os videos cobrem TV, forno, exaustor, maquina de lavar roupa, lava-loica, micro-ondas, placa, ar condicionado e area de trabalho.</li><li>Para uma experiencia mais simples, veja o video curto antes de usar um aparelho pela primeira vez.</li><li>Trate a casa como uma casa vivida e deixe tudo desligado quando sair.</li>
           </ul>
         </article>
-      
+
         <article class="guide-block reveal">
           <h3>Antes de partir</h3>
           <ul class="guide-list">
@@ -1226,48 +1399,48 @@ button,
           </div>
           <div class="gallery-grid">
         <figure class="gallery-card reveal gallery-card--large">
-          
+
     <picture class="gallery-card__media">
       <source srcset="../assets/photo-1.webp" type="image/webp" />
       <img src="../assets/photo-1.jpg" alt="Dining area at Villa Laura with open sea view." loading="lazy" />
     </picture>
-  
+
         </figure>
-      
+
         <figure class="gallery-card reveal gallery-card--large">
-          
+
     <picture class="gallery-card__media">
       <source srcset="../assets/photo-2.webp" type="image/webp" />
       <img src="../assets/photo-2.jpg" alt="Bright interior view at Villa Laura with terrace and sea beyond." loading="lazy" />
     </picture>
-  
+
         </figure>
-      
+
         <figure class="gallery-card reveal">
-          
+
     <picture class="gallery-card__media">
       <source srcset="../assets/photo-3.webp" type="image/webp" />
       <img src="../assets/photo-3.jpg" alt="Sunset view from Villa Laura over the Sardinian coastline." loading="lazy" />
     </picture>
-  
+
         </figure>
-      
+
         <figure class="gallery-card reveal">
-          
+
     <picture class="gallery-card__media">
       <source srcset="../assets/photo-4.webp" type="image/webp" />
       <img src="../assets/photo-4.jpg" alt="Rainbow over the green hills and sea near Villa Laura." loading="lazy" />
     </picture>
-  
+
         </figure>
-      
+
         <figure class="gallery-card reveal">
-          
+
     <picture class="gallery-card__media">
       <source srcset="../assets/photo-5.webp" type="image/webp" />
       <img src="../assets/photo-5.jpg" alt="Garden-level view looking up toward the villa." loading="lazy" />
     </picture>
-  
+
         </figure>
       </div>
         </section>
@@ -1280,30 +1453,30 @@ button,
               <p>Para a ajuda mais rapida, envie uma mensagem no WhatsApp. Para reservas, disponibilidade e detalhes completos, use o Airbnb.</p>
             </div>
             <div class="contact-card__actions">
-              
+
   <a class="button button--solid" href="https://wa.me/393514830318" target="_blank" rel="noreferrer">
-    
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
-      <path d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
-    </svg>
-  <span>Abrir WhatsApp</span>
+    <span class="button__icon">
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 2.4A9.3 9.3 0 0 0 4.1 16.6L2.8 21.2l4.8-1.3A9.3 9.3 0 1 0 12 2.4Zm0 15.6c-1.5 0-2.9-.4-4.1-1.2l-.3-.2-2.8.8.8-2.7-.2-.3A7 7 0 1 1 12 18Z"/>
+    <path fill="currentColor" d="M8.8 7.7c-.2-.4-.5-.4-.7-.4h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-.9 2.3.1 1.2 1 2.4 1.2 2.7.2.2 1.9 3 4.7 4.1 2.8 1.1 2.8.8 3.3.8.5-.1 1.8-.7 2.1-1.4.2-.7.2-1.2.2-1.3s-.2-.2-.5-.4l-1.7-.8c-.3-.1-.5-.2-.8.2l-.8 1c-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.5-1.4-1.7-.1-.2 0-.3.1-.4l.5-.6c.2-.2.3-.3.4-.5.1-.2.1-.4 0-.5l-.8-1.8Z"/>
+  </svg></span><span>Abrir WhatsApp</span>
   </a>
 
-              
+
   <a class="button button--soft" href="https://airbnb.co.uk/h/villa-laura-sardinia" target="_blank" rel="noreferrer">
-    
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3-.1-.2-.3-.3-.4-.5-.2.2-.3.3-.4.5-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Z"/>
-    </svg>
-  <span>Abrir Airbnb</span>
+    <span class="button__icon">
+  <svg class="icon icon--brand" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+
+    <path fill="currentColor" d="M12 3.2c-1 0-1.8.5-2.3 1.4L5 14.2c-.4.8-.6 1.5-.6 2.1 0 2 1.5 3.5 3.6 3.5 1.5 0 2.8-.8 4-2.6 1.2 1.8 2.5 2.6 4 2.6 2.1 0 3.6-1.5 3.6-3.5 0-.6-.2-1.3-.6-2.1l-4.7-9.6c-.5-.9-1.3-1.4-2.3-1.4Zm0 3.1 3.9 8c.2.5.3.9.3 1.2 0 .8-.5 1.3-1.2 1.3-.8 0-1.6-.7-2.6-2.3l-.4-.5-.4.5c-1 1.6-1.8 2.3-2.6 2.3-.7 0-1.2-.5-1.2-1.3 0-.3.1-.7.3-1.2l3.9-8Zm0 3.1a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm0 1.8c.4 0 .7.3.7.7s-.3.7-.7.7-.7-.3-.7-.7.3-.7.7-.7Z"/>
+  </svg></span><span>Abrir Airbnb</span>
   </a>
 
             </div>
           </div>
         </section>
       </main>
-      
+
   <footer class="footer">
     <p>Site de apoio ao hospede Villa Laura | Villa Laura</p>
   </footer>
@@ -1329,7 +1502,7 @@ if ("IntersectionObserver" in window) {
   reveals.forEach((element) => element.classList.add("is-visible"));
 }
 
-const supportedLocales = ["en", "it", "es", "de", "pt", "fr"];
+const supportedLocales = ["en", "it", "es", "fr", "nl", "de", "pt"];
 const savedLocaleKey = "villa-laura-locale";
 
 document.querySelectorAll("[data-locale-switch]").forEach((link) => {
@@ -1358,6 +1531,27 @@ if (page === "home" && locale === "en") {
     }
   }
 }
+
+document.querySelectorAll("[data-video-facade]").forEach((facade) => {
+  const trigger = facade.querySelector("[data-video-src]");
+  if (!trigger) return;
+
+  trigger.addEventListener("click", (event) => {
+    event.preventDefault();
+    const source = trigger.getAttribute("data-video-src");
+    if (!source) return;
+
+    const frame = document.createElement("iframe");
+    frame.className = "video-frame__embed";
+    frame.src = `${source}?autoplay=1`;
+    frame.title = trigger.getAttribute("aria-label") || "Video";
+    frame.allow =
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    frame.referrerPolicy = "strict-origin-when-cross-origin";
+    frame.allowFullscreen = true;
+    facade.replaceChildren(frame);
+  });
+});
 </script>
   </body>
 </html>

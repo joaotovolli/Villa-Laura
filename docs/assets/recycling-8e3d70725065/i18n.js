@@ -13,6 +13,7 @@ export const recyclingTranslations = {
       navigationLabel: "Navigazione principale",
       home: "Home",
       houseGuide: "Guida della casa",
+      recycling: "Rifiuti",
       support: "Contatti",
       language: "Lingua"
     },
@@ -149,6 +150,7 @@ export const recyclingTranslations = {
       navigationLabel: "Primary navigation",
       home: "Home",
       houseGuide: "House guide",
+      recycling: "Recycling",
       support: "Contact",
       language: "Language"
     },
@@ -285,6 +287,7 @@ export const recyclingTranslations = {
       navigationLabel: "Navegación principal",
       home: "Inicio",
       houseGuide: "Guía de la casa",
+      recycling: "Residuos",
       support: "Contacto",
       language: "Idioma"
     },
@@ -421,6 +424,7 @@ export const recyclingTranslations = {
       navigationLabel: "Navigation principale",
       home: "Accueil",
       houseGuide: "Guide de la maison",
+      recycling: "Tri des déchets",
       support: "Contact",
       language: "Langue"
     },
@@ -557,6 +561,7 @@ export const recyclingTranslations = {
       navigationLabel: "Hoofdnavigatie",
       home: "Start",
       houseGuide: "Huisgids",
+      recycling: "Afvalkalender",
       support: "Contact",
       language: "Taal"
     },
@@ -693,6 +698,7 @@ export const recyclingTranslations = {
       navigationLabel: "Hauptnavigation",
       home: "Start",
       houseGuide: "Hausführer",
+      recycling: "Abfallkalender",
       support: "Kontakt",
       language: "Sprache"
     },
@@ -829,6 +835,7 @@ export const recyclingTranslations = {
       navigationLabel: "Navegação principal",
       home: "Início",
       houseGuide: "Guia da casa",
+      recycling: "Reciclagem",
       support: "Contato",
       language: "Idioma"
     },

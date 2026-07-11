@@ -212,8 +212,14 @@
 }
 
 .calendar-control__arrow {
+  display: inline-grid;
   flex: 0 0 auto;
-  font-size: 1.15rem;
+  place-items: center;
+}
+
+.calendar-control__arrow .icon {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .calendar-summary {
