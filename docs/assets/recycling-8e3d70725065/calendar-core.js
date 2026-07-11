@@ -272,6 +272,7 @@ const requiredTranslationPaths = [
   "header.navigationLabel",
   "header.home",
   "header.houseGuide",
+  "header.recycling",
   "header.support",
   "header.language",
   "page.kicker",

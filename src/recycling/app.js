@@ -46,7 +46,7 @@ if (root) {
   const availableButton = root.querySelector("[data-calendar-available]");
   const savedLocaleKey = "villa-laura-locale";
   const recyclingLocaleKey = "villa-laura-recycling-locale";
-  const siteLocales = new Set(["en", "it", "es", "de", "pt", "fr"]);
+  const siteLocales = new Set(["en", "it", "es", "fr", "nl", "de", "pt"]);
 
   document.querySelectorAll("[data-recycling-locale-switch]").forEach((link) => {
     link.addEventListener("click", () => {

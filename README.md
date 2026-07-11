@@ -92,10 +92,13 @@ Primary editable files:
 
 - `site.config.json` for content, links, video metadata, and gallery source selection
 - `assets/source/` for curated original images
+- `assets/video-thumbnails/` for public-safe local snapshots used by the video guide cards and player facades
 - `src/styles.css` for styling
 - `src/app.js` for lightweight client-side behaviour
 - `scripts/build.mjs` for static site generation
 - `src/recycling/` for calendar data, translations, rendering, and date logic
+
+The public guest guide is available in English, Italian, Spanish, French, Dutch, German, and Portuguese. Dutch guide pages use `/nl/guides/<guide>/`; language switching keeps visitors on the equivalent guide. Video thumbnails are optimized into `dist/assets/` during the build, so guide cards do not depend on live YouTube thumbnail requests.
 
 ## Recycling Calendar
 

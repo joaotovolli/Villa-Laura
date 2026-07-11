@@ -72,7 +72,7 @@ test("shows an honest unavailable state in 2027 and can return to the official p
   await expect(days.first()).toHaveAttribute("data-calendar-date", "2026-01-01");
 });
 
-test("keeps Dutch as a recycling preference without poisoning the six-language site preference", async ({ page }) => {
+test("keeps Dutch as both the site and recycling preference", async ({ page }) => {
   await page.goto("/recycling/");
   await page.locator('[data-recycling-locale-switch="nl"]').click();
   await expect(page).toHaveURL(/\/nl\/recycling\//);
@@ -80,7 +80,7 @@ test("keeps Dutch as a recycling preference without poisoning the six-language s
     site: window.localStorage.getItem("villa-laura-locale"),
     recycling: window.localStorage.getItem("villa-laura-recycling-locale")
   }));
-  expect(preferences).toEqual({ site: null, recycling: "nl" });
+  expect(preferences).toEqual({ site: "nl", recycling: "nl" });
 });
 
 test("fits the viewport and has no serious or critical automated accessibility findings", async ({ page }) => {
