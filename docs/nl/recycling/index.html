@@ -803,13 +803,10 @@ button,
 }
 
 .recycling-hero {
-  display: grid;
-  gap: 1rem;
   margin-top: 1.25rem;
 }
 
 .recycling-hero__main,
-.recycling-hero__facts,
 .calendar-panel,
 .recycling-source-card,
 .full-schedule-card {
@@ -863,44 +860,6 @@ button,
   margin: 1.1rem 0 0;
   color: rgba(255, 253, 249, 0.9);
   font-size: clamp(1rem, 2vw, 1.14rem);
-}
-
-.recycling-hero__facts {
-  display: grid;
-  align-content: start;
-  gap: 0.85rem;
-  padding: 1.35rem;
-  background: rgba(255, 253, 249, 0.9);
-}
-
-.recycling-fact {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: start;
-  margin: 0;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.recycling-fact:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.recycling-fact__mark {
-  display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--sun-soft);
-  color: #9d5514;
-  font-weight: 800;
-}
-
-.recycling-fact span:last-child {
-  overflow-wrap: anywhere;
 }
 
 .recycling-section {
@@ -1428,10 +1387,6 @@ button,
 }
 
 @media (min-width: 700px) {
-  .recycling-hero {
-    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
-  }
-
   .calendar-panel__top {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
@@ -1539,12 +1494,6 @@ button,
             <h1 id="recycling-title">Afvalinzameling in Tresnuraghes</h1>
             <p class="recycling-hero__intro">Bekijk snel wat vandaag en in de komende 14 dagen wordt opgehaald. De datums komen uit de officiële kalender 2026 voor Zone B.</p>
           </div>
-          <aside class="recycling-hero__facts" aria-label="Zone B · Tresnuraghes, Sagama en Montresta">
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">B</span><span>Zone B · Tresnuraghes, Sagama en Montresta</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">⌂</span><span>Huishoudens · Villa Laura</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">✓</span><span>Beschikbare officiële periode: 1 januari 2026 – 31 december 2026</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">i</span><span>Extra inzamelingen die uitsluitend voor bedrijven zijn aangeduid, worden niet als huishoudelijke inzameling van Villa Laura getoond.</span></p>
-          </aside>
         </section>
 
         <section class="recycling-section" id="calendar" data-recycling-app data-locale="nl" data-calendar-id="planargia-zone-b-household-2026" data-valid-from="2026-01-01" data-valid-to="2026-12-31">
@@ -1553,7 +1502,6 @@ button,
               <div class="calendar-panel__heading">
                 <div class="section__kicker">Huishoudens · Villa Laura</div>
                 <h2>De komende 14 dagen</h2>
-                <p>De weergave begint op de huidige datum bij Villa Laura (tijdzone Europe/Rome).</p>
               </div>
               <div class="calendar-controls" aria-label="De komende 14 dagen">
                 <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
@@ -1570,54 +1518,21 @@ button,
               </div>
             </div>
             <div class="calendar-summary" aria-live="polite" aria-atomic="true">
-              <p class="calendar-summary__range" data-calendar-range>10 juli 2026 tot en met 23 juli 2026</p>
-              <p class="calendar-summary__next" data-next-collection>Eerstvolgende inzameling: vrijdag 10 juli 2026 — Papier en GFT</p>
+              <p class="calendar-summary__range" data-calendar-range>11 juli 2026 tot en met 24 juli 2026</p>
+              <p class="calendar-summary__next" data-next-collection>Eerstvolgende inzameling: maandag 13 juli 2026 — Rest, GFT en Glas</p>
             </div>
             <div class="calendar-coverage" data-coverage-message hidden>
               <p data-coverage-text>De beschikbare officiële kalender dekt deze datum niet. Het patroon van 2026 wordt nooit automatisch herhaald. Officiële datums zijn beschikbaar van 1 januari 2026 tot en met 31 december 2026.</p>
               <button class="calendar-control" type="button" data-calendar-available disabled>Bekijk de kalender van 2026</button>
             </div>
             <ol class="collection-days" data-calendar-list>
-    <li class="collection-day collection-day--collection is-today is-next" data-calendar-date="2026-07-10" data-calendar-status="collection" aria-current="date">
-      <div class="collection-day__date">
-        <time datetime="2026-07-10">
-          <span class="collection-day__weekday">vrijdag</span>
-          <strong>10 juli 2026</strong>
-        </time>
-        <div class="day-badges"><span class="day-badge day-badge--today">Vandaag</span><span class="day-badge day-badge--next">Eerstvolgende inzameling</span></div>
-      </div>
-      <div class="collection-day__result">
-
-      <p class="collection-day__label">Geplande inzameling</p>
-      <div class="waste-chips">
-  <span class="waste-chip waste-chip--paper" data-category="paper">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
-    </g>
-  </svg></span>
-    <span>Papier</span>
-  </span>
-  <span class="waste-chip waste-chip--organic" data-category="organic">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
-    </g>
-  </svg></span>
-    <span>GFT</span>
-  </span></div>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--none" data-calendar-date="2026-07-11" data-calendar-status="none">
+    <li class="collection-day collection-day--none is-today" data-calendar-date="2026-07-11" data-calendar-status="none" aria-current="date">
       <div class="collection-day__date">
         <time datetime="2026-07-11">
           <span class="collection-day__weekday">zaterdag</span>
           <strong>11 juli 2026</strong>
         </time>
-        <div class="day-badges"><span class="day-badge">Morgen</span></div>
+        <div class="day-badges"><span class="day-badge day-badge--today">Vandaag</span></div>
       </div>
       <div class="collection-day__result">
         <p class="collection-day__empty">Geen huishoudelijke inzameling</p>
@@ -1630,20 +1545,20 @@ button,
           <span class="collection-day__weekday">zondag</span>
           <strong>12 juli 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge">Morgen</span></div>
       </div>
       <div class="collection-day__result">
         <p class="collection-day__empty">Geen huishoudelijke inzameling</p>
 
       </div>
     </li>
-    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-13" data-calendar-status="collection">
+    <li class="collection-day collection-day--collection is-next" data-calendar-date="2026-07-13" data-calendar-status="collection">
       <div class="collection-day__date">
         <time datetime="2026-07-13">
           <span class="collection-day__weekday">maandag</span>
           <strong>13 juli 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge day-badge--next">Eerstvolgende inzameling</span></div>
       </div>
       <div class="collection-day__result">
 
@@ -1888,6 +1803,39 @@ button,
         <p class="collection-day__empty">Geen huishoudelijke inzameling</p>
 
       </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-24" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-24">
+          <span class="collection-day__weekday">vrijdag</span>
+          <strong>24 juli 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Geplande inzameling</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--paper" data-category="paper">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
+    </g>
+  </svg></span>
+    <span>Papier</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>GFT</span>
+  </span></div>
+
+      </div>
     </li></ol>
           </div>
         </section>
@@ -2127,6 +2075,6 @@ button,
       </main>
       <footer class="footer"><p>Afvalinformatie voor gasten van Villa Laura | Villa Laura</p></footer>
     </div>
-    <script type="module" src="../../assets/recycling-ea93366d620d/app.js"></script>
+    <script type="module" src="../../assets/recycling-28e4faaac14c/app.js"></script>
   </body>
 </html>

@@ -803,13 +803,10 @@ button,
 }
 
 .recycling-hero {
-  display: grid;
-  gap: 1rem;
   margin-top: 1.25rem;
 }
 
 .recycling-hero__main,
-.recycling-hero__facts,
 .calendar-panel,
 .recycling-source-card,
 .full-schedule-card {
@@ -863,44 +860,6 @@ button,
   margin: 1.1rem 0 0;
   color: rgba(255, 253, 249, 0.9);
   font-size: clamp(1rem, 2vw, 1.14rem);
-}
-
-.recycling-hero__facts {
-  display: grid;
-  align-content: start;
-  gap: 0.85rem;
-  padding: 1.35rem;
-  background: rgba(255, 253, 249, 0.9);
-}
-
-.recycling-fact {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: start;
-  margin: 0;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.recycling-fact:last-child {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.recycling-fact__mark {
-  display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--sun-soft);
-  color: #9d5514;
-  font-weight: 800;
-}
-
-.recycling-fact span:last-child {
-  overflow-wrap: anywhere;
 }
 
 .recycling-section {
@@ -1428,10 +1387,6 @@ button,
 }
 
 @media (min-width: 700px) {
-  .recycling-hero {
-    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.75fr);
-  }
-
   .calendar-panel__top {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
@@ -1539,12 +1494,6 @@ button,
             <h1 id="recycling-title">Coleta de resíduos em Tresnuraghes</h1>
             <p class="recycling-hero__intro">Veja rapidamente o que é coletado hoje e nos próximos 14 dias. As datas vêm do calendário oficial de 2026 da Zona B.</p>
           </div>
-          <aside class="recycling-hero__facts" aria-label="Zona B · Tresnuraghes, Sagama e Montresta">
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">B</span><span>Zona B · Tresnuraghes, Sagama e Montresta</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">⌂</span><span>Usuários domésticos · Villa Laura</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">✓</span><span>Período oficial disponível: 1 de janeiro de 2026 – 31 de dezembro de 2026</span></p>
-            <p class="recycling-fact"><span class="recycling-fact__mark" aria-hidden="true">i</span><span>As coletas adicionais indicadas exclusivamente para comércios não aparecem como coletas domésticas da Villa Laura.</span></p>
-          </aside>
         </section>
 
         <section class="recycling-section" id="calendar" data-recycling-app data-locale="pt" data-calendar-id="planargia-zone-b-household-2026" data-valid-from="2026-01-01" data-valid-to="2026-12-31">
@@ -1553,7 +1502,6 @@ button,
               <div class="calendar-panel__heading">
                 <div class="section__kicker">Usuários domésticos · Villa Laura</div>
                 <h2>Os próximos 14 dias</h2>
-                <p>A visualização começa na data atual da Villa Laura (fuso Europe/Rome).</p>
               </div>
               <div class="calendar-controls" aria-label="Os próximos 14 dias">
                 <button class="calendar-control calendar-control--previous" type="button" data-calendar-previous disabled>
@@ -1570,54 +1518,21 @@ button,
               </div>
             </div>
             <div class="calendar-summary" aria-live="polite" aria-atomic="true">
-              <p class="calendar-summary__range" data-calendar-range>De 10 de julho de 2026 a 23 de julho de 2026</p>
-              <p class="calendar-summary__next" data-next-collection>Próxima coleta: sexta-feira, 10 de julho de 2026 — Papel e Orgânico</p>
+              <p class="calendar-summary__range" data-calendar-range>De 11 de julho de 2026 a 24 de julho de 2026</p>
+              <p class="calendar-summary__next" data-next-collection>Próxima coleta: segunda-feira, 13 de julho de 2026 — Rejeito, Orgânico e Vidro</p>
             </div>
             <div class="calendar-coverage" data-coverage-message hidden>
               <p data-coverage-text>O calendário oficial disponível não cobre esta data. O padrão de 2026 nunca é repetido automaticamente. Há datas oficiais disponíveis de 1 de janeiro de 2026 a 31 de dezembro de 2026.</p>
               <button class="calendar-control" type="button" data-calendar-available disabled>Ver o calendário de 2026</button>
             </div>
             <ol class="collection-days" data-calendar-list>
-    <li class="collection-day collection-day--collection is-today is-next" data-calendar-date="2026-07-10" data-calendar-status="collection" aria-current="date">
-      <div class="collection-day__date">
-        <time datetime="2026-07-10">
-          <span class="collection-day__weekday">sexta-feira</span>
-          <strong>10 de julho de 2026</strong>
-        </time>
-        <div class="day-badges"><span class="day-badge day-badge--today">Hoje</span><span class="day-badge day-badge--next">Próxima coleta</span></div>
-      </div>
-      <div class="collection-day__result">
-
-      <p class="collection-day__label">Coleta programada</p>
-      <div class="waste-chips">
-  <span class="waste-chip waste-chip--paper" data-category="paper">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
-    </g>
-  </svg></span>
-    <span>Papel</span>
-  </span>
-  <span class="waste-chip waste-chip--organic" data-category="organic">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
-    </g>
-  </svg></span>
-    <span>Orgânico</span>
-  </span></div>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--none" data-calendar-date="2026-07-11" data-calendar-status="none">
+    <li class="collection-day collection-day--none is-today" data-calendar-date="2026-07-11" data-calendar-status="none" aria-current="date">
       <div class="collection-day__date">
         <time datetime="2026-07-11">
           <span class="collection-day__weekday">sábado</span>
           <strong>11 de julho de 2026</strong>
         </time>
-        <div class="day-badges"><span class="day-badge">Amanhã</span></div>
+        <div class="day-badges"><span class="day-badge day-badge--today">Hoje</span></div>
       </div>
       <div class="collection-day__result">
         <p class="collection-day__empty">Sem coleta doméstica</p>
@@ -1630,20 +1545,20 @@ button,
           <span class="collection-day__weekday">domingo</span>
           <strong>12 de julho de 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge">Amanhã</span></div>
       </div>
       <div class="collection-day__result">
         <p class="collection-day__empty">Sem coleta doméstica</p>
 
       </div>
     </li>
-    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-13" data-calendar-status="collection">
+    <li class="collection-day collection-day--collection is-next" data-calendar-date="2026-07-13" data-calendar-status="collection">
       <div class="collection-day__date">
         <time datetime="2026-07-13">
           <span class="collection-day__weekday">segunda-feira</span>
           <strong>13 de julho de 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge day-badge--next">Próxima coleta</span></div>
       </div>
       <div class="collection-day__result">
 
@@ -1888,6 +1803,39 @@ button,
         <p class="collection-day__empty">Sem coleta doméstica</p>
 
       </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-24" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-24">
+          <span class="collection-day__weekday">sexta-feira</span>
+          <strong>24 de julho de 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Coleta programada</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--paper" data-category="paper">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5v4h4M9.5 12h5M9.5 15h5"/>
+    </g>
+  </svg></span>
+    <span>Papel</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Orgânico</span>
+  </span></div>
+
+      </div>
     </li></ol>
           </div>
         </section>
@@ -2127,6 +2075,6 @@ button,
       </main>
       <footer class="footer"><p>Informações sobre resíduos para hóspedes da Villa Laura | Villa Laura</p></footer>
     </div>
-    <script type="module" src="../../assets/recycling-ea93366d620d/app.js"></script>
+    <script type="module" src="../../assets/recycling-28e4faaac14c/app.js"></script>
   </body>
 </html>

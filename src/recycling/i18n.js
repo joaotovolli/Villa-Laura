@@ -20,14 +20,10 @@ export const recyclingTranslations = {
       kicker: "Informazioni utili per gli ospiti",
       title: "Raccolta rifiuti a Tresnuraghes",
       intro: "Consulta rapidamente cosa viene ritirato oggi e nei prossimi 14 giorni. Le date sono quelle del calendario ufficiale {year} della Zona B.",
-      zone: "Zona B · Tresnuraghes, Sagama e Montresta",
-      audience: "Utenze domestiche · Villa Laura",
-      validPeriod: "Periodo ufficiale disponibile: {validStart} – {validEnd}",
-      householdOnly: "Le raccolte aggiuntive indicate esclusivamente per le utenze commerciali non sono mostrate come raccolte domestiche."
+      audience: "Utenze domestiche · Villa Laura"
     },
     calendar: {
       title: "I prossimi 14 giorni",
-      intro: "La vista parte dalla data corrente a Villa Laura (fuso orario Europe/Rome).",
       previousWeek: "Settimana precedente",
       today: "Oggi",
       nextWeek: "Settimana successiva",
@@ -160,14 +156,10 @@ export const recyclingTranslations = {
       kicker: "Useful guest information",
       title: "Waste collection in Tresnuraghes",
       intro: "See at a glance what is collected today and over the next 14 days. Dates come from the official {year} Zone B calendar.",
-      zone: "Zone B · Tresnuraghes, Sagama and Montresta",
-      audience: "Household users · Villa Laura",
-      validPeriod: "Official period available: {validStart} – {validEnd}",
-      householdOnly: "Additional collections marked exclusively for commercial users are not shown as Villa Laura household collections."
+      audience: "Household users · Villa Laura"
     },
     calendar: {
       title: "The next 14 days",
-      intro: "The view starts from the current date at Villa Laura (Europe/Rome time).",
       previousWeek: "Previous week",
       today: "Today",
       nextWeek: "Next week",
@@ -300,14 +292,10 @@ export const recyclingTranslations = {
       kicker: "Información útil para huéspedes",
       title: "Recogida de residuos en Tresnuraghes",
       intro: "Consulta rápidamente qué se recoge hoy y durante los próximos 14 días. Las fechas proceden del calendario oficial {year} de la Zona B.",
-      zone: "Zona B · Tresnuraghes, Sagama y Montresta",
-      audience: "Usuarios domésticos · Villa Laura",
-      validPeriod: "Periodo oficial disponible: {validStart} – {validEnd}",
-      householdOnly: "Las recogidas adicionales indicadas exclusivamente para comercios no aparecen como recogidas domésticas de Villa Laura."
+      audience: "Usuarios domésticos · Villa Laura"
     },
     calendar: {
       title: "Los próximos 14 días",
-      intro: "La vista comienza en la fecha actual de Villa Laura (zona horaria Europe/Rome).",
       previousWeek: "Semana anterior",
       today: "Hoy",
       nextWeek: "Semana siguiente",
@@ -440,14 +428,10 @@ export const recyclingTranslations = {
       kicker: "Informations utiles aux voyageurs",
       title: "Collecte des déchets à Tresnuraghes",
       intro: "Voyez rapidement ce qui est collecté aujourd’hui et pendant les 14 prochains jours. Les dates proviennent du calendrier officiel {year} de la Zone B.",
-      zone: "Zone B · Tresnuraghes, Sagama et Montresta",
-      audience: "Usagers domestiques · Villa Laura",
-      validPeriod: "Période officielle disponible : {validStart} – {validEnd}",
-      householdOnly: "Les collectes supplémentaires réservées aux commerces ne sont pas affichées comme collectes domestiques de Villa Laura."
+      audience: "Usagers domestiques · Villa Laura"
     },
     calendar: {
       title: "Les 14 prochains jours",
-      intro: "L’affichage commence à la date actuelle de Villa Laura (fuseau Europe/Rome).",
       previousWeek: "Semaine précédente",
       today: "Aujourd’hui",
       nextWeek: "Semaine suivante",
@@ -580,14 +564,10 @@ export const recyclingTranslations = {
       kicker: "Nuttige informatie voor gasten",
       title: "Afvalinzameling in Tresnuraghes",
       intro: "Bekijk snel wat vandaag en in de komende 14 dagen wordt opgehaald. De datums komen uit de officiële kalender {year} voor Zone B.",
-      zone: "Zone B · Tresnuraghes, Sagama en Montresta",
-      audience: "Huishoudens · Villa Laura",
-      validPeriod: "Beschikbare officiële periode: {validStart} – {validEnd}",
-      householdOnly: "Extra inzamelingen die uitsluitend voor bedrijven zijn aangeduid, worden niet als huishoudelijke inzameling van Villa Laura getoond."
+      audience: "Huishoudens · Villa Laura"
     },
     calendar: {
       title: "De komende 14 dagen",
-      intro: "De weergave begint op de huidige datum bij Villa Laura (tijdzone Europe/Rome).",
       previousWeek: "Vorige week",
       today: "Vandaag",
       nextWeek: "Volgende week",
@@ -720,14 +700,10 @@ export const recyclingTranslations = {
       kicker: "Nützliche Informationen für Gäste",
       title: "Abfallsammlung in Tresnuraghes",
       intro: "Sieh auf einen Blick, was heute und in den nächsten 14 Tagen abgeholt wird. Die Daten stammen aus dem offiziellen Kalender {year} für Zone B.",
-      zone: "Zone B · Tresnuraghes, Sagama und Montresta",
-      audience: "Privathaushalte · Villa Laura",
-      validPeriod: "Verfügbarer offizieller Zeitraum: {validStart} – {validEnd}",
-      householdOnly: "Zusätzliche, ausschließlich für Gewerbebetriebe gekennzeichnete Sammlungen werden nicht als Haushaltsabholung von Villa Laura angezeigt."
+      audience: "Privathaushalte · Villa Laura"
     },
     calendar: {
       title: "Die nächsten 14 Tage",
-      intro: "Die Ansicht beginnt mit dem aktuellen Datum an der Villa Laura (Zeitzone Europe/Rome).",
       previousWeek: "Vorherige Woche",
       today: "Heute",
       nextWeek: "Nächste Woche",
@@ -860,14 +836,10 @@ export const recyclingTranslations = {
       kicker: "Informações úteis para hóspedes",
       title: "Coleta de resíduos em Tresnuraghes",
       intro: "Veja rapidamente o que é coletado hoje e nos próximos 14 dias. As datas vêm do calendário oficial de {year} da Zona B.",
-      zone: "Zona B · Tresnuraghes, Sagama e Montresta",
-      audience: "Usuários domésticos · Villa Laura",
-      validPeriod: "Período oficial disponível: {validStart} – {validEnd}",
-      householdOnly: "As coletas adicionais indicadas exclusivamente para comércios não aparecem como coletas domésticas da Villa Laura."
+      audience: "Usuários domésticos · Villa Laura"
     },
     calendar: {
       title: "Os próximos 14 dias",
-      intro: "A visualização começa na data atual da Villa Laura (fuso Europe/Rome).",
       previousWeek: "Semana anterior",
       today: "Hoje",
       nextWeek: "Próxima semana",
