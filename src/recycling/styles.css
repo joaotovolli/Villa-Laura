@@ -113,6 +113,36 @@
   font-size: clamp(1rem, 2vw, 1.14rem);
 }
 
+.recycling-hero__notice {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: fit-content;
+  max-width: 44rem;
+  margin-top: 1.25rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 16px;
+  background: rgba(15, 49, 56, 0.72);
+  color: #fffdf9;
+  line-height: 1.45;
+  box-shadow: 0 8px 24px rgba(12, 35, 41, 0.16);
+}
+
+.recycling-hero__notice-icons {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+  color: #e7f0b6;
+}
+
+.recycling-hero__notice-icons .icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
 .recycling-section {
   padding-top: clamp(3rem, 7vw, 5.5rem);
 }
@@ -242,6 +272,12 @@
 
 .calendar-summary__next {
   color: var(--ink-soft);
+}
+
+.calendar-summary__instruction {
+  margin-top: 0.3rem !important;
+  color: #284e51;
+  font-weight: 800;
 }
 
 .calendar-coverage {
@@ -384,6 +420,27 @@
   border-left: 3px solid #d34e55;
   color: var(--ink-soft);
   font-size: 0.84rem;
+}
+
+.collection-day__put-out {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin: 0.65rem 0 0;
+  color: #28585c;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.collection-day__put-out-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.collection-day__put-out-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .waste-chip {
@@ -673,6 +730,13 @@
 
   .recycling-hero h1 {
     font-size: clamp(2.55rem, 13vw, 3.8rem);
+  }
+
+  .recycling-hero__notice {
+    align-items: flex-start;
+    width: 100%;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.92rem;
   }
 
   .recycling-page .topbar__inner {

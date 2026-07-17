@@ -61,6 +61,8 @@ export const formatWeekday = (isoDate, translation) =>
     weekday: "long"
   }).format(isoDateToUtc(isoDate));
 
+export const previousEveningDate = (collectionDate) => addIsoDays(collectionDate, -1);
+
 export const formatMonth = (monthKey, translation) =>
   new Intl.DateTimeFormat(translation.intlLocale, {
     timeZone: "UTC",
@@ -93,6 +95,11 @@ export const renderCategoryChip = (categoryId, translation) => `
     <span class="waste-chip__icon">${categoryIcon(categoryId)}</span>
     <span>${escapeHtml(translation.categories[categoryId].shortName)}</span>
   </span>`;
+
+const nightIcon = `
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
 
 const exceptionNotes = (calendar, isoDate) =>
   getExceptionsForDate(calendar, isoDate).map((exception) => exception.noteId).filter(Boolean);
@@ -128,11 +135,18 @@ export const renderCalendarDay = (
       translation.calendar.unavailable
     )}</p>`;
   } else if (day.status === "collection") {
+    const putOutInstruction = replaceTokens(translation.calendar.putOutInstruction, {
+      previousWeekday: formatWeekday(previousEveningDate(day.date), translation)
+    });
     result = `
       <p class="collection-day__label">${escapeHtml(translation.calendar.collection)}</p>
       <div class="waste-chips">${day.categories
         .map((categoryId) => renderCategoryChip(categoryId, translation))
-        .join("")}</div>`;
+        .join("")}</div>
+      <p class="collection-day__put-out" aria-label="${escapeHtml(putOutInstruction)}">
+        <span class="collection-day__put-out-icon">${nightIcon}</span>
+        <span>${escapeHtml(putOutInstruction)}</span>
+      </p>`;
   }
 
   return `

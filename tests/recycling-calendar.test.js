@@ -20,6 +20,7 @@ import {
   registeredAvailableWindowAnchor,
   registeredNavigationTarget
 } from "../src/recycling/calendars.js";
+import { previousEveningDate } from "../src/recycling/render.js";
 
 test("Europe/Rome civil dates do not roll over according to UTC", () => {
   assert.equal(dateInTimeZone(new Date("2026-07-09T21:59:59Z"), "Europe/Rome"), "2026-07-09");
@@ -115,4 +116,10 @@ test("civil-date helpers reject impossible dates and handle year transitions", (
   assert.equal(isValidIsoDate("2026-13-01"), false);
   assert.equal(isValidIsoDate("2026-12-31"), true);
   assert.equal(addIsoDays("2026-12-31", 1), "2027-01-01");
+});
+
+test("previous-evening dates use calendar civil dates across week, month and year boundaries", () => {
+  assert.equal(previousEveningDate("2026-07-13"), "2026-07-12");
+  assert.equal(previousEveningDate("2026-06-01"), "2026-05-31");
+  assert.equal(previousEveningDate("2026-01-01"), "2025-12-31");
 });

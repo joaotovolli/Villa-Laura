@@ -978,6 +978,36 @@ button,
   font-size: clamp(1rem, 2vw, 1.14rem);
 }
 
+.recycling-hero__notice {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: fit-content;
+  max-width: 44rem;
+  margin-top: 1.25rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 16px;
+  background: rgba(15, 49, 56, 0.72);
+  color: #fffdf9;
+  line-height: 1.45;
+  box-shadow: 0 8px 24px rgba(12, 35, 41, 0.16);
+}
+
+.recycling-hero__notice-icons {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+  color: #e7f0b6;
+}
+
+.recycling-hero__notice-icons .icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
 .recycling-section {
   padding-top: clamp(3rem, 7vw, 5.5rem);
 }
@@ -1107,6 +1137,12 @@ button,
 
 .calendar-summary__next {
   color: var(--ink-soft);
+}
+
+.calendar-summary__instruction {
+  margin-top: 0.3rem !important;
+  color: #284e51;
+  font-weight: 800;
 }
 
 .calendar-coverage {
@@ -1249,6 +1285,27 @@ button,
   border-left: 3px solid #d34e55;
   color: var(--ink-soft);
   font-size: 0.84rem;
+}
+
+.collection-day__put-out {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin: 0.65rem 0 0;
+  color: #28585c;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.collection-day__put-out-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.collection-day__put-out-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .waste-chip {
@@ -1540,6 +1597,13 @@ button,
     font-size: clamp(2.55rem, 13vw, 3.8rem);
   }
 
+  .recycling-hero__notice {
+    align-items: flex-start;
+    width: 100%;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.92rem;
+  }
+
   .recycling-page .topbar__inner {
     width: min(calc(100% - 1rem), var(--content));
   }
@@ -1619,6 +1683,16 @@ button,
             <div class="eyebrow">Useful guest information</div>
             <h1 id="recycling-title">Waste collection in Tresnuraghes</h1>
             <p class="recycling-hero__intro">See at a glance what is collected today and over the next 14 days. Dates come from the official 2026 Zone B calendar.</p>
+            <div class="recycling-hero__notice" role="note" aria-label="Collection time reminder">
+              <span class="recycling-hero__notice-icons" aria-hidden="true">
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+              <strong>Place waste outside the evening before. Collection starts from 5:00 AM.</strong>
+            </div>
           </div>
         </section>
 
@@ -1650,148 +1724,24 @@ button,
               </div>
             </div>
             <div class="calendar-summary" aria-live="polite" aria-atomic="true">
-              <p class="calendar-summary__range" data-calendar-range>11 July 2026 to 24 July 2026</p>
-              <p class="calendar-summary__next" data-next-collection>Next collection: Monday 13 July 2026 — Residual, Organic and Glass</p>
+              <p class="calendar-summary__range" data-calendar-range>17 July 2026 to 30 July 2026</p>
+              <div class="calendar-summary__next">
+                <p data-next-collection>Next collection: Friday 17 July 2026 — Paper and Organic</p>
+                <p class="calendar-summary__instruction" data-next-collection-instruction>Put it outside on the evening of Thursday 16 July 2026. Collection starts from 5:00 AM.</p>
+              </div>
             </div>
             <div class="calendar-coverage" data-coverage-message hidden>
               <p data-coverage-text>The available official calendar does not cover this date. The 2026 pattern is never repeated automatically. Official dates are available from 1 January 2026 to 31 December 2026.</p>
               <button class="calendar-control" type="button" data-calendar-available disabled>View the 2026 calendar</button>
             </div>
             <ol class="collection-days" data-calendar-list>
-    <li class="collection-day collection-day--none is-today" data-calendar-date="2026-07-11" data-calendar-status="none" aria-current="date">
-      <div class="collection-day__date">
-        <time datetime="2026-07-11">
-          <span class="collection-day__weekday">Saturday</span>
-          <strong>11 July 2026</strong>
-        </time>
-        <div class="day-badges"><span class="day-badge day-badge--today">Today</span></div>
-      </div>
-      <div class="collection-day__result">
-        <p class="collection-day__empty">No household collection</p>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--none" data-calendar-date="2026-07-12" data-calendar-status="none">
-      <div class="collection-day__date">
-        <time datetime="2026-07-12">
-          <span class="collection-day__weekday">Sunday</span>
-          <strong>12 July 2026</strong>
-        </time>
-        <div class="day-badges"><span class="day-badge">Tomorrow</span></div>
-      </div>
-      <div class="collection-day__result">
-        <p class="collection-day__empty">No household collection</p>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--collection is-next" data-calendar-date="2026-07-13" data-calendar-status="collection">
-      <div class="collection-day__date">
-        <time datetime="2026-07-13">
-          <span class="collection-day__weekday">Monday</span>
-          <strong>13 July 2026</strong>
-        </time>
-        <div class="day-badges"><span class="day-badge day-badge--next">Next collection</span></div>
-      </div>
-      <div class="collection-day__result">
-
-      <p class="collection-day__label">Scheduled collection</p>
-      <div class="waste-chips">
-  <span class="waste-chip waste-chip--residual" data-category="residual">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 7h12l-1 14H7zM5 7h14M9 7V4h6v3M10 11v6M14 11v6"/>
-    </g>
-  </svg></span>
-    <span>Residual</span>
-  </span>
-  <span class="waste-chip waste-chip--organic" data-category="organic">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
-    </g>
-  </svg></span>
-    <span>Organic</span>
-  </span>
-  <span class="waste-chip waste-chip--glass" data-category="glass">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M6 4h4v3l-1 2v10H5V9L4 7V4z"/><path d="M14 7h5v12h-5zM14 11h5"/>
-    </g>
-  </svg></span>
-    <span>Glass</span>
-  </span></div>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--none" data-calendar-date="2026-07-14" data-calendar-status="none">
-      <div class="collection-day__date">
-        <time datetime="2026-07-14">
-          <span class="collection-day__weekday">Tuesday</span>
-          <strong>14 July 2026</strong>
-        </time>
-        <div class="day-badges"></div>
-      </div>
-      <div class="collection-day__result">
-        <p class="collection-day__empty">No household collection</p>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-15" data-calendar-status="collection">
-      <div class="collection-day__date">
-        <time datetime="2026-07-15">
-          <span class="collection-day__weekday">Wednesday</span>
-          <strong>15 July 2026</strong>
-        </time>
-        <div class="day-badges"></div>
-      </div>
-      <div class="collection-day__result">
-
-      <p class="collection-day__label">Scheduled collection</p>
-      <div class="waste-chips">
-  <span class="waste-chip waste-chip--plastic" data-category="plastic">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 3h4v3l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9l2-3z"/><path d="M8 11h8M10 3h4"/>
-    </g>
-  </svg></span>
-    <span>Plastic</span>
-  </span>
-  <span class="waste-chip waste-chip--organic" data-category="organic">
-    <span class="waste-chip__icon">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
-    </g>
-  </svg></span>
-    <span>Organic</span>
-  </span></div>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--none" data-calendar-date="2026-07-16" data-calendar-status="none">
-      <div class="collection-day__date">
-        <time datetime="2026-07-16">
-          <span class="collection-day__weekday">Thursday</span>
-          <strong>16 July 2026</strong>
-        </time>
-        <div class="day-badges"></div>
-      </div>
-      <div class="collection-day__result">
-        <p class="collection-day__empty">No household collection</p>
-
-      </div>
-    </li>
-    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-17" data-calendar-status="collection">
+    <li class="collection-day collection-day--collection is-today is-next" data-calendar-date="2026-07-17" data-calendar-status="collection" aria-current="date">
       <div class="collection-day__date">
         <time datetime="2026-07-17">
           <span class="collection-day__weekday">Friday</span>
           <strong>17 July 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge day-badge--today">Today</span><span class="day-badge day-badge--next">Next collection</span></div>
       </div>
       <div class="collection-day__result">
 
@@ -1815,6 +1765,13 @@ button,
   </svg></span>
     <span>Organic</span>
   </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Thursday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Thursday evening</span>
+      </p>
 
       </div>
     </li>
@@ -1824,7 +1781,7 @@ button,
           <span class="collection-day__weekday">Saturday</span>
           <strong>18 July 2026</strong>
         </time>
-        <div class="day-badges"></div>
+        <div class="day-badges"><span class="day-badge">Tomorrow</span></div>
       </div>
       <div class="collection-day__result">
         <p class="collection-day__empty">No household collection</p>
@@ -1874,6 +1831,13 @@ button,
   </svg></span>
     <span>Organic</span>
   </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Sunday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Sunday evening</span>
+      </p>
 
       </div>
     </li>
@@ -1920,6 +1884,13 @@ button,
   </svg></span>
     <span>Organic</span>
   </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Tuesday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Tuesday evening</span>
+      </p>
 
       </div>
     </li>
@@ -1966,6 +1937,154 @@ button,
   </svg></span>
     <span>Organic</span>
   </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Thursday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Thursday evening</span>
+      </p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-25" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-25">
+          <span class="collection-day__weekday">Saturday</span>
+          <strong>25 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-26" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-26">
+          <span class="collection-day__weekday">Sunday</span>
+          <strong>26 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-27" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-27">
+          <span class="collection-day__weekday">Monday</span>
+          <strong>27 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--residual" data-category="residual">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 7h12l-1 14H7zM5 7h14M9 7V4h6v3M10 11v6M14 11v6"/>
+    </g>
+  </svg></span>
+    <span>Residual</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span>
+  <span class="waste-chip waste-chip--glass" data-category="glass">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 4h4v3l-1 2v10H5V9L4 7V4z"/><path d="M14 7h5v12h-5zM14 11h5"/>
+    </g>
+  </svg></span>
+    <span>Glass</span>
+  </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Sunday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Sunday evening</span>
+      </p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-28" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-28">
+          <span class="collection-day__weekday">Tuesday</span>
+          <strong>28 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--collection" data-calendar-date="2026-07-29" data-calendar-status="collection">
+      <div class="collection-day__date">
+        <time datetime="2026-07-29">
+          <span class="collection-day__weekday">Wednesday</span>
+          <strong>29 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+
+      <p class="collection-day__label">Scheduled collection</p>
+      <div class="waste-chips">
+  <span class="waste-chip waste-chip--plastic" data-category="plastic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 3h4v3l2 3v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V9l2-3z"/><path d="M8 11h8M10 3h4"/>
+    </g>
+  </svg></span>
+    <span>Plastic</span>
+  </span>
+  <span class="waste-chip waste-chip--organic" data-category="organic">
+    <span class="waste-chip__icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20c-5-2-7-5-7-9 4 0 7 2 7 6 0-5 2-8 7-9 0 6-2 10-7 12Z"/><path d="M12 17c1-5 3-7 6-8"/>
+    </g>
+  </svg></span>
+    <span>Organic</span>
+  </span></div>
+      <p class="collection-day__put-out" aria-label="Put out on Tuesday evening">
+        <span class="collection-day__put-out-icon">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg></span>
+        <span>Put out on Tuesday evening</span>
+      </p>
+
+      </div>
+    </li>
+    <li class="collection-day collection-day--none" data-calendar-date="2026-07-30" data-calendar-status="none">
+      <div class="collection-day__date">
+        <time datetime="2026-07-30">
+          <span class="collection-day__weekday">Thursday</span>
+          <strong>30 July 2026</strong>
+        </time>
+        <div class="day-badges"></div>
+      </div>
+      <div class="collection-day__result">
+        <p class="collection-day__empty">No household collection</p>
 
       </div>
     </li></ol>
@@ -2207,6 +2326,6 @@ button,
       </main>
       <footer class="footer"><p>Waste collection information for Villa Laura guests | Villa Laura</p></footer>
     </div>
-    <script type="module" src="../assets/recycling-8e3d70725065/app.js"></script>
+    <script type="module" src="../assets/recycling-7a2d7cc007fd/app.js"></script>
   </body>
 </html>

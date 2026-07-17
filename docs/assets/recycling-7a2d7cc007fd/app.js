@@ -18,6 +18,7 @@ import {
   formatCalendarDate,
   formatCategoryList,
   localizeRecyclingTranslation,
+  previousEveningDate,
   renderCalendarWindow,
   replaceTokens
 } from "./render.js";
@@ -38,6 +39,7 @@ if (root) {
   const list = root.querySelector("[data-calendar-list]");
   const range = root.querySelector("[data-calendar-range]");
   const nextSummary = root.querySelector("[data-next-collection]");
+  const nextInstruction = root.querySelector("[data-next-collection-instruction]");
   const coverageMessage = root.querySelector("[data-coverage-message]");
   const coverageText = root.querySelector("[data-coverage-text]");
   const previousButton = root.querySelector("[data-calendar-previous]");
@@ -98,8 +100,21 @@ if (root) {
         date: formatCalendarDate(nextCollection.date, translation, { weekday: true }),
         categories: formatCategoryList(nextCollection.categories, translation)
       });
+      nextInstruction.textContent = replaceTokens(
+        translation.calendar.nextCollectionInstruction,
+        {
+          previousDate: formatCalendarDate(
+            previousEveningDate(nextCollection.date),
+            translation,
+            { weekday: true }
+          )
+        }
+      );
+      nextInstruction.hidden = false;
     } else {
       nextSummary.textContent = translation.calendar.noFutureCollection;
+      nextInstruction.textContent = "";
+      nextInstruction.hidden = true;
     }
 
     const includesUnavailableDates = days.some((day) => day.status === "unavailable");

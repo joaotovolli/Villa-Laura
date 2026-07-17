@@ -18,6 +18,7 @@ import {
   formatCalendarDate,
   formatCategoryList,
   localizeRecyclingTranslation,
+  previousEveningDate,
   renderCalendarWindow,
   renderFullHouseholdSchedule,
   renderRecyclingGuide,
@@ -1311,6 +1312,8 @@ const icon = {
   arrow: svgIcon(`<path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>`),
   chevronLeft: svgIcon(`<path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`),
   chevronRight: svgIcon(`<path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`),
+  moon: svgIcon(`<path d="M19.4 15.3A8.2 8.2 0 0 1 8.7 4.6 8.2 8.2 0 1 0 19.4 15.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`),
+  clock: svgIcon(`<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`),
   recycle: svgIcon(`<path fill="currentColor" d="m10.7 3.1-1.5 2.6 1.7 1 1-1.7 2.2 3.8 1.7-1-3.1-5.4-2 .7Zm7.9 8.2h-3.1v2h2l-2.2 3.8h-4.4v2h5.5l1.3-1.6 3.1-5.4-2.2-.8Zm-11.1.1-1.7-1-3.1 5.4.4 2.1L4.3 20h6.2v-2H6.1l-1.1-1.9 2.5-4.7Z"/>`)
 };
 
@@ -1912,6 +1915,15 @@ const renderRecyclingPage = (locale) => {
         categories: formatCategoryList(nextCollection.categories, translation)
       })
     : translation.calendar.noFutureCollection;
+  const nextCollectionInstruction = nextCollection
+    ? replaceTokens(translation.calendar.nextCollectionInstruction, {
+        previousDate: formatCalendarDate(
+          previousEveningDate(nextCollection.date),
+          translation,
+          { weekday: true }
+        )
+      })
+    : "";
   const availableRangeText = replaceTokens(translation.calendar.availableRange, {
     start: formatCalendarDate(pageCalendar.validFrom, translation, { weekday: false }),
     end: formatCalendarDate(pageCalendar.validTo, translation, { weekday: false })
@@ -1942,6 +1954,12 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
             <div class="eyebrow">${escapeHtml(translation.page.kicker)}</div>
             <h1 id="recycling-title">${escapeHtml(translation.page.title)}</h1>
             <p class="recycling-hero__intro">${escapeHtml(translation.page.intro)}</p>
+            <div class="recycling-hero__notice" role="note" aria-label="${escapeHtml(
+              translation.page.collectionTimeLabel
+            )}">
+              <span class="recycling-hero__notice-icons" aria-hidden="true">${icon.moon}${icon.clock}</span>
+              <strong>${escapeHtml(translation.page.collectionTimeNotice)}</strong>
+            </div>
           </div>
         </section>
 
@@ -1970,7 +1988,12 @@ ${renderRecyclingMeta(locale, translation, currentSegments, prefix)}
             </div>
             <div class="calendar-summary" aria-live="polite" aria-atomic="true">
               <p class="calendar-summary__range" data-calendar-range>${escapeHtml(rangeText)}</p>
-              <p class="calendar-summary__next" data-next-collection>${escapeHtml(nextCollectionText)}</p>
+              <div class="calendar-summary__next">
+                <p data-next-collection>${escapeHtml(nextCollectionText)}</p>
+                <p class="calendar-summary__instruction" data-next-collection-instruction${
+                  nextCollectionInstruction ? "" : " hidden"
+                }>${escapeHtml(nextCollectionInstruction)}</p>
+              </div>
             </div>
             <div class="calendar-coverage" data-coverage-message${includesUnavailableDates ? "" : " hidden"}>
               <p data-coverage-text>${escapeHtml(`${translation.calendar.outsideCoverage} ${availableRangeText}`)}</p>

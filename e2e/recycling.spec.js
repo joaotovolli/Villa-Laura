@@ -32,9 +32,18 @@ test("shows Rome's current 14-day household schedule and preserves the selected 
   await expect(days.first()).toHaveAttribute("aria-current", "date");
   await expect(days.first()).toContainText("Paper");
   await expect(days.first()).toContainText("Organic");
+  await expect(days.first().locator(".collection-day__put-out")).toContainText("Thursday evening");
   await expect(days.nth(1)).toHaveAttribute("data-calendar-date", "2026-07-11");
   await expect(days.nth(1)).toContainText("No household collection");
+  await expect(days.nth(1).locator(".collection-day__put-out")).toHaveCount(0);
   await expect(page.locator("[data-next-collection]")).toContainText("Friday 10 July 2026");
+  await expect(page.locator("[data-next-collection-instruction]")).toContainText(
+    "Thursday 9 July 2026"
+  );
+  await expect(page.locator("[data-next-collection-instruction]")).toContainText("from 5:00 AM");
+  await expect(page.locator(".recycling-hero__notice")).toContainText(
+    "Place waste outside the evening before. Collection starts from 5:00 AM."
+  );
 
   await page.locator("[data-calendar-next]").focus();
   await page.keyboard.press("Enter");
@@ -46,6 +55,7 @@ test("shows Rome's current 14-day household schedule and preserves the selected 
   await expect(page.locator("body")).toHaveAttribute("data-locale", "it");
   await expect(days.first()).toHaveAttribute("data-calendar-date", "2026-07-17");
   await expect(page.locator("[data-calendar-previous]")).toContainText("Settimana precedente");
+  await expect(page.locator(".recycling-hero__notice")).toContainText("La raccolta inizia dalle 5:00");
 
   await page.locator("[data-calendar-today]").click();
   await expect(days.first()).toHaveAttribute("data-calendar-date", "2026-07-10");
