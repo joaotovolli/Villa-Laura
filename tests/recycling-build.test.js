@@ -10,8 +10,11 @@ import { recyclingTranslations } from "../src/recycling/i18n.js";
 import {
   escapeHtml,
   formatCalendarDate,
+  formatWeekday,
   formatMonth,
-  localizeRecyclingTranslation
+  localizeRecyclingTranslation,
+  previousEveningDate,
+  renderCalendarDay
 } from "../src/recycling/render.js";
 
 const root = process.cwd();
@@ -59,6 +62,9 @@ test("build emits complete, canonical recycling pages in all seven languages", (
     assert.equal(html.includes('aria-current="page"'), true);
     assert.equal(html.includes(translation.calendar.previousWeek), true);
     assert.equal(html.includes(translation.calendar.noCollection), true);
+    assert.equal(html.includes(translation.page.collectionTimeNotice), true);
+    assert.equal(html.includes(`aria-label="${escapeHtml(translation.page.collectionTimeLabel)}"`), true);
+    assert.equal(html.includes("data-next-collection-instruction"), true);
     assert.equal(html.includes(translation.guide.title), true);
     assert.equal(html.includes("recycling-hero__facts"), false);
     assert.equal(html.includes("recycling-fact"), false);
@@ -80,6 +86,33 @@ test("build emits complete, canonical recycling pages in all seven languages", (
     assert.equal(html.includes("<noscript>"), true);
     assert.equal((html.match(/data-full-schedule-date=/g) ?? []).length, 157);
     assert.equal(html.includes('meta name="robots" content="noindex'), false);
+  }
+});
+
+test("collection reminders are localized and only render for household collection days", () => {
+  for (const locale of RECYCLING_LOCALES) {
+    const translation = localizeRecyclingTranslation(recyclingTranslations[locale], calendar, locale);
+    const collectionDate = "2026-07-13";
+    const collectionHtml = renderCalendarDay(
+      { date: collectionDate, status: "collection", categories: ["organic"], noteIds: [] },
+      { calendar, translation, today: "2026-07-10", nextCollectionDate: collectionDate }
+    );
+    const expected = translation.calendar.putOutInstruction.replace(
+      "{previousWeekday}",
+      formatWeekday(previousEveningDate(collectionDate), translation)
+    );
+    assert.equal(collectionHtml.includes(escapeHtml(expected)), true);
+
+    const emptyHtml = renderCalendarDay(
+      { date: "2026-07-12", status: "none", categories: [], noteIds: [] },
+      { calendar, translation, today: "2026-07-10", nextCollectionDate: collectionDate }
+    );
+    assert.equal(emptyHtml.includes("collection-day__put-out"), false);
+
+    if (locale !== "en") {
+      assert.equal(read(routeFile(locale)).includes(recyclingTranslations.en.page.collectionTimeNotice), false);
+      assert.equal(read(routeFile(locale)).includes(recyclingTranslations.en.calendar.putOutInstruction.split("{")[0]), false);
+    }
   }
 });
 

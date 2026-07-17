@@ -21,6 +21,8 @@ export const recyclingTranslations = {
       kicker: "Informazioni utili per gli ospiti",
       title: "Raccolta rifiuti a Tresnuraghes",
       intro: "Consulta rapidamente cosa viene ritirato oggi e nei prossimi 14 giorni. Le date sono quelle del calendario ufficiale {year} della Zona B.",
+      collectionTimeLabel: "Promemoria sull’orario di raccolta",
+      collectionTimeNotice: "Porta fuori i rifiuti la sera prima. La raccolta inizia dalle 5:00.",
       audience: "Utenze domestiche · Villa Laura"
     },
     calendar: {
@@ -37,6 +39,8 @@ export const recyclingTranslations = {
       noCollection: "Nessuna raccolta domestica",
       unavailable: "Calendario non disponibile per questa data",
       nextCollection: "Prossima raccolta: {date} — {categories}",
+      nextCollectionInstruction: "Portali fuori la sera di {previousDate}. La raccolta inizia dalle 5:00.",
+      putOutInstruction: "Porta fuori la sera di {previousWeekday}",
       noFutureCollection: "Non risultano altre raccolte nel periodo ufficiale disponibile.",
       outsideCoverage: "Il calendario ufficiale disponibile non copre questa data. Non viene ripetuto automaticamente lo schema del {year}.",
       viewAvailable: "Vedi il calendario {year}",
@@ -158,6 +162,8 @@ export const recyclingTranslations = {
       kicker: "Useful guest information",
       title: "Waste collection in Tresnuraghes",
       intro: "See at a glance what is collected today and over the next 14 days. Dates come from the official {year} Zone B calendar.",
+      collectionTimeLabel: "Collection time reminder",
+      collectionTimeNotice: "Place waste outside the evening before. Collection starts from 5:00 AM.",
       audience: "Household users · Villa Laura"
     },
     calendar: {
@@ -174,6 +180,8 @@ export const recyclingTranslations = {
       noCollection: "No household collection",
       unavailable: "Calendar unavailable for this date",
       nextCollection: "Next collection: {date} — {categories}",
+      nextCollectionInstruction: "Put it outside on the evening of {previousDate}. Collection starts from 5:00 AM.",
+      putOutInstruction: "Put out on {previousWeekday} evening",
       noFutureCollection: "There are no later collections in the available official period.",
       outsideCoverage: "The available official calendar does not cover this date. The {year} pattern is never repeated automatically.",
       viewAvailable: "View the {year} calendar",
@@ -295,6 +303,8 @@ export const recyclingTranslations = {
       kicker: "Información útil para huéspedes",
       title: "Recogida de residuos en Tresnuraghes",
       intro: "Consulta rápidamente qué se recoge hoy y durante los próximos 14 días. Las fechas proceden del calendario oficial {year} de la Zona B.",
+      collectionTimeLabel: "Recordatorio del horario de recogida",
+      collectionTimeNotice: "Saca los residuos la noche anterior. La recogida comienza a partir de las 5:00.",
       audience: "Usuarios domésticos · Villa Laura"
     },
     calendar: {
@@ -311,6 +321,8 @@ export const recyclingTranslations = {
       noCollection: "Sin recogida doméstica",
       unavailable: "Calendario no disponible para esta fecha",
       nextCollection: "Próxima recogida: {date} — {categories}",
+      nextCollectionInstruction: "Sácalos la noche del {previousDate}. La recogida comienza a partir de las 5:00.",
+      putOutInstruction: "Sacar el {previousWeekday} por la noche",
       noFutureCollection: "No hay más recogidas en el periodo oficial disponible.",
       outsideCoverage: "El calendario oficial disponible no cubre esta fecha. El patrón de {year} no se repite automáticamente.",
       viewAvailable: "Ver el calendario de {year}",
@@ -432,6 +444,8 @@ export const recyclingTranslations = {
       kicker: "Informations utiles aux voyageurs",
       title: "Collecte des déchets à Tresnuraghes",
       intro: "Voyez rapidement ce qui est collecté aujourd’hui et pendant les 14 prochains jours. Les dates proviennent du calendrier officiel {year} de la Zone B.",
+      collectionTimeLabel: "Rappel de l’heure de collecte",
+      collectionTimeNotice: "Sortez les déchets la veille au soir. La collecte commence à partir de 5 h.",
       audience: "Usagers domestiques · Villa Laura"
     },
     calendar: {
@@ -448,6 +462,8 @@ export const recyclingTranslations = {
       noCollection: "Aucune collecte domestique",
       unavailable: "Calendrier indisponible pour cette date",
       nextCollection: "Prochaine collecte : {date} — {categories}",
+      nextCollectionInstruction: "Sortez-les le {previousDate} au soir. La collecte commence à partir de 5 h.",
+      putOutInstruction: "À sortir le {previousWeekday} soir",
       noFutureCollection: "Il n’y a pas d’autre collecte dans la période officielle disponible.",
       outsideCoverage: "Le calendrier officiel disponible ne couvre pas cette date. Le programme {year} n’est jamais répété automatiquement.",
       viewAvailable: "Voir le calendrier {year}",
@@ -569,6 +585,8 @@ export const recyclingTranslations = {
       kicker: "Nuttige informatie voor gasten",
       title: "Afvalinzameling in Tresnuraghes",
       intro: "Bekijk snel wat vandaag en in de komende 14 dagen wordt opgehaald. De datums komen uit de officiële kalender {year} voor Zone B.",
+      collectionTimeLabel: "Herinnering aan het inzameltijdstip",
+      collectionTimeNotice: "Zet het afval de avond ervoor buiten. De inzameling begint vanaf 05.00 uur.",
       audience: "Huishoudens · Villa Laura"
     },
     calendar: {
@@ -585,6 +603,8 @@ export const recyclingTranslations = {
       noCollection: "Geen huishoudelijke inzameling",
       unavailable: "Geen kalender beschikbaar voor deze datum",
       nextCollection: "Eerstvolgende inzameling: {date} — {categories}",
+      nextCollectionInstruction: "Zet het de avond van {previousDate} buiten. De inzameling begint vanaf 05.00 uur.",
+      putOutInstruction: "Buiten zetten op {previousWeekday}avond",
       noFutureCollection: "Er zijn geen latere inzamelingen in de beschikbare officiële periode.",
       outsideCoverage: "De beschikbare officiële kalender dekt deze datum niet. Het patroon van {year} wordt nooit automatisch herhaald.",
       viewAvailable: "Bekijk de kalender van {year}",
@@ -706,6 +726,8 @@ export const recyclingTranslations = {
       kicker: "Nützliche Informationen für Gäste",
       title: "Abfallsammlung in Tresnuraghes",
       intro: "Sieh auf einen Blick, was heute und in den nächsten 14 Tagen abgeholt wird. Die Daten stammen aus dem offiziellen Kalender {year} für Zone B.",
+      collectionTimeLabel: "Hinweis zur Abholzeit",
+      collectionTimeNotice: "Stelle den Abfall am Vorabend nach draußen. Die Abholung beginnt ab 5:00 Uhr.",
       audience: "Privathaushalte · Villa Laura"
     },
     calendar: {
@@ -722,6 +744,8 @@ export const recyclingTranslations = {
       noCollection: "Keine Haushaltsabholung",
       unavailable: "Für dieses Datum ist kein Kalender verfügbar",
       nextCollection: "Nächste Abholung: {date} — {categories}",
+      nextCollectionInstruction: "Stelle ihn am {previousDate} abends nach draußen. Die Abholung beginnt ab 5:00 Uhr.",
+      putOutInstruction: "Am {previousWeekday}abend rausstellen",
       noFutureCollection: "Im verfügbaren offiziellen Zeitraum gibt es keine spätere Abholung.",
       outsideCoverage: "Der verfügbare offizielle Kalender deckt dieses Datum nicht ab. Das Muster von {year} wird nie automatisch wiederholt.",
       viewAvailable: "Kalender {year} anzeigen",
@@ -843,6 +867,8 @@ export const recyclingTranslations = {
       kicker: "Informações úteis para hóspedes",
       title: "Coleta de resíduos em Tresnuraghes",
       intro: "Veja rapidamente o que é coletado hoje e nos próximos 14 dias. As datas vêm do calendário oficial de {year} da Zona B.",
+      collectionTimeLabel: "Lembrete do horário da coleta",
+      collectionTimeNotice: "Coloque os resíduos no exterior na noite anterior. A coleta começa a partir das 5:00.",
       audience: "Usuários domésticos · Villa Laura"
     },
     calendar: {
@@ -859,6 +885,8 @@ export const recyclingTranslations = {
       noCollection: "Sem coleta doméstica",
       unavailable: "Calendário indisponível para esta data",
       nextCollection: "Próxima coleta: {date} — {categories}",
+      nextCollectionInstruction: "Coloque-os no exterior na noite de {previousDate}. A coleta começa a partir das 5:00.",
+      putOutInstruction: "Colocar no exterior: {previousWeekday} à noite",
       noFutureCollection: "Não há coletas posteriores no período oficial disponível.",
       outsideCoverage: "O calendário oficial disponível não cobre esta data. O padrão de {year} nunca é repetido automaticamente.",
       viewAvailable: "Ver o calendário de {year}",
