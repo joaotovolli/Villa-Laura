@@ -39,7 +39,8 @@ test("finance dashboard renders and stays responsive", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Riccardo payment ledger" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
+  await expect(page.locator(".finance-chart")).toHaveAttribute("tabindex", "0");
+  await expect(page.locator("#reports .finance-table-wrap")).toHaveAttribute("tabindex", "0");
   const accessibility = await new AxeBuilder({ page }).analyze();
   expect(accessibility.violations.filter((violation) => ["serious", "critical"].includes(violation.impact))).toEqual([]);
 });
-
