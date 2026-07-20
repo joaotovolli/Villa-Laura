@@ -46,4 +46,3 @@ export const makeD1 = async (migrationSql) => {
     }
   };
 };
-

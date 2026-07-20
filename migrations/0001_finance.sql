@@ -161,4 +161,3 @@ CREATE TABLE IF NOT EXISTS finance_audit_events (
 
 CREATE INDEX IF NOT EXISTS finance_audit_occurred_idx ON finance_audit_events(occurred_at DESC);
 CREATE INDEX IF NOT EXISTS finance_audit_entity_idx ON finance_audit_events(entity_type, entity_id);
-

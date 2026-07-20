@@ -81,4 +81,3 @@ test("iCal finance sync is idempotent, filters blocks, preserves manual fields, 
   assert.equal((await repo.getBooking(imported.id)).status, "removed_from_calendar");
   assert.equal((await repo.listAudit()).some((event) => event.action === "ical_removed"), true);
 });
-

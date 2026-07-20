@@ -66,4 +66,3 @@ test("finance mutations reject cross-origin and invalid financial input", async 
   assert.equal(crossOrigin.status, 403);
   assert.equal(badMoney.status, 400);
 });
-

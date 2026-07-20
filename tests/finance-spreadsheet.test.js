@@ -33,4 +33,3 @@ test("ambiguous spreadsheet date matches are never overwritten", () => {
   assert.equal(result.creates.length, 0);
   assert.equal(result.updates.length, 0);
 });
-

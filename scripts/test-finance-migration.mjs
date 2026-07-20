@@ -29,4 +29,3 @@ database_id = "${syntheticId}"
 } finally {
   await rm(tempDirectory, { recursive: true, force: true });
 }
-

@@ -75,4 +75,3 @@ test("operating profit and cash position remain distinct after a Riccardo paymen
   assert.equal(after.cashPositionCents, before.cashPositionCents - 15000);
   assert.equal(after.riccardoOutstandingCents, before.riccardoOutstandingCents - 15000);
 });
-
