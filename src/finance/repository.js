@@ -1,5 +1,11 @@
 import { randomId } from "../checkin/security.js";
 import { DEFAULT_FINANCE_SETTINGS, calculateBooking, calculateSummary } from "./core.js";
+import {
+  MAX_ACTIVE_ATTACHMENT_BYTES,
+  MAX_ATTACHMENTS_PER_RECORD,
+  MAX_FINANCE_CLASS_A_PER_MONTH,
+  MAX_FINANCE_CLASS_B_PER_MONTH
+} from "./attachments.js";
 
 const nowIso = () => new Date().toISOString();
 const bool = (value) => Boolean(Number(value));
@@ -69,7 +75,9 @@ const expenseRow = (row) => row && ({
   createdBy: row.created_by,
   updatedAt: row.updated_at,
   updatedBy: row.updated_by,
-  version: row.version
+  version: row.version,
+  attachmentCount: Number(row.attachment_count || 0),
+  hasEvidence: Number(row.attachment_count || 0) > 0
 });
 
 const paymentRow = (row) => row && ({
@@ -83,7 +91,29 @@ const paymentRow = (row) => row && ({
   unallocatedCents: row.amount_cents - Number(row.allocated_cents || 0),
   voidedAt: row.voided_at || "",
   createdAt: row.created_at,
-  createdBy: row.created_by
+  createdBy: row.created_by,
+  attachmentCount: Number(row.attachment_count || 0),
+  hasEvidence: Number(row.attachment_count || 0) > 0
+});
+
+const attachmentRow = (row) => row && ({
+  id: row.id,
+  parentType: row.parent_type,
+  parentId: row.parent_type === "expense" ? row.expense_id : row.payment_id,
+  objectKey: row.object_key,
+  originalFilename: row.original_filename,
+  displayFilename: row.display_filename,
+  mimeType: row.mime_type,
+  extension: row.file_extension,
+  sizeBytes: row.size_bytes,
+  checksum: row.sha256,
+  description: row.description,
+  status: row.status,
+  uploadedBy: row.uploaded_by,
+  uploadedAt: row.uploaded_at,
+  updatedAt: row.updated_at,
+  deletedAt: row.deleted_at || "",
+  deletedBy: row.deleted_by || ""
 });
 
 const settingsRow = (row) => row ? ({
@@ -234,6 +264,7 @@ export class FinanceRepository {
     if (filters.month) { clauses.push("substr(e.expense_date, 6, 2) = ?"); values.push(String(filters.month).padStart(2, "0")); }
     if (filters.bookingId) { clauses.push("e.booking_id = ?"); values.push(filters.bookingId); }
     const result = await this.db.prepare(`SELECT e.*, c.name AS category_name,
+      COALESCE((SELECT COUNT(*) FROM finance_attachments fa WHERE fa.expense_id = e.id AND fa.status = 'active'), 0) AS attachment_count,
       COALESCE((SELECT SUM(a.amount_cents) FROM finance_payment_allocations a JOIN finance_payments p ON p.id = a.payment_id WHERE a.expense_id = e.id AND p.voided_at IS NULL), 0) AS allocated_payments_cents
       FROM finance_expenses e JOIN finance_categories c ON c.id = e.category_id
       WHERE ${clauses.join(" AND ")} ORDER BY e.expense_date DESC, e.created_at DESC`).bind(...values).all();
@@ -242,6 +273,7 @@ export class FinanceRepository {
 
   async getExpense(id) {
     return expenseRow(await this.db.prepare(`SELECT e.*, c.name AS category_name,
+      COALESCE((SELECT COUNT(*) FROM finance_attachments fa WHERE fa.expense_id = e.id AND fa.status = 'active'), 0) AS attachment_count,
       COALESCE((SELECT SUM(a.amount_cents) FROM finance_payment_allocations a JOIN finance_payments p ON p.id = a.payment_id WHERE a.expense_id = e.id AND p.voided_at IS NULL), 0) AS allocated_payments_cents
       FROM finance_expenses e JOIN finance_categories c ON c.id = e.category_id WHERE e.id = ?`).bind(id).first());
   }
@@ -293,10 +325,18 @@ export class FinanceRepository {
     if (filters.to) { clauses.push("p.payment_date <= ?"); values.push(filters.to); }
     if (filters.year) { clauses.push("substr(p.payment_date, 1, 4) = ?"); values.push(String(filters.year)); }
     if (filters.month) { clauses.push("substr(p.payment_date, 6, 2) = ?"); values.push(String(filters.month).padStart(2, "0")); }
-    const result = await this.db.prepare(`SELECT p.*, COALESCE(SUM(a.amount_cents), 0) AS allocated_cents
+    const result = await this.db.prepare(`SELECT p.*, COALESCE(SUM(a.amount_cents), 0) AS allocated_cents,
+      COALESCE((SELECT COUNT(*) FROM finance_attachments fa WHERE fa.payment_id = p.id AND fa.status = 'active'), 0) AS attachment_count
       FROM finance_payments p LEFT JOIN finance_payment_allocations a ON a.payment_id = p.id
       WHERE ${clauses.join(" AND ")} GROUP BY p.id ORDER BY p.payment_date DESC, p.created_at DESC`).bind(...values).all();
     return rowsOf(result).map(paymentRow);
+  }
+
+  async getPayment(id) {
+    return paymentRow(await this.db.prepare(`SELECT p.*, COALESCE(SUM(a.amount_cents), 0) AS allocated_cents,
+      COALESCE((SELECT COUNT(*) FROM finance_attachments fa WHERE fa.payment_id = p.id AND fa.status = 'active'), 0) AS attachment_count
+      FROM finance_payments p LEFT JOIN finance_payment_allocations a ON a.payment_id = p.id
+      WHERE p.id = ? GROUP BY p.id`).bind(id).first());
   }
 
   async listAllocations(paymentId = "") {
@@ -373,6 +413,168 @@ export class FinanceRepository {
       auditStatement(this.db, actor, "voided", "payment", id, ["voidedAt"])
     ]);
     return Boolean(result[0]?.meta?.changes);
+  }
+
+  async attachmentParent(parentType, parentId) {
+    if (parentType === "expense") return this.getExpense(parentId);
+    if (parentType === "payment") return this.getPayment(parentId);
+    return null;
+  }
+
+  async listAttachments(parentType, parentId) {
+    if (!await this.attachmentParent(parentType, parentId)) return null;
+    const column = parentType === "expense" ? "expense_id" : "payment_id";
+    return rowsOf(await this.db.prepare(`SELECT * FROM finance_attachments WHERE ${column} = ? AND status IN ('active', 'delete_pending', 'delete_failed') ORDER BY uploaded_at DESC`).bind(parentId).all()).map(attachmentRow);
+  }
+
+  async getAttachment(id) {
+    return attachmentRow(await this.db.prepare("SELECT * FROM finance_attachments WHERE id = ?").bind(id).first());
+  }
+
+  async reserveAttachment(input, actor) {
+    const parent = await this.attachmentParent(input.parentType, input.parentId);
+    if (!parent || parent.voidedAt) return { reason: "parent_not_found" };
+    const column = input.parentType === "expense" ? "expense_id" : "payment_id";
+    const duplicate = attachmentRow(await this.db.prepare(`SELECT * FROM finance_attachments WHERE ${column} = ? AND sha256 = ? AND status IN ('pending', 'active', 'delete_pending', 'delete_failed', 'quarantined') LIMIT 1`).bind(input.parentId, input.checksum).first());
+    if (duplicate?.status === "quarantined") return { reason: "quarantined_duplicate" };
+    if (duplicate) return { duplicate };
+    const timestamp = nowIso();
+    const expenseId = input.parentType === "expense" ? input.parentId : null;
+    const paymentId = input.parentType === "payment" ? input.parentId : null;
+    const statement = this.db.prepare(`INSERT INTO finance_attachments
+      (id, parent_type, expense_id, payment_id, object_key, original_filename, display_filename, mime_type,
+       file_extension, size_bytes, sha256, description, status, uploaded_by, uploaded_at, updated_at)
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?
+      WHERE (SELECT COUNT(*) FROM finance_attachments WHERE ${column} = ? AND status IN ('pending', 'active', 'delete_pending', 'delete_failed', 'quarantined')) < ?
+        AND (SELECT COALESCE(SUM(size_bytes), 0) FROM finance_attachments WHERE status IN ('pending', 'active', 'delete_pending', 'delete_failed', 'quarantined')) + ? <= ?`)
+      .bind(input.id, input.parentType, expenseId, paymentId, input.objectKey, input.originalFilename, input.displayFilename,
+        input.mimeType, input.extension, input.sizeBytes, input.checksum, input.description || "", actor, timestamp, timestamp,
+        input.parentId, MAX_ATTACHMENTS_PER_RECORD, input.sizeBytes, MAX_ACTIVE_ATTACHMENT_BYTES);
+    const result = await statement.run();
+    if (!result?.meta?.changes) {
+      const count = Number((await this.db.prepare(`SELECT COUNT(*) AS total FROM finance_attachments WHERE ${column} = ? AND status IN ('pending', 'active', 'delete_pending', 'delete_failed', 'quarantined')`).bind(input.parentId).first())?.total || 0);
+      if (count >= MAX_ATTACHMENTS_PER_RECORD) return { reason: "record_limit" };
+      return { reason: "storage_limit" };
+    }
+    await auditStatement(this.db, actor, "attachment_upload_initiated", "attachment", input.id, ["status"], {
+      parentType: input.parentType, parentId: input.parentId, filename: input.displayFilename, sizeBytes: input.sizeBytes, result: "pending"
+    }).run();
+    return { attachment: await this.getAttachment(input.id) };
+  }
+
+  async consumeAttachmentOperation(kind) {
+    const isClassA = kind === "class_a";
+    const column = isClassA ? "class_a_operations" : "class_b_operations";
+    const limit = isClassA ? MAX_FINANCE_CLASS_A_PER_MONTH : MAX_FINANCE_CLASS_B_PER_MONTH;
+    const period = nowIso().slice(0, 7);
+    const timestamp = nowIso();
+    await this.db.prepare("INSERT OR IGNORE INTO finance_attachment_usage (period, class_a_operations, class_b_operations, updated_at) VALUES (?, 0, 0, ?)").bind(period, timestamp).run();
+    const result = await this.db.prepare(`UPDATE finance_attachment_usage SET ${column} = ${column} + 1, updated_at = ? WHERE period = ? AND ${column} < ?`).bind(timestamp, period, limit).run();
+    return Boolean(result?.meta?.changes);
+  }
+
+  async completeAttachmentUpload(id, actor) {
+    const timestamp = nowIso();
+    const attachment = await this.getAttachment(id);
+    if (!attachment) return null;
+    const result = await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET status = 'active', updated_at = ? WHERE id = ? AND status = 'pending'").bind(timestamp, id),
+      auditStatement(this.db, actor, "attachment_upload_completed", "attachment", id, ["status"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "completed" })
+    ]);
+    return result[0]?.meta?.changes ? this.getAttachment(id) : null;
+  }
+
+  async failAttachmentUpload(id, actor, result = "failed") {
+    const attachment = await this.getAttachment(id);
+    if (!attachment) return;
+    const timestamp = nowIso();
+    const status = result === "orphan_cleanup_failed" ? "quarantined" : "upload_failed";
+    await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET status = ?, updated_at = ? WHERE id = ? AND status = 'pending'").bind(status, timestamp, id),
+      auditStatement(this.db, actor, "attachment_upload_failed", "attachment", id, ["status"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result })
+    ]);
+  }
+
+  async updateAttachmentDescription(id, description, actor) {
+    const attachment = await this.getAttachment(id);
+    if (!attachment || attachment.status !== "active") return null;
+    const timestamp = nowIso();
+    await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET description = ?, updated_at = ? WHERE id = ? AND status = 'active'").bind(description, timestamp, id),
+      auditStatement(this.db, actor, "attachment_description_updated", "attachment", id, ["description"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "completed" })
+    ]);
+    return this.getAttachment(id);
+  }
+
+  async auditAttachmentAccess(id, actor, action) {
+    const attachment = await this.getAttachment(id);
+    if (!attachment) return;
+    await auditStatement(this.db, actor, action, "attachment", id, [], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "completed" }).run();
+  }
+
+  async beginAttachmentDeletion(id, actor) {
+    const attachment = await this.getAttachment(id);
+    if (!attachment || !["active", "delete_failed"].includes(attachment.status)) return null;
+    const timestamp = nowIso();
+    const result = await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET status = 'delete_pending', updated_at = ? WHERE id = ? AND status IN ('active', 'delete_failed')").bind(timestamp, id),
+      auditStatement(this.db, actor, "attachment_deletion_initiated", "attachment", id, ["status"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "pending" })
+    ]);
+    return result[0]?.meta?.changes ? this.getAttachment(id) : null;
+  }
+
+  async completeAttachmentDeletion(id, actor) {
+    const attachment = await this.getAttachment(id);
+    if (!attachment) return null;
+    const timestamp = nowIso();
+    await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET status = 'deleted', deleted_at = ?, deleted_by = ?, updated_at = ? WHERE id = ? AND status = 'delete_pending'").bind(timestamp, actor, timestamp, id),
+      auditStatement(this.db, actor, "attachment_deleted", "attachment", id, ["status", "deletedAt", "deletedBy"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "completed" })
+    ]);
+    return this.getAttachment(id);
+  }
+
+  async failAttachmentDeletion(id, actor) {
+    const attachment = await this.getAttachment(id);
+    if (!attachment) return;
+    const timestamp = nowIso();
+    await this.db.batch([
+      this.db.prepare("UPDATE finance_attachments SET status = 'delete_failed', updated_at = ? WHERE id = ? AND status = 'delete_pending'").bind(timestamp, id),
+      auditStatement(this.db, actor, "attachment_deletion_failed", "attachment", id, ["status"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "failed" })
+    ]);
+  }
+
+  async attachmentStorageSummary() {
+    const row = await this.db.prepare("SELECT COUNT(*) AS count, COALESCE(SUM(size_bytes), 0) AS bytes FROM finance_attachments WHERE status IN ('pending', 'active', 'delete_pending', 'delete_failed', 'quarantined')").first();
+    return { count: Number(row?.count || 0), bytes: Number(row?.bytes || 0), limitBytes: MAX_ACTIVE_ATTACHMENT_BYTES };
+  }
+
+  async attachmentConsistencyRows(prefix) {
+    return rowsOf(await this.db.prepare(`SELECT a.*,
+      CASE WHEN a.parent_type = 'expense' THEN e.id ELSE p.id END AS valid_parent_id
+      FROM finance_attachments a
+      LEFT JOIN finance_expenses e ON a.expense_id = e.id
+      LEFT JOIN finance_payments p ON a.payment_id = p.id
+      WHERE a.object_key LIKE ?`).bind(`${prefix}%`).all()).map((row) => ({ ...attachmentRow(row), validParent: Boolean(row.valid_parent_id) }));
+  }
+
+  async quarantineMissingAttachments(ids, actor) {
+    let repaired = 0;
+    for (const id of ids) {
+      const attachment = await this.getAttachment(id);
+      if (!attachment || !["pending", "active", "delete_pending", "delete_failed"].includes(attachment.status)) continue;
+      const timestamp = nowIso();
+      const result = await this.db.batch([
+        this.db.prepare("UPDATE finance_attachments SET status = 'quarantined', updated_at = ? WHERE id = ? AND status IN ('pending', 'active', 'delete_pending', 'delete_failed')").bind(timestamp, id),
+        auditStatement(this.db, actor, "attachment_orphan_repaired", "attachment", id, ["status"], { parentType: attachment.parentType, parentId: attachment.parentId, filename: attachment.displayFilename, result: "quarantined_missing_object" })
+      ]);
+      if (result[0]?.meta?.changes) repaired += 1;
+    }
+    return repaired;
+  }
+
+  async auditOrphanCleanup(actor, counts) {
+    await auditStatement(this.db, actor, "attachment_orphan_cleanup", "attachment_consistency", nowIso().slice(0, 10), [], counts).run();
   }
 
   async summary(filters = {}) {

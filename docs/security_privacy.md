@@ -34,6 +34,8 @@ No real keys, private URLs, guest data, or document files belong in GitHub. `ADM
 - Uploaded documents are stored outside public directories.
 - Audit events avoid secrets, document numbers, and full identity details.
 - Finance Collaborators are authorised only for `/api/finance/*`; all private guest-document and unrelated admin APIs require the owner role.
+- Finance receipts and payment evidence remain in private R2 Standard storage. Retrieval uses attachment and parent identifiers, never raw R2 keys or public URLs, and returns private `no-store` responses with `nosniff` and safe disposition headers.
+- Finance uploads validate size, extension, MIME type, and magic bytes, reject active web and executable formats, calculate a SHA-256 checksum, and enforce per-record and application-wide storage ceilings.
 
 ## Retention
 

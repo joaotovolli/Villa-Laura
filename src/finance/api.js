@@ -1,5 +1,15 @@
 import { FinanceValidationError, assertDateOnly, assertInteger, calculateBooking, centsFromDecimal, minutesFromHours, nightsBetween } from "./core.js";
 import { FinanceRepository } from "./repository.js";
+import { randomId } from "../checkin/security.js";
+import {
+  AttachmentValidationError,
+  MAX_ATTACHMENT_BYTES,
+  contentDisposition,
+  financeObjectKey,
+  financeObjectPrefix,
+  publicAttachment,
+  validateAttachmentFile
+} from "./attachments.js";
 
 const json = (body, status = 200, headers = {}) => new Response(JSON.stringify(body), {
   status,
@@ -168,6 +178,135 @@ const bodyJson = async (request) => {
   return request.json();
 };
 
+const attachmentDescription = (value) => textValue(value, "description", 500);
+
+const attachmentHeaders = (attachment, download) => ({
+  "content-type": attachment.mimeType,
+  "content-length": String(attachment.sizeBytes),
+  "content-disposition": contentDisposition(attachment.displayFilename, download),
+  "cache-control": "private, no-store, max-age=0",
+  "x-content-type-options": "nosniff",
+  "content-security-policy": "default-src 'none'; sandbox",
+  "x-robots-tag": "noindex, nofollow, noarchive"
+});
+
+const attachmentParentFromPath = (path) => {
+  const match = path.match(/^\/finance\/(expenses|payments)\/([^/]+)\/attachments$/);
+  if (!match) return null;
+  return { parentType: match[1] === "expenses" ? "expense" : "payment", parentId: decodeURIComponent(match[2]) };
+};
+
+const uploadAttachment = async (request, env, repo, actor, parentType, parentId) => {
+  if (!env.VILLA_LAURA_CHECKINS) return json({ error: "Private evidence storage is not configured" }, 503);
+  const contentType = String(request.headers.get("content-type") || "").toLowerCase();
+  if (!contentType.includes("multipart/form-data")) throw new AttachmentValidationError("Multipart form data is required", "invalid_content_type");
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  if (contentLength > MAX_ATTACHMENT_BYTES + 1024 * 1024) throw new AttachmentValidationError("The attachment exceeds the 10 MB limit", "file_too_large", 413);
+  const form = await request.formData();
+  const validated = await validateAttachmentFile(form.get("file"));
+  const id = randomId();
+  const objectKey = financeObjectKey({ request, env, parentType, parentId, attachmentId: id });
+  const reserved = await repo.reserveAttachment({ id, parentType, parentId, objectKey, ...validated, description: attachmentDescription(form.get("description")) }, actor);
+  if (reserved.duplicate) return json({ attachment: publicAttachment(reserved.duplicate), duplicate: true });
+  if (reserved.reason === "parent_not_found") return json({ error: `${parentType === "expense" ? "Expense" : "Payment"} not found` }, 404);
+  if (reserved.reason === "record_limit") return json({ error: "This record already has the maximum of 20 attachments", code: "attachment_record_limit" }, 409);
+  if (reserved.reason === "storage_limit") return json({ error: "The 1 GB finance attachment storage ceiling would be exceeded", code: "attachment_storage_limit" }, 409);
+  if (reserved.reason === "quarantined_duplicate") return json({ error: "A matching file is awaiting secure storage repair; ask the owner to run the attachment consistency check", code: "attachment_quarantined" }, 409);
+  if (!await repo.consumeAttachmentOperation("class_a")) {
+    await repo.failAttachmentUpload(id, actor, "operation_budget_exceeded");
+    return json({ error: "The monthly finance upload safety budget has been reached", code: "attachment_operation_limit" }, 429);
+  }
+  let stored = false;
+  try {
+    await env.VILLA_LAURA_CHECKINS.put(objectKey, validated.bytes, {
+      httpMetadata: { contentType: validated.mimeType },
+      customMetadata: { attachmentId: id, checksum: validated.checksum }
+    });
+    stored = true;
+    const attachment = await repo.completeAttachmentUpload(id, actor);
+    if (!attachment) throw new Error("Attachment activation failed");
+    return json({ attachment: publicAttachment(attachment), duplicate: false }, 201);
+  } catch {
+    let cleanupFailed = false;
+    if (stored) {
+      try { await env.VILLA_LAURA_CHECKINS.delete(objectKey); } catch { cleanupFailed = true; }
+    }
+    await repo.failAttachmentUpload(id, actor, cleanupFailed ? "orphan_cleanup_failed" : "failed");
+    return json({ error: "The attachment could not be stored safely; retry the file upload", code: cleanupFailed ? "attachment_orphaned" : "attachment_upload_failed" }, 503);
+  }
+};
+
+const retrieveAttachment = async (request, env, repo, actor, id) => {
+  if (!env.VILLA_LAURA_CHECKINS) return json({ error: "Private evidence storage is not configured" }, 503);
+  const attachment = await repo.getAttachment(id);
+  const params = new URL(request.url).searchParams;
+  const requestedParentType = params.get("parentType") || "";
+  const requestedParentId = params.get("parentId") || "";
+  if (!attachment || requestedParentType !== attachment.parentType || requestedParentId !== attachment.parentId ||
+      !["active", "delete_failed"].includes(attachment.status) || !await repo.attachmentParent(attachment.parentType, attachment.parentId)) {
+    return json({ error: "Attachment not found" }, 404);
+  }
+  if (!await repo.consumeAttachmentOperation("class_b")) return json({ error: "The monthly finance download safety budget has been reached" }, 429);
+  const object = await env.VILLA_LAURA_CHECKINS.get(attachment.objectKey);
+  if (!object) return json({ error: "Attachment not found" }, 404);
+  const download = params.get("download") === "1";
+  await repo.auditAttachmentAccess(id, actor, download ? "attachment_downloaded" : "attachment_viewed");
+  return new Response(object.body, { headers: attachmentHeaders(attachment, download) });
+};
+
+const deleteAttachment = async (env, repo, actor, id) => {
+  if (!env.VILLA_LAURA_CHECKINS) return json({ error: "Private evidence storage is not configured" }, 503);
+  const attachment = await repo.beginAttachmentDeletion(id, actor);
+  if (!attachment) return json({ error: "Attachment not found" }, 404);
+  try {
+    await env.VILLA_LAURA_CHECKINS.delete(attachment.objectKey);
+    await repo.completeAttachmentDeletion(id, actor);
+    return json({ ok: true });
+  } catch {
+    await repo.failAttachmentDeletion(id, actor);
+    return json({ error: "The attachment could not be deleted from private storage; it is flagged for retry" }, 503);
+  }
+};
+
+const attachmentConsistency = async (request, env, repo, actor, apply = false) => {
+  if (!env.VILLA_LAURA_CHECKINS) return json({ error: "Private evidence storage is not configured" }, 503);
+  const prefix = financeObjectPrefix({ request, env });
+  const metadata = await repo.attachmentConsistencyRows(prefix);
+  const objectKeys = new Set();
+  let cursor;
+  do {
+    if (!await repo.consumeAttachmentOperation("class_a")) return json({ error: "The monthly finance storage safety budget has been reached" }, 429);
+    const page = await env.VILLA_LAURA_CHECKINS.list({ prefix, cursor, limit: 1000 });
+    for (const object of page.objects || []) if (object.key.startsWith(prefix)) objectKeys.add(object.key);
+    cursor = page.truncated ? page.cursor : undefined;
+  } while (cursor);
+  const expected = new Map(metadata.filter((entry) => ["pending", "active", "delete_pending", "delete_failed"].includes(entry.status)).map((entry) => [entry.objectKey, entry]));
+  const stalePendingBefore = Date.now() - 15 * 60 * 1000;
+  const missing = [...expected.values()].filter((entry) => !objectKeys.has(entry.objectKey) && (entry.status !== "pending" || Date.parse(entry.updatedAt) < stalePendingBefore));
+  const orphans = [...objectKeys].filter((key) => !expected.has(key));
+  const report = {
+    metadataRecords: metadata.length,
+    objects: objectKeys.size,
+    missingObjects: missing.length,
+    orphanObjects: orphans.length,
+    invalidParents: metadata.filter((entry) => !entry.validParent).length,
+    pendingOrFailed: metadata.filter((entry) => entry.status !== "active" && entry.status !== "deleted").length
+  };
+  if (!apply) return json({ dryRun: true, report });
+  const body = await bodyJson(request);
+  if (body.confirm !== "DELETE_ORPHAN_FINANCE_OBJECTS") return json({ error: "Explicit orphan cleanup confirmation is required" }, 400);
+  let objectsDeleted = 0;
+  let objectDeleteFailures = 0;
+  for (const key of orphans) {
+    if (!key.startsWith(prefix)) continue;
+    try { await env.VILLA_LAURA_CHECKINS.delete(key); objectsDeleted += 1; } catch { objectDeleteFailures += 1; }
+  }
+  const metadataQuarantined = await repo.quarantineMissingAttachments(missing.map((entry) => entry.id), actor);
+  const result = { objectsDeleted, objectDeleteFailures, metadataQuarantined };
+  await repo.auditOrphanCleanup(actor, { ...report, ...result });
+  return json({ dryRun: false, report, result });
+};
+
 const requireOwner = (identity) => identity?.role === "owner";
 const canUseFinance = (identity) => ["owner", "finance_collaborator"].includes(identity?.role);
 
@@ -198,14 +337,16 @@ const exportData = async (repo, request) => {
       ["supplier", (r) => r.supplier], ["amount_cents", (r) => r.amountCents], ["currency", (r) => r.currency], ["incurred_status", (r) => r.incurredStatus],
       ["payment_status", (r) => r.paymentStatus], ["payment_date", (r) => r.paymentDate], ["payment_method", (r) => r.paymentMethod],
       ["paid_by", (r) => r.paidBy], ["booking_id", (r) => r.bookingId], ["reimbursable_to_riccardo", (r) => r.reimbursableToRiccardo],
-      ["allocated_payments_cents", (r) => r.allocatedPaymentsCents], ["created_at", (r) => r.createdAt], ["updated_at", (r) => r.updatedAt]
+      ["allocated_payments_cents", (r) => r.allocatedPaymentsCents], ["attachment_count", (r) => r.attachmentCount], ["evidence_available", (r) => r.hasEvidence],
+      ["created_at", (r) => r.createdAt], ["updated_at", (r) => r.updatedAt]
     ], records), "finance-expenses.csv");
   }
   if (type === "payments") {
     const records = await repo.listPayments(filters);
     return csv(csvRows([
       ["id", (r) => r.id], ["payment_date", (r) => r.paymentDate], ["amount_cents", (r) => r.amountCents], ["allocated_cents", (r) => r.allocatedCents],
-      ["unallocated_cents", (r) => r.unallocatedCents], ["payment_method", (r) => r.paymentMethod], ["reference", (r) => r.reference], ["created_at", (r) => r.createdAt]
+      ["unallocated_cents", (r) => r.unallocatedCents], ["payment_method", (r) => r.paymentMethod], ["reference", (r) => r.reference],
+      ["attachment_count", (r) => r.attachmentCount], ["evidence_available", (r) => r.hasEvidence], ["created_at", (r) => r.createdAt]
     ], records), "finance-payments.csv");
   }
   if (type === "allocations") {
@@ -234,6 +375,36 @@ export const handleFinanceRequest = async (request, path, env, identity) => {
     if (!env.VILLA_LAURA_FINANCE) return json({ error: "Finance database is not configured" }, 503);
     const repo = new FinanceRepository(env.VILLA_LAURA_FINANCE);
     const actor = identity.email;
+
+    const attachmentParent = attachmentParentFromPath(path);
+    if (attachmentParent && request.method === "GET") {
+      const attachments = await repo.listAttachments(attachmentParent.parentType, attachmentParent.parentId);
+      return attachments ? json({ attachments: attachments.map(publicAttachment) }) : json({ error: `${attachmentParent.parentType === "expense" ? "Expense" : "Payment"} not found` }, 404);
+    }
+    if (attachmentParent && request.method === "POST") return uploadAttachment(request, env, repo, actor, attachmentParent.parentType, attachmentParent.parentId);
+    if (path === "/finance/attachments/consistency" && request.method === "GET") {
+      if (!requireOwner(identity)) return json({ error: "Owner access required" }, 403);
+      return attachmentConsistency(request, env, repo, actor, false);
+    }
+    if (path === "/finance/attachments/consistency" && request.method === "POST") {
+      if (!requireOwner(identity)) return json({ error: "Owner access required" }, 403);
+      return attachmentConsistency(request, env, repo, actor, true);
+    }
+    if (path === "/finance/attachments/storage" && request.method === "GET") {
+      if (!requireOwner(identity)) return json({ error: "Owner access required" }, 403);
+      return json({ storage: await repo.attachmentStorageSummary() });
+    }
+    if (path.match(/^\/finance\/attachments\/[^/]+$/) && request.method === "GET") {
+      return retrieveAttachment(request, env, repo, actor, decodeURIComponent(path.split("/").at(-1)));
+    }
+    if (path.match(/^\/finance\/attachments\/[^/]+$/) && request.method === "PATCH") {
+      const attachment = await repo.updateAttachmentDescription(decodeURIComponent(path.split("/").at(-1)), attachmentDescription((await bodyJson(request)).description), actor);
+      return attachment ? json({ attachment: publicAttachment(attachment) }) : json({ error: "Attachment not found" }, 404);
+    }
+    if (path.match(/^\/finance\/attachments\/[^/]+$/) && request.method === "DELETE") {
+      if (!requireOwner(identity)) return json({ error: "Owner access required" }, 403);
+      return deleteAttachment(env, repo, actor, decodeURIComponent(path.split("/").at(-1)));
+    }
 
     if (path === "/finance/session" && request.method === "GET") return json({ authenticated: true, role: identity.role, canManageSettings: requireOwner(identity) });
     if (path === "/finance/dashboard" && request.method === "GET") {
@@ -319,6 +490,7 @@ export const handleFinanceRequest = async (request, path, env, identity) => {
     return json({ error: "Not found" }, 404);
   } catch (error) {
     if (error instanceof FinanceValidationError) return json({ error: error.message, fields: error.fields }, 400);
+    if (error instanceof AttachmentValidationError) return json({ error: error.message, code: error.code }, error.status);
     if (String(error?.message || "").includes("UNIQUE constraint failed")) return json({ error: "A matching finance record already exists" }, 409);
     if (String(error?.message || "").includes("FOREIGN KEY constraint failed")) return json({ error: "A related finance record does not exist" }, 400);
     if (String(error?.message || "").includes("Allocation") || String(error?.message || "").includes("allocations")) return json({ error: error.message }, 400);

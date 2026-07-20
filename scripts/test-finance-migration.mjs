@@ -1,11 +1,14 @@
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const tempDirectory = await mkdtemp(path.join(tmpdir(), "villa-laura-d1-test-"));
 const config = path.join(tempDirectory, "wrangler.toml");
-const migration = path.resolve("migrations/0001_finance.sql");
+const migrations = (await readdir(path.resolve("migrations")))
+  .filter((name) => /^\d+_.*\.sql$/.test(name))
+  .sort()
+  .map((name) => path.resolve("migrations", name));
 const syntheticId = "00000000-0000-0000-0000-000000000001";
 
 try {
@@ -19,13 +22,15 @@ database_id = "${syntheticId}"
 `, { encoding: "utf8", mode: 0o600 });
 
   for (let iteration = 0; iteration < 2; iteration += 1) {
-    const result = spawnSync("npx", ["--yes", "wrangler@3.114.15", "d1", "execute", "VILLA_LAURA_FINANCE", "--local", "--file", migration, "--config", config], {
-      encoding: "utf8",
-      maxBuffer: 20_000_000
-    });
-    if (result.status !== 0) throw new Error(`Finance migration iteration ${iteration + 1} failed`);
+    for (const migration of migrations) {
+      const result = spawnSync("npx", ["--yes", "wrangler@3.114.15", "d1", "execute", "VILLA_LAURA_FINANCE", "--local", "--file", migration, "--config", config], {
+        encoding: "utf8",
+        maxBuffer: 20_000_000
+      });
+      if (result.status !== 0) throw new Error(`Finance migration iteration ${iteration + 1} failed`);
+    }
   }
-  console.log("Finance migration applied twice successfully in an isolated local D1 database.");
+  console.log(`${migrations.length} finance migrations applied twice successfully in an isolated local D1 database.`);
 } finally {
   await rm(tempDirectory, { recursive: true, force: true });
 }

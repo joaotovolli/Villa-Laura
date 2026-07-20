@@ -4,7 +4,7 @@ import test from "node:test";
 import { onRequest } from "../functions/api/[[path]].js";
 import { makeD1 } from "./helpers/d1.js";
 
-const migration = await readFile("migrations/0001_finance.sql", "utf8");
+const migration = `${await readFile("migrations/0001_finance.sql", "utf8")}\n${await readFile("migrations/0002_finance_attachments.sql", "utf8")}`;
 const baseEnv = async () => ({
   APP_ENV: "production",
   ALLOWED_ADMIN_EMAILS: "owner@example.test",

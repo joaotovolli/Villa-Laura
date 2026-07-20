@@ -20,6 +20,10 @@ test("built admin includes protected finance navigation and responsive applicati
   assert.match(finance, /Keep unallocated/);
   assert.match(finance, /Export CSV/);
   assert.match(finance, /FINANCE_COLLABORATOR_EMAILS/);
+  assert.match(finance, /Receipts and evidence/);
+  assert.match(finance, /Upload selected evidence/);
+  assert.match(finance, /parentType=/);
+  assert.equal(finance.includes("finance/evidence/production"), false);
   assert.match(financeCss, /@media \(max-width: 640px\)/);
   assert.equal(finance.includes(`@hot${"mail.com"}`), false);
   assert.equal(finance.includes("AIRBNB_ICAL_URL"), false);
