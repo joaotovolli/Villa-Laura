@@ -40,6 +40,7 @@ The site is designed to sit between booking platforms and day-to-day operations,
 - Image optimisation during build for lightweight delivery
 - Secure digital check-in MVP at `/checkin`
 - Private admin MVP at `/admin` with Airbnb iCal import and Cloudflare Pages Functions backend
+- Protected finance management at `/admin/finances` with D1-backed bookings, expenses, Riccardo payments, reporting, and audit history
 
 ## Technology
 
@@ -131,6 +132,7 @@ The build process generates:
 - Guest data, uploaded identity documents, private iCal URLs, and local check-in data must never be committed
 - Run `npm run security:scan` before opening a pull request
 - Check-in architecture and operations are documented in [docs/checkin_mvp.md](docs/checkin_mvp.md), [docs/security_privacy.md](docs/security_privacy.md), and [docs/cloudflare_setup.md](docs/cloudflare_setup.md)
+- Finance architecture, migrations, role setup, and private spreadsheet import are documented in [finance_management.md](src/docs/finance_management.md)
 
 ## Possible Future Enhancements
 

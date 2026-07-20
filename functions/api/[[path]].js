@@ -5,6 +5,8 @@ import { CheckinStorage, keys } from "../../src/checkin/storage.js";
 import { publicSubmission, validateSubmission } from "../../src/checkin/validation.js";
 import { buildLocalizedGuestMessage, normalizeLanguage } from "../../src/checkin/i18n.js";
 import { dedupeNotifications } from "../../src/checkin/admin-ops.js";
+import { handleFinanceRequest } from "../../src/finance/api.js";
+import { FinanceRepository } from "../../src/finance/repository.js";
 
 const SESSION_COOKIE = "vl_admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 4;
@@ -63,18 +65,9 @@ const sameOriginAdminRequest = (request) => {
   return true;
 };
 
-const edgeProtectedAdminIdentity = (request, env) => {
-  if (env.APP_ENV !== "production") return null;
-  if (!env.CF_ACCESS_TEAM_DOMAIN && !env.CF_ACCESS_AUD) return null;
-  if (!sameOriginAdminRequest(request)) return null;
-  return { email: "cloudflare-access-edge", method: "cloudflare_access_edge_protected" };
-};
-
 const getAdminIdentity = async (request, env) => {
   const accessIdentity = await getCloudflareAccessIdentity(request, env);
   if (accessIdentity) return accessIdentity;
-  const edgeIdentity = edgeProtectedAdminIdentity(request, env);
-  if (edgeIdentity) return edgeIdentity;
 
   if (!passwordFallbackEnabled(env)) return null;
 
@@ -84,12 +77,13 @@ const getAdminIdentity = async (request, env) => {
   if (!value) return null;
   const session = JSON.parse(value);
   if (Date.now() > session.expiresAt) return null;
-  return { email: session.email || "admin", method: "password" };
+  return { email: session.email || "admin", role: "owner", method: "password" };
 };
 
 const requireAdmin = async (request, env) => {
   const identity = await getAdminIdentity(request, env);
   if (!identity) return { response: json({ error: "Authentication required" }, { status: 401 }) };
+  if (identity.role !== "owner") return { response: json({ error: "Owner access required" }, { status: 403 }) };
   return { identity };
 };
 
@@ -314,6 +308,8 @@ const syncIcal = async (request, env, storage, identity) => {
     parsedEvents: 0,
     reservations: 0,
     blockedDates: 0,
+    financeDatabaseConfigured: Boolean(env.VILLA_LAURA_FINANCE),
+    financeReconciliation: null,
     storageWriteSuccess: false,
     storageReadbackSuccess: false
   };
@@ -332,6 +328,9 @@ const syncIcal = async (request, env, storage, identity) => {
   diagnostics.parsedEvents = events.length;
   diagnostics.reservations = events.filter((event) => event.type === "reservation").length;
   diagnostics.blockedDates = events.filter((event) => event.type === "blocked").length;
+  if (env.VILLA_LAURA_FINANCE) {
+    diagnostics.financeReconciliation = await new FinanceRepository(env.VILLA_LAURA_FINANCE).syncIcalEvents(events, identity.email);
+  }
   let created = 0;
   let updated = 0;
   const writtenKeys = [];
@@ -923,7 +922,7 @@ const handleAdmin = async (context, path, storage) => {
     const identity = await getAdminIdentity(request, env);
     return json({
       authenticated: Boolean(identity),
-      identity: identity ? { method: identity.method } : null,
+      identity: identity ? { method: identity.method, role: identity.role } : null,
       passwordFallbackEnabled: passwordFallbackEnabled(env)
     });
   }
@@ -973,7 +972,11 @@ export const onRequest = async (context) => {
     const path = routePath(context);
     const storage = new CheckinStorage(context.env);
     let response;
-    if (path === "/checkin/token" && context.request.method === "GET") response = await getPublicToken(context.request, storage);
+    if (path.startsWith("/finance")) {
+      const identity = await getAdminIdentity(context.request, context.env);
+      response = await handleFinanceRequest(context.request, path, context.env, identity);
+    }
+    else if (path === "/checkin/token" && context.request.method === "GET") response = await getPublicToken(context.request, storage);
     else if (path === "/checkin/draft" && context.request.method === "POST") response = await saveDraftCheckin(context.request, storage);
     else if (path === "/checkin/submit" && context.request.method === "POST") response = await submitCheckin(context.request, storage);
     else response = await handleAdmin(context, path, storage);

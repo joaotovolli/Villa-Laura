@@ -19,11 +19,25 @@ export const parseAllowedAdminEmails = (env = {}) => {
     .filter(Boolean);
 };
 
+export const parseFinanceCollaboratorEmails = (env = {}) => {
+  return String(env.FINANCE_COLLABORATOR_EMAILS || "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+};
+
 export const isProduction = (env = {}) => String(env.APP_ENV || "").toLowerCase() === "production";
 
 export const isEmailAllowed = (email, env = {}) => {
   const normalized = String(email || "").trim().toLowerCase();
-  return Boolean(normalized) && parseAllowedAdminEmails(env).includes(normalized);
+  return Boolean(normalized) && [...parseAllowedAdminEmails(env), ...parseFinanceCollaboratorEmails(env)].includes(normalized);
+};
+
+export const roleForEmail = (email, env = {}) => {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (parseAllowedAdminEmails(env).includes(normalized)) return "owner";
+  if (parseFinanceCollaboratorEmails(env).includes(normalized)) return "finance_collaborator";
+  return "unauthorized";
 };
 
 export const parseAccessJwt = (jwt) => {
@@ -98,11 +112,9 @@ export const getCloudflareAccessIdentity = async (request, env = {}) => {
 
   if (jwt && hasStrictJwtConfig) {
     const verified = await verifyCloudflareAccessJwt(jwt, env);
-    if (!verified.ok) {
-      return isEmailAllowed(headerEmail, env) ? { email: headerEmail, method: "cloudflare_access_header" } : null;
-    }
+    if (!verified.ok) return null;
     const email = verified.payload.email || verified.payload.common_name || headerEmail;
-    return isEmailAllowed(email, env) ? { email, method: "cloudflare_access_jwt" } : null;
+    return isEmailAllowed(email, env) ? { email, role: roleForEmail(email, env), method: "cloudflare_access_jwt" } : null;
   }
 
   if (jwt) {
@@ -110,15 +122,17 @@ export const getCloudflareAccessIdentity = async (request, env = {}) => {
       const parsed = parseAccessJwt(jwt);
       const email = parsed?.payload?.email || parsed?.payload?.common_name || headerEmail;
       if (isEmailAllowed(email, env)) {
-        return { email, method: "cloudflare_access_edge" };
+        return { email, role: roleForEmail(email, env), method: "cloudflare_access_edge" };
       }
     } catch {
       return null;
     }
   }
 
+  if (hasStrictJwtConfig) return null;
+
   if (isEmailAllowed(headerEmail, env)) {
-    return { email: headerEmail, method: "cloudflare_access_header" };
+    return { email: headerEmail, role: roleForEmail(headerEmail, env), method: "cloudflare_access_header" };
   }
 
   return null;

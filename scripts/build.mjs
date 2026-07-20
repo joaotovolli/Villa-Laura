@@ -40,6 +40,8 @@ const checkinStylesPath = path.join(root, "src", "checkin", "checkin.css");
 const adminScriptPath = path.join(root, "src", "checkin", "admin.js");
 const adminClientScriptPath = path.join(root, "src", "checkin", "admin-client.js");
 const adminOpsScriptPath = path.join(root, "src", "checkin", "admin-ops.js");
+const financeScriptPath = path.join(root, "src", "finance", "finance.js");
+const financeStylesPath = path.join(root, "src", "finance", "finance.css");
 const checkinScriptPath = path.join(root, "src", "checkin", "checkin.js");
 const checkinI18nScriptPath = path.join(root, "src", "checkin", "i18n.js");
 const sourceDocsDir = path.join(root, "src", "docs");
@@ -1253,6 +1255,8 @@ await copyFile(checkinStylesPath, path.join(assetsDir, "checkin.css"));
 await copyFile(adminScriptPath, path.join(assetsDir, "admin.js"));
 await copyFile(adminClientScriptPath, path.join(assetsDir, "admin-client.js"));
 await copyFile(adminOpsScriptPath, path.join(assetsDir, "admin-ops.js"));
+await copyFile(financeScriptPath, path.join(assetsDir, "finance.js"));
+await copyFile(financeStylesPath, path.join(assetsDir, "finance.css"));
 await copyFile(checkinScriptPath, path.join(assetsDir, "checkin.js"));
 await copyFile(checkinI18nScriptPath, path.join(assetsDir, "i18n.js"));
 
@@ -2108,6 +2112,31 @@ for (const locale of RECYCLING_LOCALES) {
 await writePage(["admin"], renderCheckinShell({ title: "Admin", script: "admin.js" }), {
   indexable: false
 });
+await writePage(["admin", "finances"], `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>Finances | Villa Laura</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../../assets/checkin.css">
+    <link rel="stylesheet" href="../../assets/finance.css">
+  </head>
+  <body>
+    <main class="finance-main">
+      <header class="top finance-top">
+        <div><h1>Finances</h1><p>Villa Laura operational finance management</p></div>
+        <nav class="actions" aria-label="Admin navigation">
+          <a class="button secondary" href="/admin/">Guest operations</a>
+          <a class="button secondary" href="/">Villa Laura</a>
+        </nav>
+      </header>
+      <div id="finance-app"><section class="panel"><p>Loading finance records…</p></section></div>
+    </main>
+    <script type="module" src="../../assets/finance.js?v=finance-20260720"></script>
+  </body>
+</html>`, { indexable: false });
 await writePage(["checkin"], renderCheckinShell({ title: "Secure Check-In", script: "checkin.js" }), {
   indexable: false
 });

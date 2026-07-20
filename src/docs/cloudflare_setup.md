@@ -32,6 +32,10 @@ Object layout:
 - `checkins/submissions/<token>/documents/<guestId>/<safeFilename>`
 - `checkins/audit/<date>/<eventId>.json`
 
+## D1 Finance Database
+
+Create a private D1 database and bind it to Pages Functions as `VILLA_LAURA_FINANCE` for both Preview and Production. Keep the database identifier out of this public repository. Apply `migrations/0001_finance.sql` before deploying the finance application. See `finance_management.md` for repeatable commands and verification.
+
 ## Secrets
 
 Set these as Cloudflare Pages secrets or environment variables:
@@ -42,6 +46,7 @@ npx wrangler pages secret put ADMIN_PASSWORD
 npx wrangler pages secret put ADMIN_SESSION_SECRET
 npx wrangler pages secret put CHECKIN_TOKEN_SECRET
 npx wrangler pages secret put ALLOWED_ADMIN_EMAILS
+npx wrangler pages secret put FINANCE_COLLABORATOR_EMAILS
 npx wrangler pages secret put CF_ACCESS_TEAM_DOMAIN
 npx wrangler pages secret put CF_ACCESS_AUD
 ```

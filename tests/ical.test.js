@@ -22,3 +22,10 @@ test("parses sanitized Airbnb iCal reservations and blocks", async () => {
   assert.equal(blocked.status, "blocked");
   assert.equal(blocked.nights, 2);
 });
+
+test("recognizes a booking reference with an imported title and cancellation status", () => {
+  const [event] = parseAirbnbIcal(`BEGIN:VCALENDAR\nBEGIN:VEVENT\nUID:synthetic-cancelled\nSUMMARY:Synthetic title\nSTATUS:CANCELLED\nDTSTART;VALUE=DATE:20261001\nDTEND;VALUE=DATE:20261004\nDESCRIPTION:Reservation https://example.test/reservations/HMSYNTH123\nEND:VEVENT\nEND:VCALENDAR`);
+  assert.equal(event.type, "reservation");
+  assert.equal(event.status, "cancelled");
+  assert.equal(event.summary, "Synthetic title");
+});

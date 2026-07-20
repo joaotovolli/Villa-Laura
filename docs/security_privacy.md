@@ -18,6 +18,7 @@ Required secrets are configured as environment variables or Cloudflare secrets:
 - `CHECKIN_TOKEN_SECRET`
 - `ALLOWED_ADMIN_EMAILS`
 - `CF_ACCESS_TEAM_DOMAIN` and `CF_ACCESS_AUD` for strict Cloudflare Access JWT validation when available
+- `FINANCE_COLLABORATOR_EMAILS` for finance-only Cloudflare Access role mapping
 
 No real keys, private URLs, guest data, or document files belong in GitHub. `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` are only for local development fallback sessions; production admin login is Cloudflare Access only.
 
@@ -32,6 +33,7 @@ No real keys, private URLs, guest data, or document files belong in GitHub. `ADM
 - Uploads validate extension, MIME type, and size.
 - Uploaded documents are stored outside public directories.
 - Audit events avoid secrets, document numbers, and full identity details.
+- Finance Collaborators are authorised only for `/api/finance/*`; all private guest-document and unrelated admin APIs require the owner role.
 
 ## Retention
 

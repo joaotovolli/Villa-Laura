@@ -424,6 +424,7 @@ const topSummary = (summary, reservations, blocked) => `
         <p>${reservations.length} reservations - ${blocked.length} blocked date ranges</p>
       </div>
       <div class="actions">
+        <a class="button secondary" href="/admin/finances/">Finances</a>
         <button id="sync">Import Airbnb iCal</button>
         <a id="logout" class="button secondary" href="${accessLogoutUrl}">Log out</a>
       </div>

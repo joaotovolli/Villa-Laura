@@ -4,6 +4,8 @@ import {
   getCloudflareAccessIdentity,
   isEmailAllowed,
   parseAllowedAdminEmails,
+  parseFinanceCollaboratorEmails,
+  roleForEmail,
   passwordFallbackEnabled
 } from "../src/checkin/admin-auth.js";
 
@@ -22,6 +24,7 @@ test("production Cloudflare Access email header allows configured admin", async 
   );
 
   assert.equal(identity.email, "admin@example.com");
+  assert.equal(identity.role, "owner");
   assert.equal(identity.method, "cloudflare_access_header");
 });
 
@@ -45,7 +48,7 @@ test("production mocked Access JWT payload allows configured admin when strict J
   assert.equal(identity.method, "cloudflare_access_edge");
 });
 
-test("strict JWT failure can fall back to allowed Cloudflare Access email header", async () => {
+test("strict JWT failure never falls back to an unverified identity header", async () => {
   const identity = await getCloudflareAccessIdentity(
     requestWithHeaders({
       "cf-access-jwt-assertion": fakeJwt({ email: "admin@example.com", exp: 4102444800, nbf: 0, iss: "https://wrong.example" }),
@@ -59,8 +62,15 @@ test("strict JWT failure can fall back to allowed Cloudflare Access email header
     }
   );
 
-  assert.equal(identity.email, "admin@example.com");
-  assert.equal(identity.method, "cloudflare_access_header");
+  assert.equal(identity, null);
+});
+
+test("strict Access configuration rejects an identity header without a JWT", async () => {
+  const identity = await getCloudflareAccessIdentity(
+    requestWithHeaders({ "cf-access-authenticated-user-email": "admin@example.com" }),
+    { ALLOWED_ADMIN_EMAILS: "admin@example.com", CF_ACCESS_TEAM_DOMAIN: "team.example", CF_ACCESS_AUD: "expected-audience" }
+  );
+  assert.equal(identity, null);
 });
 
 test("local development can keep app fallback enabled", () => {
@@ -72,6 +82,15 @@ test("allowed admin email comes from environment and rejects other users", () =>
   assert.deepEqual(parseAllowedAdminEmails({}), []);
   assert.equal(isEmailAllowed("admin@example.com", { ALLOWED_ADMIN_EMAILS: "admin@example.com" }), true);
   assert.equal(isEmailAllowed("unauthorized@example.com", { ALLOWED_ADMIN_EMAILS: "admin@example.com" }), false);
+});
+
+test("Finance Collaborator role comes from private environment configuration", async () => {
+  const env = { ALLOWED_ADMIN_EMAILS: "owner@example.com", FINANCE_COLLABORATOR_EMAILS: "finance@example.com" };
+  assert.deepEqual(parseFinanceCollaboratorEmails(env), ["finance@example.com"]);
+  assert.equal(roleForEmail("owner@example.com", env), "owner");
+  assert.equal(roleForEmail("finance@example.com", env), "finance_collaborator");
+  const identity = await getCloudflareAccessIdentity(requestWithHeaders({ "cf-access-authenticated-user-email": "finance@example.com" }), env);
+  assert.equal(identity.role, "finance_collaborator");
 });
 
 test("non-allowed Cloudflare Access email is rejected", async () => {
