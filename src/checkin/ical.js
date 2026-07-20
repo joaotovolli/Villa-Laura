@@ -67,6 +67,13 @@ const classifySummary = (summary) => {
   return "unknown";
 };
 
+const bookingStatus = (event, type) => {
+  const status = String(event.STATUS || "").toLowerCase();
+  const summary = String(event.SUMMARY || "").toLowerCase();
+  if (status === "cancelled" || status === "canceled" || summary.includes("cancelled") || summary.includes("canceled")) return "cancelled";
+  return type === "blocked" ? "blocked" : "imported";
+};
+
 export const parseAirbnbIcal = (icalText) => {
   const lines = unfoldLines(icalText);
   const events = [];
@@ -96,20 +103,23 @@ export const parseAirbnbIcal = (icalText) => {
     .map((event) => {
       const description = event.DESCRIPTION || "";
       const reservationUrl = extractReservationUrl(description);
+      const reservationCode = extractReservationCode(reservationUrl || description);
       const checkIn = parseDateValue(event.DTSTART);
       const checkOut = parseDateValue(event.DTEND);
+      const summaryType = classifySummary(event.SUMMARY);
+      const type = summaryType === "unknown" && (reservationUrl || reservationCode) ? "reservation" : summaryType;
       return {
         uid: event.UID,
         summary: event.SUMMARY || "",
-        type: classifySummary(event.SUMMARY),
-        status: classifySummary(event.SUMMARY) === "blocked" ? "blocked" : "imported",
+        type,
+        status: bookingStatus(event, type),
         checkIn,
         checkOut,
         nights: daysBetween(checkIn, checkOut),
         dtstamp: event.DTSTAMP || "",
         description,
         reservationUrl,
-        reservationCode: extractReservationCode(reservationUrl || description),
+        reservationCode,
         phoneLast4: extractPhoneLast4(description),
         source: "Airbnb"
       };

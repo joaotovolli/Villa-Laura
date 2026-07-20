@@ -599,7 +599,7 @@ test("admin deletion endpoints require authentication", async () => {
   }
 });
 
-test("admin API can trust Cloudflare Access edge protection for same-origin protected requests", async () => {
+test("admin API requires a validated or explicitly allowed Cloudflare Access identity", async () => {
   const env = {
     APP_ENV: "production",
     ALLOWED_ADMIN_EMAILS: "admin@example.com",
@@ -616,11 +616,10 @@ test("admin API can trust Cloudflare Access edge protection for same-origin prot
     params: { path: ["admin", "reservations"] }
   });
 
-  assert.equal(sameOrigin.status, 200);
-  assert.equal(sameOriginNoHeader.status, 200);
-  assert.equal((await sameOriginNoHeader.json()).accessMode, "cloudflare_access_edge_protected");
+  assert.equal(sameOrigin.status, 401);
+  assert.equal(sameOriginNoHeader.status, 401);
   assert.equal(crossOrigin.status, 401);
-  assert.equal(sameOriginNoCookie.status, 200);
+  assert.equal(sameOriginNoCookie.status, 401);
 });
 
 test("R2-style listJson ignores uploaded document objects under submission prefix", async () => {
