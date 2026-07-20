@@ -5,7 +5,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import readXlsxFile from "read-excel-file/node";
 import { calculateBooking } from "../src/finance/core.js";
-import { reconcileSpreadsheetRecords } from "../src/finance/spreadsheet.js";
+import { reconcileSpreadsheetRecords, spreadsheetSqlValue } from "../src/finance/spreadsheet.js";
 
 const args = process.argv.slice(2);
 const valueFor = (name) => {
@@ -52,7 +52,7 @@ const minutes = (value) => {
 
 const normalized = (value) => String(value || "").normalize("NFKD").replace(/[^a-z0-9]/gi, "").toLowerCase();
 const importKeyFor = (record) => `spreadsheet:${createHash("sha256").update(`${record.checkIn}|${record.checkOut}|${normalized(record.title)}`).digest("hex").slice(0, 32)}`;
-const sqlValue = (value) => value === null || value === undefined || value === "" ? "NULL" : `'${String(value).replace(/'/g, "''")}'`;
+const sqlValue = spreadsheetSqlValue;
 
 const readExisting = () => {
   if (!database) return [];
