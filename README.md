@@ -41,6 +41,7 @@ The site is designed to sit between booking platforms and day-to-day operations,
 - Secure digital check-in MVP at `/checkin`
 - Private admin MVP at `/admin` with Airbnb iCal import and Cloudflare Pages Functions backend
 - Protected finance management at `/admin/finances` with D1-backed bookings, expenses, Riccardo payments, reporting, and audit history
+- Private receipt and payment-evidence attachments for finance expenses and Riccardo payments, stored in private R2 with D1 metadata and server-side role checks
 
 ## Technology
 

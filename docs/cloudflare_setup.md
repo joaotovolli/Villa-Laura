@@ -31,10 +31,16 @@ Object layout:
 - `checkins/submissions/<token>/submission.json`
 - `checkins/submissions/<token>/documents/<guestId>/<safeFilename>`
 - `checkins/audit/<date>/<eventId>.json`
+- `finance/evidence/preview/expenses/<opaque-parent-id>/<opaque-attachment-id>`
+- `finance/evidence/preview/payments/<opaque-parent-id>/<opaque-attachment-id>`
+- `finance/evidence/production/expenses/<opaque-parent-id>/<opaque-attachment-id>`
+- `finance/evidence/production/payments/<opaque-parent-id>/<opaque-attachment-id>`
+
+Finance evidence reuses this private Standard bucket and binding. Do not make the bucket public, change it to Infrequent Access, or enable a paid R2 add-on. The application enforces 10 MB per file, 20 files per record, and 1 GB of active finance attachments in total.
 
 ## D1 Finance Database
 
-Create a private D1 database and bind it to Pages Functions as `VILLA_LAURA_FINANCE` for both Preview and Production. Keep the database identifier out of this public repository. Apply `migrations/0001_finance.sql` before deploying the finance application. See `finance_management.md` for repeatable commands and verification.
+Create a private D1 database and bind it to Pages Functions as `VILLA_LAURA_FINANCE` for both Preview and Production. Keep the database identifier out of this public repository. Apply `migrations/0001_finance.sql` and then the additive `migrations/0002_finance_attachments.sql` before deploying the attachment-aware finance application. See `finance_management.md` for repeatable commands and verification.
 
 ## Secrets
 

@@ -278,6 +278,91 @@
   align-items: center;
 }
 
+.attachment-area {
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.attachment-area h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.attachment-count {
+  display: inline-flex;
+  min-width: 1.6rem;
+  min-height: 1.6rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--sea);
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+.attachment-picker,
+.attachment-upload {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.attachment-selection,
+.attachment-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.attachment-selection li,
+.attachment-list > li {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  overflow-wrap: anywhere;
+}
+
+.attachment-selection li {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.attachment-list > li > div:first-child {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.attachment-list span,
+.attachment-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.attachment-actions,
+.attachment-description {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: end;
+}
+
+.attachment-description label {
+  flex: 1 1 220px;
+}
+
+.attachment-upload[aria-busy="true"] {
+  opacity: 0.7;
+}
+
 .imported-field::after {
   content: "Imported";
   width: fit-content;
@@ -330,5 +415,18 @@
   .finance-table th,
   .finance-table td {
     padding: 0.55rem;
+  }
+
+  .attachment-actions,
+  .attachment-description {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .attachment-actions .button,
+  .attachment-actions button,
+  .attachment-description button {
+    width: 100%;
+    text-align: center;
   }
 }

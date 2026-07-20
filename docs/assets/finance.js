@@ -2,15 +2,17 @@ const app = document.querySelector("#finance-app");
 const currentYear = new Date().getFullYear();
 const state = {
   session: null, dashboard: null, bookings: [], expenses: [], payments: [], categories: [], audit: [], settings: null,
+  attachments: {},
   filters: { year: String(currentYear), month: "", from: "", to: "", status: "", search: "", sort: "checkIn", direction: "asc" },
   message: "", error: ""
 };
 
 const api = async (path, options = {}) => {
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   const response = await fetch(`/api/finance${path}`, {
     ...options,
     credentials: "include",
-    headers: options.body ? { "content-type": "application/json", ...(options.headers || {}) } : options.headers
+    headers: options.body && !isFormData ? { "content-type": "application/json", ...(options.headers || {}) } : options.headers
   });
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("application/json")) throw new Error("Finance access expired. Sign in through Cloudflare Access again.");
@@ -30,6 +32,7 @@ const percent = (bps) => `${((Number(bps) || 0) / 100).toFixed(2)}%`;
 const hours = (minutes) => ((Number(minutes) || 0) / 60).toFixed(2);
 const dateTime = (value) => value ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Rome" }).format(new Date(value)) : "Not available";
 const dateValue = (value) => escapeHtml(String(value || "").slice(0, 10));
+const fileSize = (bytes) => Number(bytes) < 1024 * 1024 ? `${(Number(bytes) / 1024).toFixed(1)} KB` : `${(Number(bytes) / (1024 * 1024)).toFixed(1)} MB`;
 const query = () => {
   const params = new URLSearchParams();
   Object.entries(state.filters).forEach(([key, value]) => { if (value) params.set(key, value); });
@@ -39,6 +42,26 @@ const query = () => {
 const formObject = (form) => Object.fromEntries(new FormData(form));
 const empty = (message) => `<div class="finance-empty">${escapeHtml(message)}</div>`;
 const statusPill = (status) => `<span class="status ${["cancelled", "removed_from_calendar", "void"].includes(status) ? "attention" : status === "completed" ? "complete" : "ready"}">${escapeHtml(String(status || "unknown").replace(/_/g, " "))}</span>`;
+
+const attachmentKey = (parentType, parentId) => `${parentType}:${parentId}`;
+const attachmentList = (parentType, parentId) => {
+  const attachments = state.attachments[attachmentKey(parentType, parentId)];
+  if (!attachments) return `<p class="muted">Open this area to load private evidence metadata.</p>`;
+  if (!attachments.length) return empty("No receipts or evidence attached yet.");
+  return `<ul class="attachment-list">${attachments.map((attachment) => `<li>
+    <div><strong>${escapeHtml(attachment.filename)}</strong><span>${escapeHtml(attachment.mimeType)} · ${fileSize(attachment.sizeBytes)} · ${dateTime(attachment.uploadedAt)}</span><span>Uploaded by ${escapeHtml(attachment.uploadedBy)}</span>${attachment.description ? `<p>${escapeHtml(attachment.description)}</p>` : ""}</div>
+    <div class="attachment-actions"><a class="button secondary" href="/api/finance/attachments/${encodeURIComponent(attachment.id)}?parentType=${parentType}&parentId=${encodeURIComponent(parentId)}" target="_blank" rel="noopener">Preview or open</a><a class="button secondary" href="/api/finance/attachments/${encodeURIComponent(attachment.id)}?parentType=${parentType}&parentId=${encodeURIComponent(parentId)}&download=1">Download</a>${state.session?.role === "owner" ? `<button type="button" class="danger" data-action="delete-attachment" data-id="${escapeHtml(attachment.id)}" data-parent-type="${parentType}" data-parent-id="${escapeHtml(parentId)}">Delete</button>` : ""}</div>
+    <form class="attachment-description" data-form="attachment-description" data-id="${escapeHtml(attachment.id)}" data-parent-type="${parentType}" data-parent-id="${escapeHtml(parentId)}"><label>Evidence description<input name="description" maxlength="500" value="${escapeHtml(attachment.description || "")}" placeholder="Optional short note"></label><button type="submit" class="secondary">Save note</button></form>
+  </li>`).join("")}</ul>`;
+};
+
+const filePicker = (name) => `<div class="attachment-picker" data-attachment-picker="${escapeHtml(name)}"><label>Receipt or evidence files<input type="file" name="attachmentFiles" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp" multiple></label><p class="field-note">PDF, JPEG, PNG, or WebP. Maximum 10 MB each, 20 per record. Files upload privately after the finance record is saved.</p><ul class="attachment-selection" aria-live="polite"></ul><label>Evidence description<input name="attachmentDescription" maxlength="500" placeholder="Optional note applied to selected files"></label></div>`;
+
+const attachmentArea = (parentType, record) => `<section class="attachment-area" aria-label="Receipts and evidence">
+  <div class="section-heading"><div><h3>Receipts and evidence <span class="attachment-count">${record.attachmentCount || 0}</span></h3><p>Private files are available only through authorised finance routes.</p></div><button type="button" class="secondary" data-action="load-attachments" data-parent-type="${parentType}" data-parent-id="${escapeHtml(record.id)}">Load attachments</button></div>
+  <div data-attachment-list="${escapeHtml(attachmentKey(parentType, record.id))}">${attachmentList(parentType, record.id)}</div>
+  <form class="attachment-upload stack" data-form="attachment-upload" data-parent-type="${parentType}" data-parent-id="${escapeHtml(record.id)}">${filePicker(`${parentType}-${record.id}`)}<button type="submit">Upload selected evidence</button></form>
+</section>`;
 
 const nav = () => `<nav class="finance-nav" aria-label="Finance sections">
   <a href="#overview">Overview</a><a href="#bookings">Bookings</a><a href="#expenses">Expenses</a>
@@ -156,12 +179,13 @@ const expenseFields = (expense = {}) => `<div class="grid">
 const expenseRecord = (expense) => `<details class="finance-record">
   <summary><span><strong>${escapeHtml(expense.description)}</strong><br><small>${escapeHtml(expense.categoryName)} · ${escapeHtml(expense.expenseDate)}</small></span><span>${statusPill(expense.paymentStatus)}</span><span>${escapeHtml(expense.paidBy)}</span><span>${money(expense.amountCents)}</span></summary>
   <div class="finance-record__body"><form class="stack" data-form="expense-edit" data-id="${escapeHtml(expense.id)}" data-version="${expense.version}">${expenseFields(expense)}<div class="finance-form-actions"><button type="submit">Save expense</button>${state.session?.role === "owner" ? `<button type="button" class="danger" data-action="void-expense" data-id="${escapeHtml(expense.id)}">Void expense</button>` : ""}</div></form>
+  ${attachmentArea("expense", expense)}
   <p class="muted">${expense.reimbursableToRiccardo ? `Recognised once as a property expense and payable to Riccardo. Allocated reimbursement: ${money(expense.allocatedPaymentsCents)}.` : "Does not increase Riccardo payable."} Created ${dateTime(expense.createdAt)} by ${escapeHtml(expense.createdBy)}.</p></div>
 </details>`;
 
 const expenses = () => `<section id="expenses" class="finance-section" aria-labelledby="expenses-title">
   <div class="section-heading"><div><h2 id="expenses-title">General property expenses</h2><p>Owner-paid costs reduce profit only. Riccardo-paid reimbursable costs reduce profit once and also increase his payable.</p></div><a class="button secondary" href="/api/finance/export?type=expenses&${query().slice(1)}">Export CSV</a></div>
-  <details class="panel"><summary><strong>Add property expense</strong></summary><form id="expense-create" class="stack">${expenseFields({})}<button type="submit">Add expense</button></form></details>
+  <details class="panel"><summary><strong>Add property expense</strong></summary><form id="expense-create" class="stack">${expenseFields({})}${filePicker("expense-new")}<button type="submit">Add expense and upload evidence</button></form></details>
   <div class="stack">${state.expenses.length ? state.expenses.map(expenseRecord).join("") : empty("No property expenses match this period.")}</div>
 </section>`;
 
@@ -171,7 +195,7 @@ const allocationTargetOptions = () => {
   return `<option value="">Keep unallocated</option>${bookingTargets.join("")}${expenseTargets.join("")}`;
 };
 
-const paymentRecord = (payment) => `<tr><td>${escapeHtml(payment.paymentDate)}</td><td>${escapeHtml(payment.paymentMethod || "—")}</td><td>${escapeHtml(payment.reference || "—")}</td><td class="numeric">${money(payment.amountCents)}</td><td class="numeric">${money(payment.allocatedCents)}</td><td class="numeric ${payment.unallocatedCents ? "money-negative" : ""}">${money(payment.unallocatedCents)}</td><td><details><summary>Allocate</summary><form data-form="allocation-create" data-id="${escapeHtml(payment.id)}" class="stack"><label>Target<select name="target" required>${allocationTargetOptions()}</select></label><label>Amount (€)<input type="number" name="amountCents" min="0.01" max="${decimal(payment.unallocatedCents)}" step="0.01" required></label><button type="submit" ${payment.unallocatedCents <= 0 ? "disabled" : ""}>Allocate balance</button></form>${state.session?.role === "owner" ? `<button type="button" class="danger" data-action="void-payment" data-id="${escapeHtml(payment.id)}">Void payment</button>` : ""}</details></td></tr>`;
+const paymentRecord = (payment) => `<tr><td>${escapeHtml(payment.paymentDate)}</td><td>${escapeHtml(payment.paymentMethod || "—")}</td><td>${escapeHtml(payment.reference || "—")}<br><small>${payment.attachmentCount || 0} evidence file${payment.attachmentCount === 1 ? "" : "s"}</small></td><td class="numeric">${money(payment.amountCents)}</td><td class="numeric">${money(payment.allocatedCents)}</td><td class="numeric ${payment.unallocatedCents ? "money-negative" : ""}">${money(payment.unallocatedCents)}</td><td><details><summary>Manage</summary><form data-form="allocation-create" data-id="${escapeHtml(payment.id)}" class="stack"><label>Target<select name="target" required>${allocationTargetOptions()}</select></label><label>Amount (€)<input type="number" name="amountCents" min="0.01" max="${decimal(payment.unallocatedCents)}" step="0.01" required></label><button type="submit" ${payment.unallocatedCents <= 0 ? "disabled" : ""}>Allocate balance</button></form>${attachmentArea("payment", payment)}${state.session?.role === "owner" ? `<button type="button" class="danger" data-action="void-payment" data-id="${escapeHtml(payment.id)}">Void payment</button>` : ""}</details></td></tr>`;
 
 const payments = () => `<section id="payments" class="finance-section" aria-labelledby="payments-title">
   <div class="section-heading"><div><h2 id="payments-title">Riccardo payment ledger</h2><p>Payments affect cash and reduce the payable; they never create a second operating expense.</p></div><div class="actions"><a class="button secondary" href="/api/finance/export?type=payments&${query().slice(1)}">Payments CSV</a><a class="button secondary" href="/api/finance/export?type=allocations">Allocations CSV</a></div></div>
@@ -182,7 +206,7 @@ const payments = () => `<section id="payments" class="finance-section" aria-labe
     <label>Reference<input name="reference" maxlength="180"></label>
     <label>Optional initial allocation<select name="target">${allocationTargetOptions()}</select></label>
     <label>Allocated amount (€)<input type="number" name="allocatedAmountCents" min="0" step="0.01" value="0.00"></label>
-  </div><label>Notes<textarea name="notes" maxlength="5000"></textarea></label><button type="submit">Record payment once</button></form></details>
+  </div><label>Notes<textarea name="notes" maxlength="5000"></textarea></label>${filePicker("payment-new")}<button type="submit">Record payment once and upload evidence</button></form></details>
   ${state.payments.length ? `<div class="finance-table-wrap"><table class="finance-table"><thead><tr><th>Date</th><th>Method</th><th>Reference</th><th class="numeric">Amount</th><th class="numeric">Allocated</th><th class="numeric">Unallocated</th><th>Actions</th></tr></thead><tbody>${state.payments.map(paymentRecord).join("")}</tbody></table></div>` : empty("No payments to Riccardo match this period.")}
 </section>`;
 
@@ -216,6 +240,8 @@ const payloadFromBooking = (form) => {
 
 const payloadFromExpense = (form) => {
   const body = formObject(form);
+  delete body.attachmentFiles;
+  delete body.attachmentDescription;
   if (form.dataset.version) body.version = Number(form.dataset.version);
   return body;
 };
@@ -230,14 +256,80 @@ const mutate = async (work, success) => {
   state.error = "";
   state.message = "";
   try {
-    await work();
-    state.message = success;
+    const result = await work();
+    state.message = typeof success === "function" ? success(result) : success;
     await load(false);
   } catch (error) {
     state.error = error.message;
     render();
   }
 };
+
+const uploadFiles = async (parentType, parentId, input, description = "") => {
+  const files = [...(input?.files || [])];
+  const failures = [];
+  for (const file of files) {
+    const data = new FormData();
+    data.set("file", file);
+    data.set("description", description);
+    try { await api(`/${parentType === "expense" ? "expenses" : "payments"}/${encodeURIComponent(parentId)}/attachments`, { method: "POST", body: data }); }
+    catch (error) { failures.push({ filename: file.name, message: error.message }); }
+  }
+  return { uploaded: files.length - failures.length, failed: failures.length, failures };
+};
+
+const refreshAttachments = async (parentType, parentId) => {
+  const resource = parentType === "expense" ? "expenses" : "payments";
+  const result = await api(`/${resource}/${encodeURIComponent(parentId)}/attachments`);
+  const key = attachmentKey(parentType, parentId);
+  state.attachments[key] = result.attachments;
+  const container = document.querySelector(`[data-attachment-list="${CSS.escape(key)}"]`);
+  if (container) {
+    container.innerHTML = attachmentList(parentType, parentId);
+    bindAttachmentActions(container);
+  }
+  return result.attachments;
+};
+
+const bindAttachmentActions = (root = document) => {
+  root.querySelectorAll?.("[data-form='attachment-description']").forEach((form) => form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = form.querySelector("button");
+    button.disabled = true;
+    try {
+      await api(`/attachments/${encodeURIComponent(form.dataset.id)}`, { method: "PATCH", body: JSON.stringify({ description: formObject(form).description }) });
+      await refreshAttachments(form.dataset.parentType, form.dataset.parentId);
+      state.message = "Evidence description saved.";
+    } catch (error) { state.error = error.message; }
+    finally { button.disabled = false; }
+  }));
+  root.querySelectorAll?.("[data-action='delete-attachment']").forEach((button) => button.addEventListener("click", async () => {
+    if (!confirm("Delete this private evidence file? The metadata and audit history will be retained.")) return;
+    button.disabled = true;
+    try {
+      await api(`/attachments/${encodeURIComponent(button.dataset.id)}`, { method: "DELETE" });
+      await refreshAttachments(button.dataset.parentType, button.dataset.parentId);
+      state.message = "Attachment deleted from private storage.";
+    } catch (error) { state.error = error.message; button.disabled = false; }
+  }));
+};
+
+const setupFilePickers = (root = document) => root.querySelectorAll?.(".attachment-picker").forEach((picker) => {
+  const input = picker.querySelector("input[type='file']");
+  const list = picker.querySelector(".attachment-selection");
+  const draw = () => {
+    const files = [...input.files];
+    list.innerHTML = files.map((file, index) => `<li><span>${escapeHtml(file.name)} · ${fileSize(file.size)}</span><button type="button" class="secondary" data-remove-file="${index}" aria-label="Remove ${escapeHtml(file.name)}">Remove</button></li>`).join("");
+    list.querySelectorAll("[data-remove-file]").forEach((button) => button.addEventListener("click", () => {
+      const transfer = new DataTransfer();
+      files.forEach((file, index) => { if (index !== Number(button.dataset.removeFile)) transfer.items.add(file); });
+      input.files = transfer.files;
+      draw();
+    }));
+  };
+  input.addEventListener("change", draw);
+  draw();
+});
 
 function bindEvents() {
   document.querySelector("#finance-filter")?.addEventListener("submit", async (event) => {
@@ -262,8 +354,11 @@ function bindEvents() {
     event.preventDefault(); mutate(() => api(`/bookings/${encodeURIComponent(form.dataset.id)}`, { method: "PATCH", body: JSON.stringify(payloadFromBooking(form)) }), "Booking finance saved.");
   }));
   document.querySelector("#expense-create")?.addEventListener("submit", (event) => {
-    event.preventDefault(); const form = event.currentTarget;
-    mutate(() => api("/expenses", { method: "POST", body: JSON.stringify(payloadFromExpense(form)) }), "Property expense added.");
+    event.preventDefault(); const form = event.currentTarget; const input = form.querySelector("input[type='file']"); const description = form.elements.attachmentDescription?.value || "";
+    mutate(async () => {
+      const result = await api("/expenses", { method: "POST", body: JSON.stringify(payloadFromExpense(form)) });
+      return uploadFiles("expense", result.expense.id, input, description);
+    }, (result) => result.failed ? `Expense created. ${result.uploaded} attachment(s) uploaded; ${result.failed} failed and can be retried without creating another expense.` : `Property expense added with ${result.uploaded} attachment(s).`);
   });
   document.querySelectorAll("[data-form='expense-edit']").forEach((form) => form.addEventListener("submit", (event) => {
     event.preventDefault(); mutate(() => api(`/expenses/${encodeURIComponent(form.dataset.id)}`, { method: "PATCH", body: JSON.stringify(payloadFromExpense(form)) }), "Expense saved.");
@@ -273,7 +368,12 @@ function bindEvents() {
     const allocation = allocationFromTarget(body.target, body.allocatedAmountCents);
     const payload = { paymentDate: body.paymentDate, amountCents: body.amountCents, paymentMethod: body.paymentMethod, reference: body.reference, notes: body.notes, idempotencyKey: form.dataset.idempotencyKey || crypto.randomUUID(), allocations: allocation && Number(body.allocatedAmountCents) > 0 ? [allocation] : [] };
     form.dataset.idempotencyKey = payload.idempotencyKey;
-    mutate(() => api("/payments", { method: "POST", body: JSON.stringify(payload) }), "Payment recorded. Any unallocated balance remains available for later allocation.");
+    const input = form.querySelector("input[type='file']"); const description = form.elements.attachmentDescription?.value || "";
+    mutate(async () => {
+      const result = await api("/payments", { method: "POST", body: JSON.stringify(payload) });
+      const uploads = await uploadFiles("payment", result.payment.id, input, description);
+      return { ...uploads, existing: result.existing };
+    }, (result) => result.failed ? `Payment recorded. ${result.uploaded} attachment(s) uploaded; ${result.failed} failed and can be retried on the existing payment.` : `Payment recorded with ${result.uploaded} attachment(s). Any unallocated balance remains available.`);
   });
   document.querySelectorAll("[data-form='allocation-create']").forEach((form) => form.addEventListener("submit", (event) => {
     event.preventDefault(); const body = formObject(form); const allocation = allocationFromTarget(body.target, body.amountCents);
@@ -289,6 +389,27 @@ function bindEvents() {
       mutate(() => api(`/${endpoint}/${encodeURIComponent(button.dataset.id)}/void`, { method: "POST", body: "{}" }), `${noun[0].toUpperCase()}${noun.slice(1)} voided.`);
     }));
   }
+  document.querySelectorAll("[data-action='load-attachments']").forEach((button) => button.addEventListener("click", async () => {
+    button.disabled = true;
+    button.textContent = "Loading…";
+    try { await refreshAttachments(button.dataset.parentType, button.dataset.parentId); button.textContent = "Refresh attachments"; }
+    catch (error) { state.error = error.message; button.textContent = "Retry loading"; }
+    finally { button.disabled = false; }
+  }));
+  document.querySelectorAll("[data-form='attachment-upload']").forEach((form) => form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = form.querySelector("input[type='file']");
+    if (!input.files.length) { state.error = "Choose at least one evidence file."; return; }
+    const button = form.querySelector("button[type='submit']");
+    button.disabled = true; button.textContent = "Uploading…"; form.setAttribute("aria-busy", "true");
+    const result = await uploadFiles(form.dataset.parentType, form.dataset.parentId, input, form.elements.attachmentDescription?.value || "");
+    await refreshAttachments(form.dataset.parentType, form.dataset.parentId).catch(() => {});
+    state.message = result.failed ? `${result.uploaded} attachment(s) uploaded; ${result.failed} failed and can be retried.` : `${result.uploaded} attachment(s) uploaded privately.`;
+    button.disabled = false; button.textContent = "Upload selected evidence"; form.removeAttribute("aria-busy");
+    if (!result.failed) { input.value = ""; setupFilePickers(form); }
+  }));
+  setupFilePickers();
+  bindAttachmentActions();
 }
 
 const load = async (showLoading = true) => {

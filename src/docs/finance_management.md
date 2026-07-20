@@ -85,3 +85,21 @@ After reviewing a clean dry-run, add `--apply`. The importer uses deterministic 
 - Overall Riccardo outstanding = total accrued − total non-voided payments. Booking-level outstanding uses payment allocations.
 
 An unallocated payment still reduces the overall payable and cash, while remaining available for later booking or expense allocation.
+
+## Private Receipts And Payment Evidence
+
+Expenses and Riccardo payments can each have multiple private evidence files. File contents use the existing private Standard R2 binding under environment-separated `finance/evidence/` prefixes; D1 stores only metadata, checksums, parent relationships, lifecycle state, and audit history. Finance APIs never accept a raw object key or return a public R2 URL.
+
+Supported files are PDF, JPEG, PNG, and WebP. Uploads require matching MIME type, extension, and magic bytes, are SHA-256 checksummed, and are limited to 10 MB each and 20 active files per finance record. The server enforces a 1 GB active finance-evidence ceiling across the application. Exact checksum duplicates on the same record are idempotent. Conservative monthly finance-only R2 operation budgets stop uploads and downloads before this feature approaches the account-wide free allowances.
+
+Owners and Finance Collaborators can upload, list, preview, download, and update evidence descriptions. Deletion is owner-only and audited. Retrieval requires the attachment identifier plus its expected parent type and identifier, validates the finance role and D1 relationship, and streams the private object with `private, no-store`, `nosniff`, safe disposition, and restrictive Content Security Policy headers. Finance Collaborators still cannot use any guest-document API or retrieve objects outside the finance prefix.
+
+Apply the additive attachment migration after the base finance migration and before deploying the attachment-aware application:
+
+```bash
+npx --yes wrangler@3.114.15 d1 execute <private-database-name> --remote --file migrations/0002_finance_attachments.sql
+```
+
+The protected owner endpoint `GET /api/finance/attachments/consistency` performs a dry-run comparison between D1 metadata and only the current environment's finance R2 prefix. It reports aggregate counts without filenames or keys. Cleanup requires a separate same-origin owner `POST` with the explicit confirmation value used by the API; it deletes only orphan objects under that exact prefix, quarantines metadata whose object is missing, and writes audit events. Never run cleanup before reviewing a fresh dry run.
+
+Preview and production evidence use separate opaque prefixes even when they share the same private bucket. Do not configure Infrequent Access, public bucket access, R2 Data Catalog, R2 SQL, or a new paid storage product for this feature.

@@ -4,7 +4,7 @@ import test from "node:test";
 import { FinanceRepository } from "../src/finance/repository.js";
 import { makeD1 } from "./helpers/d1.js";
 
-const migration = await readFile("migrations/0001_finance.sql", "utf8");
+const migration = `${await readFile("migrations/0001_finance.sql", "utf8")}\n${await readFile("migrations/0002_finance_attachments.sql", "utf8")}`;
 const actor = "owner@example.test";
 const input = (overrides = {}) => ({ title: "Synthetic Stay", source: "Manual", checkIn: "2026-08-01", checkOut: "2026-08-05", status: "active", guests: 2, revenueCents: 100000, revenueReceivedCents: 100000, riccardoMinutes: 120, purchasesCents: 0, otherReimbursableCents: 0, ...overrides });
 
