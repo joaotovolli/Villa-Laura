@@ -1,3 +1,7 @@
+export const spreadsheetSqlValue = (value) => value === null || value === undefined
+  ? "NULL"
+  : `'${String(value).replace(/'/g, "''")}'`;
+
 export const reconcileSpreadsheetRecords = (records, existing = []) => {
   const creates = [];
   const updates = [];

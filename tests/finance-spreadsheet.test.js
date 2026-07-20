@@ -1,8 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { reconcileSpreadsheetRecords } from "../src/finance/spreadsheet.js";
+import { reconcileSpreadsheetRecords, spreadsheetSqlValue } from "../src/finance/spreadsheet.js";
 
 const record = (overrides = {}) => ({ importKey: "spreadsheet:synthetic", rowNumber: 5, checkIn: "2025-06-01", checkOut: "2025-06-04", guests: 2, revenueCents: 50000, riccardoMinutes: 120, hourlyRateCents: 1200, laundryRateCents: 1000, commissionBps: 2000, purchasesCents: 0, ...overrides });
+
+test("spreadsheet SQL preserves empty non-null text and escapes quotes", () => {
+  assert.equal(spreadsheetSqlValue(""), "''");
+  assert.equal(spreadsheetSqlValue("owner's purchase"), "'owner''s purchase'");
+  assert.equal(spreadsheetSqlValue(null), "NULL");
+});
 
 test("spreadsheet dry-run reports a new record without exposing record contents", () => {
   const result = reconcileSpreadsheetRecords([record()], []);
